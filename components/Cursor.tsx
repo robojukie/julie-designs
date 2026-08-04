@@ -22,25 +22,23 @@ const FINE_POINTER = "(hover: hover) and (pointer: fine)";
 const ACTIVE_CLASS = "has-custom-cursor";
 
 /* Text that reads as artwork rather than prose: it keeps the resting dot
-   instead of the caret. Two ways in —
+   instead of the caret. Carried by the tag alone, never inferred — the home
+   hero wordmark and the page title on each top-level page wear it.
 
-     [data-graphic-text]   tagged explicitly. The home hero wordmark.
-     .home .hero-title-text  the one page title at the top of each top-level
-                           page — "Blog posts", "Who am I?". `.home` sits on
-                           home, writing and about and on nothing else; case
-                           studies root at `.project`, which keeps them out.
+   Inferring it was tried and dropped. Matching `.home .hero-title-text` picked
+   out the right elements, but only because a Webflow LAYOUT class happened to
+   sit on the right three pages; it tied "which titles are unselectable" to
+   "which pages share a layout", two things that agree today by coincidence.
+   Case studies are excluded now because they simply don't carry the tag,
+   rather than because they root at a different class.
 
-   Page titles only, deliberately. Section headings (.main-section-header),
-   article titles and card titles all read as part of the prose around them
-   and stay selectable, so this matches one class rather than h1-h6.
+   KEEP IN SYNC with styles/custom.css section 13, which makes the same
+   attribute unselectable. Both halves of "this is a picture of words" answer
+   the same question, so they read from the same selector.
 
-   KEEP IN SYNC with the matching selector in styles/custom.css (section 13),
-   which makes exactly these unselectable. Both halves of "this is a picture of
-   words" answer the same question, so they read from the same selector.
-
-   The tagged half matches austlee.com's data-cursor="none", which sits on his
-   "austin lee" wrapper and is the only such attribute on his page. */
-const GRAPHIC_TEXT = "[data-graphic-text], .home .hero-title-text";
+   Matches austlee.com's data-cursor="none", which sits on his "austin lee"
+   wrapper and is the only such attribute on his page. */
+const GRAPHIC_TEXT = "[data-graphic-text]";
 
 type State = "default" | "text";
 

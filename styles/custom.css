@@ -411,28 +411,31 @@
    (hover: hover) query that styles/cursor.css lives in — the selection half
    matters most on touch, which that query excludes.
 
-   THE PAGE-TITLE HALF. The one big heading at the top of a page is part of
-   that page's identity in the way the home wordmark is, so it gets the same
-   treatment without being tagged one by one.
+   WHO WEARS IT. The home hero wordmark, and the page title on each top-level
+   page — the ones reachable straight from the nav, so "Blog posts" on writing
+   and "Who am I?" on about today, plus a resume page later. The big heading at
+   the top of such a page is part of that page's identity in the way the home
+   wordmark is.
 
-   Scoped by `.home`, which sits on exactly the three top-level pages (home,
-   writing, about) and on nothing else; case studies root at `.project`
-   instead, which is what keeps them out. A future resume page picks this up
-   for free by using the same wrapper. Keying behaviour off these structural
-   classes is already the idiom here — section 1 above reaches the case-study
-   background the same way, via .body:has(.project).
+   PAGE TITLES ONLY. Section headings like "How I work" and "My favorite
+   podcasts to learn from" are read as part of the prose around them, as are
+   MediumFeed's article titles and ProjectCard's card titles. All of those stay
+   selectable, and so do case-study titles.
 
-   PAGE TITLES ONLY — .hero-title-text, which is "Blog posts" and "Who am I?".
-   Deliberately not h1-h6 and not .main-section-header: section headings like
-   "How I work" and "My favorite podcasts to learn from" are read as part of
-   the prose around them, and so are MediumFeed's article titles and
-   ProjectCard's card titles. All of those stay selectable.
+   TAGGED, NEVER INFERRED. Matching `.home .hero-title-text` was tried and
+   dropped: it picked out the right elements, but only because a Webflow
+   LAYOUT class happened to sit on the right three pages, which tied "which
+   titles are unselectable" to "which pages share a layout" — two things that
+   agree today by coincidence. (`.home` is also a poor name for the group; it
+   sits on writing and about too, and it carries five real styling rules in
+   the generated juliepaik.css, so it is not cheaply renamed.) Tagging costs
+   one word on a new page's heading and puts the marker where the behaviour
+   is, instead of in a rule three files away.
 
-   KEEP IN SYNC with GRAPHIC_TEXT in components/Cursor.tsx, which uses the
-   same selector to decide where the cursor keeps its dot.
+   KEEP IN SYNC with GRAPHIC_TEXT in components/Cursor.tsx, which reads the
+   same attribute to decide where the cursor keeps its dot.
 --------------------------------------------------------------------------- */
-[data-graphic-text],
-.home .hero-title-text {
+[data-graphic-text] {
   -webkit-user-select: none;
   user-select: none;
   /* Suppresses iOS's press-and-hold "Copy / Look Up" sheet, which
