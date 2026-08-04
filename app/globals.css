@@ -1,0 +1,53 @@
+/* Load order mirrors the <link> order in the Webflow export:
+   normalize.css -> webflow.css -> juliepaik.webflow.css.
+
+   All three are now ported in FULL and generated, not hand-curated — the
+   per-concern split this replaced (base/nav/hero/home/about/case-study/…) was
+   missing 252 rules across 122 selector groups, and had lost the source's rule
+   order. Regenerate the custom stylesheet with:
+     node scripts/port-custom-css.js
+   Check coverage with:
+     node scripts/audit-css-coverage.js */
+@import "../styles/normalize.css";
+@import "../styles/webflow.css";
+
+/* :root variables, extracted from the source's :root block (which
+   port-custom-css.js strips, so this stays the single source of truth). */
+@import "../styles/tokens.css";
+
+/* The full custom stylesheet, verbatim and in source order. */
+@import "../styles/juliepaik.css";
+
+/* Ours: rebuild-specific rules plus the Webflow page-level custom code that
+   only exists in the exported HTML's inline <style> blocks. Loads last. */
+@import "../styles/custom.css";
+
+:root {
+  /* Overridden to use next/font's self-hosted, optimized font files instead of
+     the raw Google Fonts family names the Webflow export used. The font
+     variable classes (--font-baloo-2 / --font-nunito) are applied to <html>
+     in app/layout.tsx. */
+  --heading-font: var(--font-baloo-2), sans-serif;
+  --text-body-font: var(--font-nunito), sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+/* webflow.css ships `html { height: 100% }`, which pins the root box to one
+   viewport. The body gradient propagates to the canvas, and a propagated
+   background is sized to the ROOT element's box — so at 100% the gradient is
+   one viewport tall and tiles down the page instead of spanning it once.
+
+   The export overrides this to `height: auto` in an inline <style> present on
+   17 of the 19 pages. */
+html {
+  height: auto;
+}

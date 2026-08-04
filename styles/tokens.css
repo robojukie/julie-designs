@@ -1,0 +1,204 @@
+/* Auto-generated from juliepaik.webflow/css/juliepaik.webflow.css :root block.
+   Do not hand-edit — regenerate from the export if the source changes.
+   Webflow variable names with a "<deleted|variable-...>" suffix mean the variable
+   was deleted in the Designer but is still referenced by some elements; the suffix
+   is stripped here and the original raw name is noted inline for cross-reference. */
+
+:root {
+  --text-body-font: Nunito, sans-serif;
+  --text-colors--text-primary: var(--color--neutral--800);
+  --text-size--body-desktop-1-25: 1.25rem;
+  --text-height--body-desktop-height-1-8: 1.8rem;
+  --heading-font: "Baloo 2", sans-serif;
+  --text-size--display-desktop-large: 5rem;
+  --text-height--display-desktop-large-height: 5rem;
+  --text-size--heading-h2-desktop: 2.125rem;
+  --text-height--heading-h2-desktop-height: 3rem;
+  --text-weightt--h2-200: 200;
+  --text-size--heading-h2-mobile: 1.6rem;
+  --text-height--heading-h2-mobile-height: 2.25rem;
+  --text-size--heading-h3-desktop: 1.7rem;
+  --text-height--heading-h3-desktop-height: 2.3rem;
+  --text-size--heading-h3-mobile: 1.4rem;
+  --text-height--heading-h3-mobile-height: 2rem;
+  /* Webflow: --text-size--title-desktop-1-5\<deleted\|variable-68d9024b-7d06-09f8-b0c9-247bcd547a67\> (deleted-variable export artifact) */
+  --text-size--title-desktop-1-5: 1.5rem;
+  --text-height--title-desktop-height: 2rem;
+  /* Webflow: --text-size--title-mobile\<deleted\|variable-d3cdc563-c459-61a4-41ac-5b00f61d3b76\> (deleted-variable export artifact) */
+  --text-size--title-mobile: 1.3rem;
+  --text-height--title-mobile-height: 1.625rem;
+  /* Webflow: --text--body-text-sm\<deleted\|variable-d41035c7-4718-1eae-c3a4-6fa104b3736a\> (deleted-variable export artifact) */
+  --text--body-text-sm: 1.125rem;
+  --text-height--body-mobile-height: 1.5rem;
+  --text-weightt--body-300: 300;
+  --text-size--body-mobile: 1.125rem;
+  --accents--bold--accent-heading: var(--color--pink--color);
+  --accents--bold--accent-hover: var(--color--peach--600);
+  --width--container-680: 680px;
+  --width--container-800: 800px;
+  /* Webflow: --light\<deleted\|variable-acdcbe1f-539b-5263-e1d0-6c36272c18fd\> (deleted-variable export artifact) */
+  --light: var(--accents--bold--secondary-brand-color);
+  --nav-link-color: #9c9c9c;
+  --text-size--nav-link-p-text: .9rem;
+  --text-height--nav-link-height: 1.1rem;
+  --accents--bold--main-brand-color: #a7b5a2;
+  --accents--bold--secondary-brand-color: #ab91b4;
+  --width--container-1232: 1232px;
+  --width--container-1224: 1224px;
+  /* Webflow: --text--farewell\<deleted\|variable-2dc89ba5-7c5f-b3c7-1704-aedafb018e3a\> (deleted-variable export artifact) */
+  --text--farewell: 2rem;
+  --translucent-white: #ffffffde;
+  --divider: var(--shadow-color);
+  --og-colors--black-1000: #0c0d0d;
+  /* Webflow: --dark-dark-dark-gray-blue\<deleted\|variable-714e5efc\> (deleted-variable export artifact) */
+  --dark-dark-dark-gray-blue: #171718;
+  --background-color--background-case-study: var(--color--neutral--warm--200);
+  /* Webflow: --text--image-caption\<deleted\|variable-0d1f0440-0d59-f665-28b8-fe05cca98f8c\> (deleted-variable export artifact) */
+  --text--image-caption: 1rem;
+  /* Webflow: --text-height--image-caption-height\<deleted\|variable-3d7c2b17-1bd4-dbfd-223b-0424b9ff1236\> (deleted-variable export artifact) */
+  --text-height--image-caption-height: 1.4rem;
+  /* Webflow: --text--page-title-small-size\<deleted\|variable-53e336d2-d16e-810a-0565-49d15a9140ac\> (deleted-variable export artifact) */
+  --text--page-title-small-size: 48px;
+  /* Webflow: --text--page-title-small-height\<deleted\|variable-6f5b9f66-2e52-e9f9-b445-75c4373079e3\> (deleted-variable export artifact) */
+  --text--page-title-small-height: 4rem;
+  --background-color--background-main: #fdfdfd;
+  --large-radius: 10px;
+  --width--video-width: 1064px;
+  --accents--bold--main-brand-dark: #59685a;
+  --width--main-content-width: 800px;
+  /* Webflow: --text--display-med\<deleted\|variable-c644e563-97b5-6970-e43b-aca83c2c7ee1\> (deleted-variable export artifact) */
+  --text--display-med: 64px;
+  --text-height--display-tablet-height: 2.8rem;
+  --text-size--hero-large: 103px;
+  --text-height--hero-large-height: 104px;
+  --text-size--hero-small: 72px;
+  --text-height--hero-small-height: 72px;
+  --text-size--display-desktop-regular: 4rem;
+  --text-height--display-desktop-regular-height: 4.375rem;
+  --text-size--hero-xsmall: 56px;
+  --text-size--display-mobile: 2.3rem;
+  /* Webflow: --text--page-subtitle-sm\<deleted\|variable-210c7c5a-5d27-5ff3-c5bc-563872051800\> (deleted-variable export artifact) */
+  --text--page-subtitle-sm: 1.3rem;
+  /* Webflow: --text--page-subtitle-sm-height\<deleted\|variable-41c23a71-a778-8da8-d924-5c0e9dbdc692\> (deleted-variable export artifact) */
+  --text--page-subtitle-sm-height: 1.8rem;
+  --accents--bold--accent: var(--accents--bold--pink);
+  --background-color--background-brain-sprout: #e2ebdd;
+  --background-color--background-light-purple: #eae4f7;
+  /* Webflow: --h4-small\<deleted\|variable-eda73832-5f67-6b07-66a5-7886214a34e5\> (deleted-variable export artifact) */
+  --h4-small: 24px;
+  /* Webflow: --h4-small-height\<deleted\|variable-9242b7f2-ada1-536f-6b20-66c4f62be276\> (deleted-variable export artifact) */
+  --h4-small-height: 32px;
+  --accents--bold--brainsprout-lightest-green: #eff4f2;
+  --background-color--background-accent-bankgreen: #e8f0c7;
+  --color--peach--300: #fee9da;
+  --background-color--background-blue: #c5d3e8;
+  --text-size--eyebrow-desktop: 1rem;
+  --text-height--eyebrow-desktop-height: 1rem;
+  --text-weightt--eyebrow-500: 500;
+  --text-size--eyebrow-mobile: 1rem;
+  --text-height--eyebrow-mobile-height: 1.2rem;
+  /* Webflow: --text-size--label-mobile\<deleted\|variable-60a4b4ed-5de8-cdf2-7ecd-7da18921c848\> (deleted-variable export artifact) */
+  --text-size--label-mobile: 1.125rem;
+  --text-height--label-mobile-height: 1.5rem;
+  --text-size--caption-desktop-1-125: 1.125rem;
+  --text-height--caption-desktop-height-1-6: 1.6rem;
+  --text-weightt--caption-200: 200;
+  --text-size--caption-mobile: 1rem;
+  --text-height--caption-mobile-height: 1.3rem;
+  --surface: #0d09090d;
+  --small-radius: 4px;
+  --color--neutral--warm--400: #e8e5e5;
+  --color--beige--600: #b6afa9;
+  --beige: #eee5de;
+  --background-color--background-light-blue: #ebeced;
+  --text-colors--text-light: var(--color--neutral--100);
+  --background-color--background-dark-blue: #182230;
+  /* Webflow: --text--h3\<deleted\|variable-d4a58d79-e3f0-6d50-0612-110ce966c20f\> (deleted-variable export artifact) */
+  --text--h3: 2rem;
+  --text-size--highlight-desktop: 72px;
+  --text-size--highlight-desktop-80-height: 80px;
+  --text-size--highlight-mobile-callout: 57px;
+  --text-size--highlight-mobile-callout-72: 64px;
+  --accents--bold--accent-green: var(--accents--bold--green);
+  --text-height--label-desktop-large-height: 2rem;
+  --og-colors--black-og: #545454;
+  --color--beige--300: #f4ede7;
+  --text-weightt--title-500: 500;
+  /* Webflow: --text--light\<deleted\|variable-bfdf30ce-bada-add2-e679-ff53deaf29d0\> (deleted-variable export artifact) */
+  --text--light: #fcfcfc;
+  --text-weightt--display-weight: 800;
+  --text-size--display-tablet: 2.625rem;
+  --text-height--display-mobile-height: 2.4rem;
+  --text-colors--muted-dark-blue: #596068;
+  --accents--bold--accent-deep-blue: var(--accents--bold--blue);
+  --text-size--display-thin-desktop-long: 1.75rem;
+  --text-height--display-thin-desktop-long-height: 2.5rem;
+  --text-size--display-thin-mobile: 1.3rem;
+  --text-height--display-thin-mobile-height: 2rem;
+  --color--neutral--cool--400: #e7e7e6;
+  --white: #fdfefd;
+  --translucent-black: #000000a8;
+  --background-color--old-background-dark: var(--color--neutral--800);
+  --shadow-color: #0000001a;
+  --shadow-blur: 8px;
+  --text-colors--disabled-text: #8d8d8d;
+  --inline-link: var(--text-colors--text-primary);
+  --accents--bold--accent-blue: #d8e0e0;
+  --width--lightbox-width: 1024px;
+  --background-color--background-brainsprout: #f8f4f1;
+  --text-weightt--h3: 200;
+  --accents--bold--light-green: #bec4a3;
+  --accents--pastel--purple: #cfc9dd;
+  --accents--pastel--green: #c9ddc9;
+  --border--annotation: var(--accents--bold--pink);
+  --border--primary: #c1bfbf;
+  --color--beige--500: #e8dfd9;
+  --color--beige--200: #faf9f9;
+  --color--beige--350: #f8f4f1;
+  --color--beige--700: #524e4b;
+  --color--blue--600: #87bbbb;
+  --color--blue--400: #d5e9f2;
+  --color--green--muted--500: #e8f0c7;
+  --color--green--muted--800: #a2ad90;
+  --color--green--muted--100: #f7faef;
+  --color--neutral--1000: black;
+  --color--neutral--800: #272727;
+  --color--neutral--900: #1f1f1f;
+  --color--neutral--0: #fff;
+  --color--neutral--100: #fcfcfc;
+  --color--neutral--cool--300: #f0f0f0;
+  --color--neutral--cool--200: #f8f8f8;
+  --color--neutral--cool--700: #5d5c5c;
+  --color--neutral--cool--500: #d8d7d6;
+  --color--neutral--cool--600: #a2a1a1;
+  --color--neutral--warm--700: #898787;
+  --color--neutral--warm--500: #dbd8d8;
+  --color--neutral--warm--200: #faf8f8;
+  --color--neutral--warm--300: #f0ecec;
+  --color--neutral--warm--600: #c1bfbf;
+  --color--neutral--warm--old: #f7f4f0;
+  --color--peach--200: #f7f5f2;
+  --color--peach--400: #f5cdb2;
+  --color--peach--800: #ed6b6b;
+  --color--peach--600: #ff988a;
+  --color--pink--800: #de225d;
+  --color--pink--color: #ed6b6b;
+  --color--purple--400: #eae4f7;
+  --components--link--primary: var(--color--pink--800);
+  --icon--primary: #272727;
+  --surface--annotation--cool: #f8f8f8;
+  --surface--annotation--warm: #faf8f8;
+  --surface--background--case-study--background: #fcfcfc;
+  --surface--background--dark--background: #272727;
+  --surface--thumbnail--purple: #eae4f7;
+  --surface--thumbnail--peach-2: #f5cdb2;
+  --surface--thumbnail--peach-1: #f7e7dc;
+  --surface--thumbnail--green-1: #e8f0c7;
+  --surface--thumbnail--blue: #d5e9f2;
+  --accents--bold--green: #43a363;
+  --accents--bold--orange: #ed6b6b;
+  --accents--bold--yellow: #f1e534;
+  --accents--bold--pink: #de225d;
+  --accents--bold--blue: #52afcf;
+  --text-colors--disabled: #c1bfbf;
+}

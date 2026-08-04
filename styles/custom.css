@@ -1,0 +1,386 @@
+/* Everything in this file is ours — either written for the rebuild, or ported
+   from Webflow page-level custom code that lives in the exported HTML's inline
+   <style> blocks rather than in any .css file.
+
+   Loads AFTER styles/juliepaik.css (the full verbatim port) so it can override.
+   Nothing here should duplicate a rule that exists in the export; if a rule
+   turns out to be in juliepaik.webflow.css, delete it here and let the port
+   own it. Verify with: node scripts/audit-css-coverage.js */
+
+/* ---------------------------------------------------------------------------
+   1. Case-study background
+   The export marks these pages `<body class="body casestudy">`, and the ported
+   .body.casestudy rules depend on that class. Next renders <body> once in the
+   shared root layout, so it can't vary per route without toggling the class
+   from client JS — which paints the gradient first and swaps after hydration.
+   :has(.project) reaches the same rules in pure CSS: server-rendered and
+   flash-free, and .project is the case-study wrapper, present only there.
+
+   The background must sit on <body> so it spans the whole document. On
+   .project instead, the navbar and footer strips still show the body gradient
+   around a flat middle, which reads as a banded background.
+   Keep in sync with the .body.casestudy rules in juliepaik.css.
+--------------------------------------------------------------------------- */
+.body:has(.project) {
+  background-color: var(--background-color--background-case-study);
+  background-image: none;
+  font-weight: 300;
+}
+
+@media screen and (min-width: 1440px) {
+  .body:has(.project) {
+    line-height: var(--text-size--body-desktop-1-25);
+  }
+}
+
+@media screen and (max-width: 991px) {
+  .body:has(.project) {
+    font-size: var(--text-size--body-mobile);
+    line-height: var(--text-height--body-mobile-height);
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   2. Hero title
+   .hero-title-span-wrapper comes from the custom JS embed's injected <style>
+   in index.html, not the main stylesheet. The keyframes replace that embed's
+   JS-driven fade: a rAF-driven animation can freeze permanently if the tab is
+   hidden mid-sequence (Chrome suspends rAF in background tabs); a CSS
+   animation cannot.
+--------------------------------------------------------------------------- */
+.hero-title-span-wrapper {
+  display: inline-block;
+  white-space: nowrap;
+}
+
+@media (max-width: 780px) {
+  .hero-title-span-wrapper {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    margin-bottom: 5px;
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    /* 6px, not a rounder-looking number — this is the embed's own value. */
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-in-up {
+  opacity: 0;
+  animation: fadeInUp 0.4s ease forwards;
+}
+
+/* ---------------------------------------------------------------------------
+   3. Project-thumbnail hover
+   Ports the "Scale/Reset <project> on hover" IX2 action lists (a-15/16,
+   a-38/39, a-84/85, a-132/133): on hover of the card link, scale the child
+   thumbnail 1 -> 1.05 over 500ms; back to 1 over 300ms with a quad ease.
+   a-132/133 is titled "Scale dv01 on hover" but targets .novinopath-thumbnail
+   — a copy-paste leftover in the Webflow project, so the NovinoPath card does
+   get the hover scale despite its link being disabled ("Coming soon").
+   Keyed off the card link rather than href, and done in CSS so the image can
+   stay a direct flex child of .image-wrapper-cover (an extra wrapper element
+   un-blockifies it and leaves an inline-baseline gap under the image).
+--------------------------------------------------------------------------- */
+.container-project-link .image-wrapper-cover img {
+  transition: transform 300ms cubic-bezier(0.55, 0.085, 0.68, 0.53); /* inQuad */
+}
+
+.container-project-link:hover .image-wrapper-cover img {
+  transform: scale(1.05);
+  transition-duration: 500ms;
+  transition-timing-function: ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .container-project-link .image-wrapper-cover img,
+  .container-project-link:hover .image-wrapper-cover img {
+    transition: none;
+    transform: none;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   4. Mobile menu
+   webflow.css's mobile show/hide is driven by `.w-nav[data-collapse=…]`
+   attribute selectors tied to Webflow's own JS nav-collapse. We drive the menu
+   from React state, so we don't carry data-collapse and reimplement the
+   breakpoint switch here.
+--------------------------------------------------------------------------- */
+
+/* Stands in for .w-nav-button, which is display:none until a [data-collapse]
+   rule matches. Box geometry (56px tall, 16px padding, overflow:hidden) comes
+   from the ported .menu-button rule: the icon is a 208px Lottie offset to
+   -88/-75 and this element is the window that clips it, so setting
+   width/height/padding here would crop the wrong part of the frame. */
+.menuButton {
+  display: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  position: relative;
+  /* .w-nav-button is float:right so it shares the brand's line inside the
+     display:block .container-nav instead of dropping to a new line. */
+  float: right;
+}
+
+@media screen and (max-width: 991px) {
+  .menuButton {
+    display: flex;
+  }
+}
+
+/* The export's `.nav-menu { position: absolute }` at <=991 has no offsets or
+   width of its own — it relies on Webflow wrapping the menu in .w-nav-overlay
+   (position:absolute; top:100%; left:0; right:0; width:100%) for its box. We
+   render the menu inline rather than inside an overlay, so without this the
+   panel collapses to a shrink-to-fit strip at the static position. */
+@media screen and (max-width: 991px) {
+  .nav-menu {
+    display: none;
+  }
+
+  .nav-menu.navMenuOpen {
+    display: block;
+    top: 100%;
+    left: 0;
+    right: 0;
+    width: 100%;
+    height: 100vh;
+  }
+
+  /* The dropdown's aspect-ratio sized the panel back when nothing else did;
+     now that the panel has a real box, let it fill instead. */
+  .nav-menu.navMenuOpen .nav-menu-dropdown {
+    aspect-ratio: auto;
+    width: 100%;
+    height: 100%;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   5. Current-page nav link
+   Ported verbatim from the inline <style> in the exported index.html (Webflow
+   page-level custom code, which is why it isn't in any .css file). Selectors
+   are unchanged because the markup carries w-nav-link.
+
+   The padding rule is load-bearing: `.nav-link.top-nav.last` sets
+   padding-right:0, pushing the "about" link's padding box 24px wider on the
+   left. The ::after underline is centred on that box (left:50%), so it lands
+   ~12px left of the word. Restoring symmetric padding re-centres it, and the
+   -24px margin cancels the width that adds back so the link stays flush right.
+
+   Webflow adds w--nav-link-open to the links while the mobile nav is open; we
+   drive that from React state, so it maps to .nav-menu.navMenuOpen.
+--------------------------------------------------------------------------- */
+.nav-link.w-nav-link.w--current {
+  padding: 4px 24px 4px 24px;
+}
+
+.nav-link.last.w-nav-link.w--current {
+  margin-right: -24px;
+}
+
+.nav-menu.navMenuOpen .nav-link.w-nav-link,
+.nav-menu.navMenuOpen .nav-link.w-nav-link.w--current {
+  padding: 16px 24px 16px 24px;
+}
+
+.nav-menu.navMenuOpen .nav-link.last.w-nav-link.w--current {
+  margin-right: 0;
+}
+
+.nav-link.w-nav-link.w--current::after,
+.nav-menu.navMenuOpen .nav-link.w-nav-link.w--current::after {
+  background-color: #9c9c9c;
+  content: "";
+  display: block;
+  height: 2px;
+  left: 50%;
+  position: absolute;
+  transform: translate(-50%, 75%);
+  width: 15px;
+}
+
+.nav-link.w-nav-link.w--current:hover::after,
+.nav-menu.navMenuOpen .nav-link.w-nav-link.w--current:hover::after {
+  background-color: #ff988a;
+  content: "";
+  display: block;
+  height: 2px;
+  left: 50%;
+  position: absolute;
+  transform: translate(-50%, 75%);
+  width: 15px;
+}
+
+/* ---------------------------------------------------------------------------
+   6. Misc
+   webflow.js sets position:relative on YouTube embed wrappers at runtime when
+   it initialises the embed; we don't run webflow.js, so the absolutely
+   positioned iframe inside would otherwise escape to the nearest positioned
+   ancestor instead of staying contained.
+--------------------------------------------------------------------------- */
+.w-embed-youtubevideo {
+  position: relative;
+}
+
+/* ---------------------------------------------------------------------------
+   7. next/image sizing vs. the export's plain <img>
+
+   Every <img> in the Webflow export carries NO width/height attributes — its
+   box comes entirely from the stylesheet plus the file's intrinsic ratio.
+   next/image requires width/height, and the HTML attributes act as CSS
+   presentational hints. So wherever the ported CSS constrains only one axis,
+   the attribute silently supplies the other and the aspect ratio breaks:
+
+     .image-1257 (case-study banner) sets height:100% and no width, so the
+     width attribute (1840px, clamped by max-width:100%) filled the wrapper —
+     1057x370 instead of 851x370. With the export's global
+     `img { object-fit: cover }` the extra width then CROPPED the banner.
+     .image-1262 (about hero) sets max-height:280px and no width: 228x280
+     instead of 176x208, cropped the same way.
+
+   Resetting both axes to auto restores the export's behaviour exactly: where
+   the CSS sets a dimension it wins, and where it doesn't the intrinsic ratio
+   fills in. :where() keeps specificity at 0 so every ported rule — including
+   the breakpoint overrides that DO set width, like .image-1257's
+   `width:100%` at <=991px — still beats it, while it stays ahead of the
+   presentational hints, which sort below all author styles.
+--------------------------------------------------------------------------- */
+:where(img[data-nimg]) {
+  width: auto;
+  height: auto;
+}
+
+/* ---------------------------------------------------------------------------
+   8. Hero title wrap order  — DELIBERATE DIVERGENCE FROM THE EXPORT
+
+   This is a bug fix, not a port. The export (and the live site) render the
+   waving "Hi!" BELOW "I'm Julie" on very narrow screens, which is wrong — the
+   greeting should come first. Julie confirmed the live site is incorrect here,
+   so the export is not the reference for this rule.
+
+   Cause: juliepaik.css has
+
+     @media screen and (max-width: 767px) {
+       .page-title-container { flex-flow: wrap-reverse; … }
+     }
+
+   `wrap-reverse` stacks wrapped flex lines bottom-to-top, so once the Lottie
+   and the text no longer fit on one line — below roughly 362px — the Lottie
+   (first in the DOM) lands on the lower line. Between 362px and 767px they
+   still share one line, which is why the export looks fine until it doesn't.
+
+   Overriding only flex-wrap, not the whole flex-flow shorthand, so the
+   direction and the other declarations in that rule are left alone.
+--------------------------------------------------------------------------- */
+@media screen and (max-width: 767px) {
+  .page-title-container {
+    flex-wrap: wrap;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   9. VAC banner lightbox anchor height
+
+   vac-redesign is the only case study whose banner image sits inside the
+   `.project-hero` lightbox anchor rather than directly in
+   `.cover-screenshot-wrapper`. In the export that anchor ends up 370px tall by
+   side effect: the image is intrinsically 1322x818, it overflows the wrapper,
+   and the stylesheet's bare `a { max-height: 100% }` clamps the anchor back to
+   the wrapper's height. The image's own `height: 100%` then resolves against
+   that and lands at 598x370.
+
+   That chain needs the image to be intrinsically TALLER than 370px, and with
+   next/image it isn't. next/image advertises srcset candidates wider than the
+   source file (up to 3840w for a 1322px image) and the optimizer never
+   upscales, so the browser applies density correction and reports the intrinsic
+   size as 440x272. Nothing overflows, nothing clamps, and the anchor collapses
+   to the image's natural box — 441x273 instead of 598x370.
+
+   Giving the anchor the height directly reproduces the export's result without
+   depending on intrinsic size. Scoped to this wrapper so it can't affect the
+   banners whose <img> is a direct child (bank-green, dv01, brainsprout,
+   accessibility, novinopath) — those already resolve height:100% against the
+   wrapper and are unaffected.
+--------------------------------------------------------------------------- */
+.cover-screenshot-wrapper > .project-hero {
+  height: 100%;
+}
+
+/* ---------------------------------------------------------------------------
+   10. Bank Green footer background
+
+   bank-green-gpe.html is the only page with `.sticky-section` elements (it has
+   two). Those are `z-index: -1; height: 100vh` background layers that scroll
+   behind the content, and the stylesheet's `.section.footer` is
+   `background-color: #0000` — transparent. The thing that covers them at the
+   bottom of the page is a `.section.footer` background set in that page's
+   inline <style>, i.e. Webflow page-level custom code that exists in no .css
+   file. Without it the sticky screenshots show through the footer as stacked,
+   half-visible panels.
+
+   Ported verbatim, including the fallback: the custom property is never
+   defined anywhere in the export, so #fcfcfc is what actually applies — the
+   export computes rgb(252, 252, 252) here, and so do we now.
+
+   Scoped by data-page because our Footer is shared from the root layout while
+   the export's is per-page. dv01.html and novinopath-lis.html carry the same
+   rule but as `var(--background-case-study-bankgreen)` with NO fallback, so it
+   resolves to nothing and their footers stay transparent — and neither page has
+   sticky sections, so there is nothing to cover. Not ported, deliberately: it
+   would be dead CSS.
+--------------------------------------------------------------------------- */
+.body:has([data-page="bank-green-gpe"]) .section.footer {
+  background-color: var(--background-colors--background-case-study-bankgreen, #fcfcfc);
+}
+
+/* ---------------------------------------------------------------------------
+   11. Utility pages (404 / 401)
+   The backdrop-filter is Webflow page-level custom code — it lives in the
+   inline <style> of 404.html and 401.html only, so the .frosted-glass rule in
+   juliepaik.css has no blur without it.
+--------------------------------------------------------------------------- */
+.frosted-glass {
+  -webkit-backdrop-filter: saturate(200%) blur(30px) brightness(100%);
+  backdrop-filter: saturate(200%) blur(30px) brightness(100%);
+}
+
+/* Both utility pages render .utility-page-wrap as their entire body — no
+   navbar, no footer. Ours live in the shared root layout, so they're hidden
+   with the same :has() approach used for the case-study background above:
+   server-rendered and flash-free, no client-side class toggling.
+   .utility-page-wrap is height:100vh, so a nav or footer left in place would
+   push the centred card off-screen rather than just sitting around it. */
+.body:has(.utility-page-wrap) .navbar,
+.body:has(.utility-page-wrap) .section.footer {
+  display: none;
+}
+
+/* 404.html's <body> carries no class at all, so it never picks up .body's
+   gradient — 401.html's does. .utility-page-wrap's own background is
+   translucent (#ffffffde), so the difference is visible. Cleared back off for
+   the 404 route only, since our root layout always sets .body. */
+.body:has(.utility-page-wrap.is-404) {
+  background-image: none;
+}
+
+/* ---------------------------------------------------------------------------
+   12. Case-study tab links
+   From vac-redesign.html's inline <style> (page-level custom code, so not in
+   any .css file). sample.html carries the same pair.
+--------------------------------------------------------------------------- */
+.tab-link.w--current .tab-link_text,
+.tab-link.w--current {
+  color: #5a5a5a;
+}
