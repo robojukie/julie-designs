@@ -21,14 +21,26 @@ const FINE_POINTER = "(hover: hover) and (pointer: fine)";
 // stylesheet for why that indirection matters.
 const ACTIVE_CLASS = "has-custom-cursor";
 
-/* Opt-out for text that should read as artwork rather than prose — the home
-   hero wordmark. Marked elements keep the resting dot instead of the caret,
-   and styles/custom.css (section 13) makes the same attribute unselectable, so
-   the two halves of "this is a picture of words" stay on one switch.
+/* Text that reads as artwork rather than prose: it keeps the resting dot
+   instead of the caret. Two ways in —
 
-   Matches austlee.com's data-cursor="none", which sits on his "austin lee"
-   wrapper and is the only such attribute on his page. */
-const GRAPHIC_TEXT = "[data-graphic-text]";
+     [data-graphic-text]   tagged explicitly. The home hero wordmark.
+     .home .hero-title-text  the one page title at the top of each top-level
+                           page — "Blog posts", "Who am I?". `.home` sits on
+                           home, writing and about and on nothing else; case
+                           studies root at `.project`, which keeps them out.
+
+   Page titles only, deliberately. Section headings (.main-section-header),
+   article titles and card titles all read as part of the prose around them
+   and stay selectable, so this matches one class rather than h1-h6.
+
+   KEEP IN SYNC with the matching selector in styles/custom.css (section 13),
+   which makes exactly these unselectable. Both halves of "this is a picture of
+   words" answer the same question, so they read from the same selector.
+
+   The tagged half matches austlee.com's data-cursor="none", which sits on his
+   "austin lee" wrapper and is the only such attribute on his page. */
+const GRAPHIC_TEXT = "[data-graphic-text], .home .hero-title-text";
 
 type State = "default" | "text";
 
