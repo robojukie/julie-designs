@@ -22,6 +22,11 @@
    only exists in the exported HTML's inline <style> blocks. Loads last. */
 @import "../styles/custom.css";
 
+/* Ours: the pink dot that stands in for the native cursor's default state.
+   Loads after juliepaik.css because the `cursor: none` in it has to sit later
+   in the cascade than that sheet's own cursor rules. */
+@import "../styles/cursor.css";
+
 :root {
   /* Overridden to use next/font's self-hosted, optimized font files instead of
      the raw Google Fonts family names the Webflow export used. The font

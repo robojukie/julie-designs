@@ -384,3 +384,36 @@
 .tab-link.w--current {
   color: #5a5a5a;
 }
+
+/* ---------------------------------------------------------------------------
+   13. Graphic text  — NEW BEHAVIOUR, NOT IN THE EXPORT
+   Marks text that should read as a piece of artwork rather than as prose: it
+   can't be selected, doesn't raise a long-press callout on touch, and
+   components/Cursor.tsx shows the resting dot over it instead of the text
+   caret. Applied to the home hero wordmark.
+
+   austlee.com does the same thing to "austin lee", and — worth recording,
+   because it is the opposite of what the effect suggests — WITHOUT an image.
+   That wordmark is a real <h1> with four stacked stroke layers behind it; the
+   graphic feel comes entirely from user-select:none plus a data-cursor="none"
+   attribute his cursor script reads. Keeping ours as text likewise costs
+   nothing semantically: the heading still carries its own text for search and
+   for screen readers, and HeroTitle.tsx's per-letter stagger still has letters
+   to stagger. An <img> would have given up all three.
+
+   One attribute rather than his two (a class for selection, an attribute for
+   the cursor), since both behaviours answer the same question — is this thing
+   prose, or is it a picture of words?
+
+   user-select inherits, so this belongs on the outermost wrapper of whatever
+   is being marked; descendants follow. Deliberately NOT inside the
+   (hover: hover) query that styles/cursor.css lives in — the selection half
+   matters most on touch, which that query excludes.
+--------------------------------------------------------------------------- */
+[data-graphic-text] {
+  -webkit-user-select: none;
+  user-select: none;
+  /* Suppresses iOS's press-and-hold "Copy / Look Up" sheet, which
+     user-select:none alone does not stop. */
+  -webkit-touch-callout: none;
+}

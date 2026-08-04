@@ -1,0 +1,160 @@
+/* Custom pointer: a pink rig that stands in for the native cursor in two
+   states — a dot at rest, a caret bar over text.
+
+   MODELLED ON austlee.com. His is not an SVG and not a CSS `cursor: url(...)`
+   image — it is plain DOM: fixed-position <div>s rounded with
+   border-radius: 9999px, moved by JS writing transform: translate3d() on every
+   pointer move. Geometry copied from his.
+
+   HOW THIS DIFFERS FROM HIS RIG. He builds every state out of a two-eye
+   assembly (.cursor-eye.left / .cursor-eye.right, each holding a .cursor-iris)
+   so that the button state can blink. With the eyes dropped, the states here
+   need a ring and a single bar, so that is the whole rig.
+
+   THE STATES, set as data-state by components/Cursor.tsx:
+
+     default   12x12 filled dot. Over the page's own background, images, and
+               anything else with no cursor of its own.
+     text      Ring hidden; the bar becomes a 2px caret whose height is the
+               underlying line-height, passed in as --cursor-text-h.
+
+   EVERYTHING ELSE KEEPS THE NATIVE CURSOR. Anywhere the stylesheets ask for a
+   specific cursor — cursor: pointer on links and buttons, the I-beam in a text
+   field, not-allowed on a disabled control — the real cursor is left alone and
+   the rig hides, so none of those affordances are lost to decoration. That
+   distinction is carried entirely by `cursor` being an INHERITED property,
+   which makes the declaration on <html> below both reach every element that
+   doesn't author its own cursor AND lose to every element that does. Cursor.tsx
+   reads the computed value under the pointer and only takes over where it
+   resolves to `none`. Doing this with `*` and !important would flatten the very
+   distinction being drawn.
+
+   (An `image` state — the ring growing to a 20px outline around a "+" over
+   case-study lightbox frames — was built and then removed, to be handled
+   alongside the lightboxes themselves. Nothing here is shaped around it; it
+   would come back as a third data-state plus a second bar.)
+
+   COLOR is the "Hi! I'm Julie" hero pink. See --cursor-color below.
+
+   GATED ON (hover: hover) and (pointer: fine). A touch device has no hovering
+   pointer to follow and no native cursor to replace, so on one of those the rig
+   would sit frozen wherever the last tap landed while `cursor: none` silently
+   broke nothing but also helped nothing. Everything in this file lives inside
+   that query for that reason, and Cursor.tsx tests the same query before it
+   mounts any behaviour. */
+
+@media (hover: hover) and (pointer: fine) {
+  /* .has-custom-cursor is added to <html> by Cursor.tsx on mount, and is what
+     makes hiding the native cursor safe: if the bundle fails to load or the
+     component throws, the class never lands and the real cursor stays. Hiding
+     it from a plain stylesheet would leave a JS failure with no pointer at
+     all. No !important and no descendant selector — see the header. */
+  html.has-custom-cursor {
+    cursor: none;
+  }
+
+  /* Text-entry fields are the one place inheritance gets it wrong: they have
+     no authored `cursor` of their own (the I-beam comes from the widget, not
+     the cascade), so they would inherit `none` and lose it. There are no forms
+     on the site today; this is here so that adding one doesn't quietly ship a
+     text field you can't see the caret target in. */
+  html.has-custom-cursor :is(input, textarea, select, [contenteditable]) {
+    cursor: auto;
+  }
+
+  /* The rig itself: a zero-size point moved to the pointer. Its children are
+     centred on it, so this element carries position and nothing visual — which
+     is what lets the per-frame transform write be the whole translate3d string
+     and never have to preserve a centring translate alongside it. */
+  .cursor-root {
+    /* The hero pink: --color--pink--color (#ed6b6b) in styles/tokens.css, the
+       same value .hero-title-text.main-page.home-page paints "I'm Julie" with
+       (it reaches it through --accents--bold--accent-heading). Aliased here so
+       there is one knob to turn if the cursor should ever drift off the hero
+       color, rather than a var() repeated in every part below. */
+    --cursor-color: var(--color--pink--color);
+
+    /* Overwritten per-frame by Cursor.tsx with the line-height of whatever
+       text is under the pointer. The fallback only shows if a text zone is
+       somehow detected before the measurement lands. */
+    --cursor-text-h: 18px;
+
+    /* Matches austlee.com's shape-morph timing. Long enough to read as the
+       parts growing into each other rather than snapping. */
+    --cursor-morph: 0.28s cubic-bezier(0.2, 0.8, 0.2, 1);
+
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 0;
+    height: 0;
+
+    pointer-events: none;
+    /* The maximum, because the rig has to clear the Webflow badge — which
+       webflow.css pins at this same value — as well as any full-viewport
+       overlay the site grows later: the cursor should keep tracking over one,
+       not vanish under it. Equal z-index is settled by document order, and
+       Cursor.tsx mounts last in <body>, so the rig wins that tie. */
+    z-index: 2147483647;
+
+    /* Only the fade is animated here. The rig's POSITION is deliberately not
+       transitioned: it tracks the pointer 1:1, so any easing would show up as
+       the cursor lagging behind the hand. Same choice austlee.com makes. The
+       fade is what smooths the handoff to and from the native cursor at the
+       edge of a link. */
+    opacity: 0;
+    transition: opacity 0.16s ease-out;
+    /* Promotes the rig to its own layer up front, so the first pointer move
+       isn't the frame that pays for the promotion. */
+    will-change: transform;
+  }
+
+  /* Set by Cursor.tsx, and false in three cases: before the first pointer move
+     (otherwise the rig paints at the top-left corner on load and jumps to the
+     hand), while the pointer is outside the window, and whenever the pointer
+     is over something with a cursor of its own. */
+  .cursor-root[data-visible="true"] {
+    opacity: 1;
+  }
+
+  /* Both parts sit centred on the rig's origin, i.e. on the pointer. These
+     transforms are static — only .cursor-root's is rewritten per frame. */
+  .cursor-ring,
+  .cursor-caret {
+    position: absolute;
+    top: 0;
+    left: 0;
+    transform: translate(-50%, -50%);
+    box-sizing: border-box;
+  }
+
+  .cursor-ring {
+    width: 12px;
+    height: 12px;
+    border-radius: 9999px;
+    background: var(--cursor-color);
+    transition: opacity 0.16s ease-out;
+  }
+
+  /* Zero-height at rest rather than display:none, so switching into the text
+     state animates the caret growing out of the centre instead of popping in. */
+  .cursor-caret {
+    width: 2px;
+    height: 0;
+    border-radius: 2px;
+    background: var(--cursor-color);
+    opacity: 0;
+    transition: height var(--cursor-morph), opacity 0.16s ease-out;
+  }
+
+  /* --- text: a caret the height of the line it is over --- */
+
+  .cursor-root[data-state="text"] .cursor-ring {
+    opacity: 0;
+  }
+
+  .cursor-root[data-state="text"] .cursor-caret {
+    height: var(--cursor-text-h);
+    opacity: 1;
+  }
+}
