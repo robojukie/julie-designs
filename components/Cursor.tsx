@@ -1,0 +1,191 @@
+"use client";
+
+import { useEffect, useRef } from "react";
+
+/* Drives the pink cursor rig. Everything visual — the parts, their sizes per
+   state, the morph timing — lives in styles/cursor.css; this file only tracks
+   the pointer, decides which state it is in, and measures the one value the
+   stylesheet can't work out for itself (the height of the text caret).
+
+   Ported from the technique austlee.com uses (a fixed element written to with
+   translate3d on pointermove) rather than from any of the things it is easy to
+   reach for instead: a `cursor: url(...)` image can't animate between states,
+   and an SVG buys nothing for a circle and a rectangle. */
+
+// Mirrors the @media guard in styles/cursor.css. Both have to agree: this one
+// decides whether the listeners and the `cursor: none` class are installed,
+// that one decides whether the rig is styled at all.
+const FINE_POINTER = "(hover: hover) and (pointer: fine)";
+
+// Set on <html>, and the only thing that hides the native cursor — see the
+// stylesheet for why that indirection matters.
+const ACTIVE_CLASS = "has-custom-cursor";
+
+/* Opt-out for text that should read as artwork rather than prose — the home
+   hero wordmark. Marked elements keep the resting dot instead of the caret,
+   and styles/custom.css (section 13) makes the same attribute unselectable, so
+   the two halves of "this is a picture of words" stay on one switch.
+
+   Matches austlee.com's data-cursor="none", which sits on his "austin lee"
+   wrapper and is the only such attribute on his page. */
+const GRAPHIC_TEXT = "[data-graphic-text]";
+
+type State = "default" | "text";
+
+/* True when the element paints text of its own, as opposed to merely
+   containing something that does. Checking for a direct non-empty text child
+   is what separates a <p> or an <h2> from the stack of layout wrappers above
+   it — elementFromPoint returns the innermost element either way, so without
+   this test a gap between two paragraphs inside a text column would read as
+   text just as strongly as the paragraphs do. */
+function paintsText(el: Element): boolean {
+  for (const node of Array.from(el.childNodes)) {
+    if (node.nodeType === Node.TEXT_NODE && node.textContent?.trim()) {
+      return true;
+    }
+  }
+  return false;
+}
+
+/* The caret's height, taken from the line box it sits in so the bar matches
+   the text's rhythm rather than a fixed guess. getComputedStyle returns either
+   a px value or the keyword "normal"; the keyword has no numeric form, so it
+   falls back to the ~1.2 ratio browsers use for it. */
+function lineHeightOf(el: Element): number {
+  const style = window.getComputedStyle(el);
+  const lineHeight = Number.parseFloat(style.lineHeight);
+  if (Number.isFinite(lineHeight)) return lineHeight;
+  return Math.round(Number.parseFloat(style.fontSize) * 1.2);
+}
+
+export default function Cursor() {
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const rig = ref.current;
+    if (!rig) return;
+    if (!window.matchMedia(FINE_POINTER).matches) return;
+
+    const root = document.documentElement;
+    root.classList.add(ACTIVE_CLASS);
+
+    let x = 0;
+    let y = 0;
+    let frame = 0;
+    let inside = false;
+    // Both written to the DOM only on change: every dataset write invalidates
+    // style for the rig's whole subtree, and the state holds steady across the
+    // large majority of frames.
+    let state: State | null = null;
+    let textHeight = 0;
+
+    const setState = (next: State) => {
+      if (next === state) return;
+      state = next;
+      rig.dataset.state = next;
+    };
+
+    const setTextHeight = (next: number) => {
+      if (next === textHeight) return;
+      textHeight = next;
+      rig.style.setProperty("--cursor-text-h", `${next}px`);
+    };
+
+    const paint = () => {
+      frame = 0;
+      rig.style.transform = `translate3d(${x}px, ${y}px, 0)`;
+
+      const under = document.elementFromPoint(x, y);
+      if (!under || !inside) {
+        rig.dataset.visible = "false";
+        return;
+      }
+
+      /* Order matters, and this is the whole decision:
+
+         1. Anything with a cursor of its own — a link, a button, a field — is
+            left to the native cursor, which is already on screen there; a rig
+            layered over it would be two cursors.
+         2. Then text, which by this point is text that isn't also a link —
+            unless it has been marked as artwork, which is checked first
+            precisely because such elements ARE text and would otherwise pass
+            the test below.
+         3. Otherwise the resting dot. Images land here, along with the page's
+            own background: they have no cursor of their own, so the default
+            arrow is what they would otherwise get, and the dot is what stands
+            in for it. */
+      if (window.getComputedStyle(under).cursor !== "none") {
+        rig.dataset.visible = "false";
+        return;
+      }
+
+      if (!under.closest(GRAPHIC_TEXT) && paintsText(under)) {
+        setTextHeight(lineHeightOf(under));
+        setState("text");
+      } else {
+        setState("default");
+      }
+
+      rig.dataset.visible = "true";
+    };
+
+    const show = (event: PointerEvent) => {
+      // A hybrid machine (touchscreen laptop, iPad with a trackpad) satisfies
+      // the media query on account of its mouse but still emits pointermove
+      // for finger contact. Following those would park the rig wherever the
+      // last tap landed, so touch is dropped and only mouse/pen move it.
+      if (event.pointerType === "touch") return;
+
+      x = event.clientX;
+      y = event.clientY;
+      inside = true;
+
+      // Coalesce to one write per frame: pointermove can fire well above
+      // display rate on a high-polling mouse, and the hit-test in paint()
+      // costs a style flush, so running it per event rather than per frame is
+      // the difference that matters here.
+      if (!frame) frame = requestAnimationFrame(paint);
+    };
+
+    // The rig is a fixed element, so without this it would stall at the edge
+    // of the window — visible and wrong — while the real pointer is off in
+    // another app or in the browser chrome.
+    const hide = () => {
+      inside = false;
+      rig.dataset.visible = "false";
+    };
+
+    window.addEventListener("pointermove", show, { passive: true });
+    // On <document>, not <window>: pointerleave/-enter on window don't fire
+    // reliably for the pointer exiting the viewport in every browser.
+    document.addEventListener("pointerleave", hide);
+    // Covers the case the leave event misses — cmd-tabbing away without the
+    // pointer crossing an edge.
+    window.addEventListener("blur", hide);
+
+    return () => {
+      window.removeEventListener("pointermove", show);
+      document.removeEventListener("pointerleave", hide);
+      window.removeEventListener("blur", hide);
+      if (frame) cancelAnimationFrame(frame);
+      root.classList.remove(ACTIVE_CLASS);
+    };
+  }, []);
+
+  /* data-visible starts "false" so the server and client markup agree, and so
+     the rig doesn't paint at (0, 0) before the first move — see the
+     stylesheet. The parts are spans because the rig is purely decorative and
+     aria-hidden; neither carries meaning. */
+  return (
+    <div
+      ref={ref}
+      className="cursor-root"
+      data-state="default"
+      data-visible="false"
+      aria-hidden="true"
+    >
+      <span className="cursor-ring" />
+      <span className="cursor-caret" />
+    </div>
+  );
+}
