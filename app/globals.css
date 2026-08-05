@@ -22,6 +22,9 @@
    only exists in the exported HTML's inline <style> blocks. Loads last. */
 @import "../styles/custom.css";
 
+/* Ours: route-change page transition wipe. */
+@import "../styles/page-transition.css";
+
 :root {
   /* Overridden to use next/font's self-hosted, optimized font files instead of
      the raw Google Fonts family names the Webflow export used. The font
