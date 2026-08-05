@@ -18,6 +18,13 @@ export default function Home() {
                 onClick doubles as the mobile trigger, since there's no hover there. */}
             <div
               className="page-title-container home"
+              /* The wordmark reads as artwork, not prose: unselectable, and
+                 the cursor keeps its resting dot rather than switching to the
+                 text caret. Set here, on the wrapper around both the "Hi"
+                 Lottie and the letters, because user-select inherits — one
+                 attribute covers the whole mark. See styles/custom.css
+                 section 13. */
+              data-graphic-text
               onMouseEnter={() => hiLottieRef.current?.replay()}
               onClick={() => hiLottieRef.current?.replay()}
             >
