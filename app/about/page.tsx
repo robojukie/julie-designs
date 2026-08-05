@@ -16,7 +16,7 @@ export default function About() {
             <div className="page-title-container no-botttom-padding">
               <div className="page-title">
                 {/* Page titles read as artwork rather than prose — see
-                    styles/custom.css section 13. */}
+                    styles/custom.css section 14. */}
                 <h1 className="hero-title-text main-page" data-graphic-text>
                   Who am I?
                 </h1>
