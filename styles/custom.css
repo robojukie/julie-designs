@@ -659,5 +659,23 @@ a.social-link:not(.brand):hover::after {
    underline. Pull the dots back inside the padding to align with the text. */
 a.social-link:not(.brand)::after {
   left: 16px;
-  right: 16px;
+  right: 17px;
+}
+
+/* "say hello!" carries .email, which zeroes out padding-right (juliepaik.css
+   `.social-link.email.nav-link`). Without this the shared 16px right offset
+   above would sit 16px inside the text and the underline would be off-centre. */
+a.social-link.email:not(.brand)::after {
+  right: 0;
+}
+
+/* Fade the text to the same peach as the dots on hover, so both animate
+   together instead of the dots warming up alone. Transition on the base so
+   hover-out fades back symmetrically. */
+a.social-link:not(.brand) {
+  transition: color 0.3s;
+}
+
+a.social-link:not(.brand):hover {
+  color: var(--accents--bold--accent-hover);
 }
