@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { baloo2, nunito } from "./fonts";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
+import PageTransition, { ENTRY_SCRIPT } from "@/components/PageTransition";
 import Cursor from "@/components/Cursor";
 import "./globals.css";
 
@@ -30,15 +31,28 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${baloo2.variable} ${nunito.variable}`}>
+    /* suppressHydrationWarning: ENTRY_SCRIPT stamps data-pt-entry onto <html>
+       before React hydrates, so the client tree legitimately differs from the
+       server tree by that one attribute. Scoped to this element only (the
+       prop doesn't cascade), same pattern as a theme-flash script. */
+    <html
+      lang="en"
+      className={`${baloo2.variable} ${nunito.variable}`}
+      suppressHydrationWarning
+    >
       <body className="body">
-        <Nav />
-        {children}
-        <Footer />
-        {/* Last in <body> deliberately: the rig shares the maximum z-index
-            with the Webflow badge, and document order is what breaks that
-            tie in the rig's favour. See styles/cursor.css. */}
-        <Cursor />
+        {/* Must run before first paint so a refresh renders already-covered
+            rather than flashing content until hydration. First element in
+            <body> so it executes before the panel markup below is parsed. */}
+        <script dangerouslySetInnerHTML={{ __html: ENTRY_SCRIPT }} />
+        <PageTransition>
+          <Nav />
+          {children}
+          <Footer />
+          {/* Last in <body> so the rig stacks above everything before it even
+              against an equal z-index. See styles/cursor.css. */}
+          <Cursor />
+        </PageTransition>
       </body>
     </html>
   );
