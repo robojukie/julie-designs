@@ -390,7 +390,8 @@
    Marks text that should read as a piece of artwork rather than as prose: it
    can't be selected, doesn't raise a long-press callout on touch, and
    components/Cursor.tsx shows the resting dot over it instead of the text
-   caret. Applied to the home hero wordmark.
+   caret. Applied to the home hero wordmark, and to the page and section
+   headers on the three top-level pages.
 
    austlee.com does the same thing to "austin lee", and — worth recording,
    because it is the opposite of what the effect suggests — WITHOUT an image.
@@ -405,10 +406,34 @@
    the cursor), since both behaviours answer the same question — is this thing
    prose, or is it a picture of words?
 
-   user-select inherits, so this belongs on the outermost wrapper of whatever
-   is being marked; descendants follow. Deliberately NOT inside the
+   user-select inherits, so the attribute belongs on the outermost wrapper of
+   whatever is being marked; descendants follow. Deliberately NOT inside the
    (hover: hover) query that styles/cursor.css lives in — the selection half
    matters most on touch, which that query excludes.
+
+   WHO WEARS IT. The home hero wordmark, and the page title on each top-level
+   page — the ones reachable straight from the nav, so "Blog posts" on writing
+   and "Who am I?" on about today, plus a resume page later. The big heading at
+   the top of such a page is part of that page's identity in the way the home
+   wordmark is.
+
+   PAGE TITLES ONLY. Section headings like "How I work" and "My favorite
+   podcasts to learn from" are read as part of the prose around them, as are
+   MediumFeed's article titles and ProjectCard's card titles. All of those stay
+   selectable, and so do case-study titles.
+
+   TAGGED, NEVER INFERRED. Matching `.home .hero-title-text` was tried and
+   dropped: it picked out the right elements, but only because a Webflow
+   LAYOUT class happened to sit on the right three pages, which tied "which
+   titles are unselectable" to "which pages share a layout" — two things that
+   agree today by coincidence. (`.home` is also a poor name for the group; it
+   sits on writing and about too, and it carries five real styling rules in
+   the generated juliepaik.css, so it is not cheaply renamed.) Tagging costs
+   one word on a new page's heading and puts the marker where the behaviour
+   is, instead of in a rule three files away.
+
+   KEEP IN SYNC with GRAPHIC_TEXT in components/Cursor.tsx, which reads the
+   same attribute to decide where the cursor keeps its dot.
 --------------------------------------------------------------------------- */
 [data-graphic-text] {
   -webkit-user-select: none;

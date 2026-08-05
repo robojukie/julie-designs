@@ -21,10 +21,20 @@ const FINE_POINTER = "(hover: hover) and (pointer: fine)";
 // stylesheet for why that indirection matters.
 const ACTIVE_CLASS = "has-custom-cursor";
 
-/* Opt-out for text that should read as artwork rather than prose — the home
-   hero wordmark. Marked elements keep the resting dot instead of the caret,
-   and styles/custom.css (section 13) makes the same attribute unselectable, so
-   the two halves of "this is a picture of words" stay on one switch.
+/* Text that reads as artwork rather than prose: it keeps the resting dot
+   instead of the caret. Carried by the tag alone, never inferred — the home
+   hero wordmark and the page title on each top-level page wear it.
+
+   Inferring it was tried and dropped. Matching `.home .hero-title-text` picked
+   out the right elements, but only because a Webflow LAYOUT class happened to
+   sit on the right three pages; it tied "which titles are unselectable" to
+   "which pages share a layout", two things that agree today by coincidence.
+   Case studies are excluded now because they simply don't carry the tag,
+   rather than because they root at a different class.
+
+   KEEP IN SYNC with styles/custom.css section 13, which makes the same
+   attribute unselectable. Both halves of "this is a picture of words" answer
+   the same question, so they read from the same selector.
 
    Matches austlee.com's data-cursor="none", which sits on his "austin lee"
    wrapper and is the only such attribute on his page. */
