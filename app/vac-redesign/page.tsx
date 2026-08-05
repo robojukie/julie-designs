@@ -65,17 +65,21 @@ export default function VACRedesign() {
                   </div>
                   <div className="project-role">
                     <h2 className="eyebrow">Tools</h2>
-                    <p>Figma, FigJam, Miro, Whimsical, ChatGPT</p>
+                    <div className="text">
+                      <p>Figma, FigJam, Miro, Whimsical, ChatGPT</p>
+                    </div>
                   </div>
                   <div className="project-role">
                     <div className="eyebrow">TEAM</div>
-                    <p>
-                      1 product designer (me)
-                      <br />
-                      1 Non-technical co-founder
-                      <br />
-                      1 Engineering co-founder
-                    </p>
+                    <div className="text">
+                      <p>
+                        1 product designer (me)
+                        <br />
+                        1 Non-technical co-founder
+                        <br />
+                        1 Engineering co-founder
+                      </p>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -88,6 +92,7 @@ export default function VACRedesign() {
                     alt="Illustration of a person, teacher, and school with arrows pointing from person to school and teacher, and a double arrow between teacher and school"
                     width={680}
                     height={380}
+                    sizes="(max-width: 680px) 100vw, 680px"
                     className="vac-illustration"
                     style={{ height: "auto" }}
                   />
@@ -156,6 +161,8 @@ export default function VACRedesign() {
                 alt="Screenshot of VAC's original dashboard showing a disorganized hodgepodge of information"
                 width={580}
                 height={378}
+                sizes="(max-width: 991px) 100vw, 800px"
+                unoptimized
                 className="image-single border"
                 style={{ height: "auto" }}
               />
@@ -178,6 +185,7 @@ export default function VACRedesign() {
                 alt="A computer screen with a list of names and times for classes and teachers."
                 width={1512}
                 height={982}
+                sizes="(max-width: 1512px) 100vw, 1512px"
                 className="image-single border"
                 style={{ height: "auto" }}
               />
@@ -308,6 +316,8 @@ export default function VACRedesign() {
                       alt="Screen with list of schools and other information"
                       width={387}
                       height={203}
+                      sizes="387px"
+                      unoptimized
                       className="screenshot-shadow bordered"
                       style={{ height: "auto" }}
                     />
@@ -322,6 +332,8 @@ export default function VACRedesign() {
                       alt="Screen with list of schools"
                       width={386}
                       height={204}
+                      sizes="386px"
+                      unoptimized
                       className="screenshot-shadow bordered"
                       style={{ height: "auto" }}
                     />
@@ -336,6 +348,7 @@ export default function VACRedesign() {
                       alt="Screenshot of webpage showing an orange calendar view"
                       width={768}
                       height={402}
+                      sizes="(max-width: 479px) 100vw, 386px"
                       className="screenshot-shadow bordered"
                       style={{ height: "auto" }}
                     />
@@ -458,6 +471,7 @@ export default function VACRedesign() {
                     alt="List of prioritized employee tasks"
                     width={680}
                     height={641}
+                    sizes="100vw"
                     className="image-pc"
                     style={{ height: "auto" }}
                   />
@@ -483,6 +497,7 @@ export default function VACRedesign() {
                 alt="Screenshot of screenshot flows going from login to a difficult to navigate dashboard to a difficult to view and navigate calendar, with a zoomed in shot of the current teacher attendance section"
                 width={1301}
                 height={791}
+                sizes="100vw"
                 className="image-single"
                 style={{ height: "auto" }}
               />
@@ -531,8 +546,9 @@ export default function VACRedesign() {
                   alt="Flow chart"
                   width={820}
                   height={219}
+                  sizes="100vw"
+                  unoptimized
                   className="image-max300h"
-                  style={{ height: "auto" }}
                 />
               </div>
               <div className="caption-wrapper">
@@ -551,8 +567,9 @@ export default function VACRedesign() {
                   alt="Flow chart"
                   width={820}
                   height={241}
+                  sizes="100vw"
+                  unoptimized
                   className="image-max300h"
-                  style={{ height: "auto" }}
                 />
               </div>
               <div className="caption-wrapper">
@@ -589,6 +606,7 @@ export default function VACRedesign() {
                   alt="A screenshot of a website with a list of classes and teachers and a button to confirm."
                   width={1079}
                   height={701}
+                  sizes="100vw"
                   className="border"
                   style={{ width: "100%", height: "auto" }}
                 />
@@ -626,6 +644,8 @@ export default function VACRedesign() {
                         alt="Steps to assign a sub"
                         width={440}
                         height={746}
+                        sizes="440px"
+                        unoptimized
                         className="process-image"
                         style={{ height: "auto" }}
                       />
@@ -640,6 +660,7 @@ export default function VACRedesign() {
                         alt="Number of steps to assign a sub"
                         width={772}
                         height={416}
+                        sizes="100vw"
                         className="process-image"
                         style={{ height: "auto" }}
                       />
@@ -670,8 +691,9 @@ export default function VACRedesign() {
                       alt="Screenshot of webpage showing a list of teachers"
                       width={600}
                       height={336}
+                      sizes="100vw"
+                      unoptimized
                       className="image-max300h"
-                      style={{ height: "auto" }}
                     />
                   </div>
                 </div>
@@ -686,14 +708,21 @@ export default function VACRedesign() {
               </div>
               <div className="captioned-image">
                 <div className="image-wrapper left-align">
-                  <Image
-                    src="/images/vac-dashboard-06.png"
-                    alt="A computer screen displaying sub requests for a teacher."
-                    width={1512}
-                    height={982}
-                    className="image-max300h"
-                    style={{ height: "auto" }}
-                  />
+                  {/* The export wraps this image in a Webflow lightbox anchor.
+                      The lightbox needs webflow.js, which we don't run, so the
+                      anchor gets no href — but it must stay an <a>: the
+                      stylesheet's bare `a { max-width: 100%; max-height: 100% }`
+                      is what .image-max300h's `height: 100%` resolves against. */}
+                  <a className="lightbox-link-5 w-inline-block">
+                    <Image
+                      src="/images/vac-dashboard-06.png"
+                      alt="A computer screen displaying sub requests for a teacher."
+                      width={1512}
+                      height={982}
+                      sizes="(max-width: 1512px) 100vw, 1512px"
+                      className="image-max300h"
+                    />
+                  </a>
                 </div>
                 <div className="caption-wrapper">
                   <p className="caption-title">After</p>
@@ -724,8 +753,8 @@ export default function VACRedesign() {
                   alt="Flow chart"
                   width={2820}
                   height={489}
+                  sizes="100vw"
                   className="image-max300h"
-                  style={{ height: "auto" }}
                 />
               </div>
               <div className="card-info">
@@ -739,8 +768,8 @@ export default function VACRedesign() {
                   alt="Flow chart"
                   width={2556}
                   height={447}
+                  sizes="100vw"
                   className="image-max300h"
-                  style={{ height: "auto" }}
                 />
               </div>
               <div className="card-info">
@@ -768,8 +797,9 @@ export default function VACRedesign() {
                       alt="Screenshot of webpage showing a list of classes"
                       width={613}
                       height={330}
+                      sizes="100vw"
+                      unoptimized
                       className="image-max300h"
-                      style={{ height: "auto" }}
                     />
                   </div>
                 </div>
@@ -784,14 +814,17 @@ export default function VACRedesign() {
               </div>
               <div className="captioned-image">
                 <div className="image-wrapper left-align">
-                  <Image
-                    src="/images/vac-dashboard-09.png"
-                    alt="A computer screen displaying teacher assignment page"
-                    width={1512}
-                    height={982}
-                    className="image-max300h"
-                    style={{ height: "auto" }}
-                  />
+                  {/* Lightbox anchor, as above — load-bearing for height: 100%. */}
+                  <a className="w-inline-block">
+                    <Image
+                      src="/images/vac-dashboard-09.png"
+                      alt="A computer screen displaying teacher assignment page"
+                      width={1512}
+                      height={982}
+                      sizes="(max-width: 1512px) 100vw, 1512px"
+                      className="image-max300h"
+                    />
+                  </a>
                 </div>
                 <div className="caption-wrapper">
                   <p className="caption-title">After</p>
@@ -830,6 +863,7 @@ export default function VACRedesign() {
                   alt="A screenshot of a computer screen showing a list of names and times for classes and teachers."
                   width={1512}
                   height={982}
+                  sizes="(max-width: 1512px) 100vw, 1512px"
                   className="hifi-half border"
                   style={{ width: "100%", height: "auto" }}
                 />
@@ -890,6 +924,7 @@ export default function VACRedesign() {
                   alt="A computer screen displaying a list of teachers"
                   width={912}
                   height={492}
+                  sizes="100vw"
                   className="hifi-half border"
                   style={{ width: "100%", height: "auto" }}
                 />
@@ -942,6 +977,7 @@ export default function VACRedesign() {
                   alt="A website page with a list of teachers and their contact information."
                   width={1512}
                   height={982}
+                  sizes="(max-width: 1512px) 100vw, 1512px"
                   className="hifi-half border"
                   style={{ width: "100%", height: "auto" }}
                 />
@@ -1002,8 +1038,8 @@ export default function VACRedesign() {
                       alt="Screen with grid of options"
                       width={800}
                       height={528}
+                      sizes="100vw"
                       className="_2x1-image-fixed-height"
-                      style={{ height: "auto" }}
                     />
                   </div>
                 </div>
@@ -1025,8 +1061,8 @@ export default function VACRedesign() {
                       alt="A screenshot of a computer screen showing a list of names and times for classes and teachers."
                       width={1512}
                       height={982}
+                      sizes="(max-width: 1512px) 100vw, 1512px"
                       className="_2x1-image-fixed-height"
-                      style={{ height: "auto" }}
                     />
                   </div>
                 </div>
@@ -1064,8 +1100,8 @@ export default function VACRedesign() {
                       alt="Screen with list of teachers"
                       width={800}
                       height={558}
+                      sizes="100vw"
                       className="_2x1-image-fixed-height"
-                      style={{ height: "auto" }}
                     />
                   </div>
                 </div>
@@ -1087,8 +1123,8 @@ export default function VACRedesign() {
                       alt="A computer screen displaying a table with teacher details"
                       width={1670}
                       height={982}
+                      sizes="100vw"
                       className="_2x1-image-fixed-height"
-                      style={{ height: "auto" }}
                     />
                   </div>
                 </div>
@@ -1127,8 +1163,8 @@ export default function VACRedesign() {
                       alt="Screen with grid of teachers"
                       width={800}
                       height={521}
+                      sizes="100vw"
                       className="_2x1-image-fixed-height"
-                      style={{ height: "auto" }}
                     />
                   </div>
                 </div>
@@ -1149,8 +1185,8 @@ export default function VACRedesign() {
                       alt="A computer screen displaying a list of teachers"
                       width={912}
                       height={492}
+                      sizes="100vw"
                       className="_2x1-image-fixed-height"
-                      style={{ height: "auto" }}
                     />
                   </div>
                 </div>
