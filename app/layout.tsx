@@ -3,6 +3,7 @@ import { baloo2, nunito } from "./fonts";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import PageTransition, { ENTRY_SCRIPT } from "@/components/PageTransition";
+import Cursor from "@/components/Cursor";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -48,6 +49,10 @@ export default function RootLayout({
           <Nav />
           {children}
           <Footer />
+          {/* Last in <body> deliberately: the rig shares the maximum z-index
+              with the Webflow badge, and document order is what breaks that
+              tie in the rig's favour. See styles/cursor.css. */}
+          <Cursor />
         </PageTransition>
       </body>
     </html>

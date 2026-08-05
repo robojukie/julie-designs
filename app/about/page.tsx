@@ -15,7 +15,11 @@ export default function About() {
           <div className="hero-text-container">
             <div className="page-title-container no-botttom-padding">
               <div className="page-title">
-                <h1 className="hero-title-text main-page">Who am I?</h1>
+                {/* Page titles read as artwork rather than prose — see
+                    styles/custom.css section 13. */}
+                <h1 className="hero-title-text main-page" data-graphic-text>
+                  Who am I?
+                </h1>
               </div>
               <div className="title-image">
                 {/* width/height are the SVG's own dimensions — it is portrait,

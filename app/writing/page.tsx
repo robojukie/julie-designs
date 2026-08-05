@@ -18,7 +18,11 @@ export default function Writing() {
         <div className="hero-text-container">
           <div className="page-title-container">
             <div className="page-title">
-              <h1 className="hero-title-text main-page">Blog posts</h1>
+              {/* Page titles read as artwork rather than prose — see
+                  styles/custom.css section 13. */}
+              <h1 className="hero-title-text main-page" data-graphic-text>
+                Blog posts
+              </h1>
             </div>
           </div>
           <div className="container-680 home-subtitle">
