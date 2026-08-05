@@ -1,0 +1,176 @@
+/* Route-change wipe (components/PageTransition.tsx).
+
+   ONE pink ball on a parabola — a thrown-ball bounce. It falls in from off the
+   TOP-RIGHT, bottoms out dead centre (the sealed frame where the route swaps
+   underneath), then rises back out through the TOP-LEFT. In and out of
+   different corners, so the path is a true V across the viewport rather than a
+   retrace of one diagonal.
+
+   HOW THE PARABOLA IS MADE. The two axes animate on two different elements
+   with two different timing functions — the only way to get a real projectile
+   arc out of CSS, since one element carries one timing function per property
+   and easing a single diagonal translate just makes it move faster and slower
+   along a straight line.
+
+     __x    carries translateX, always LINEAR — constant horizontal speed,
+            exactly like a thrown ball.
+     __ball carries translateY, eased — accelerating on the way down
+            (gravity), decelerating on the way up.
+
+   Linear on one axis and quadratic on the other IS a parabola, so each leg
+   curves like a hand-drawn bounce and the vertex stays a sharp V (vertical
+   speed is at its maximum right where it reverses). Easing both axes together
+   would flatten it into an S-curve and lose the bounce.
+
+   The ball also PARKS dead centre between the two legs — the cover animation's
+   forwards fill holds it there until React has committed the new route and
+   flipped the phase — so the swap has no timing race and no sliver of the new
+   page can show early.
+
+   SIZE. The ball has to cover the whole viewport at the vertex, so it is
+   necessarily bigger than the screen — it reads as a big round edge sweeping
+   through, not as a small ball. 72vmax is the tightest radius that always
+   works: the half-diagonal it must clear, 0.5*sqrt(W^2 + H^2), is at most
+   0.7072 * max(W, H) (the worst case being a square viewport). Keeping it
+   tight matters — an oversized circle presents a flatter arc and stops reading
+   as round. */
+
+.page-transition {
+  /* The "Hi! I'm Julie" hero pink — var(--color--pink--color) in tokens.css.
+     Inlined rather than referenced so the entry-cover paint (which happens
+     before hydration, see [data-pt-entry] below) can't depend on cascade
+     order between the token sheet and this one. */
+  --pt-color: #ed6b6b;
+  /* One leg. Every leg on every route runs at this — cover, reveal, entry or
+     click. Mirrored as DURATION_MS in PageTransition.tsx, which sizes the
+     watchdog off it. */
+  --pt-duration: 300ms;
+
+  --pt-r: 72vmax;
+
+  /* Off-screen ends. 0.7071 * r along each axis past the corner (0.7071 * 72 =
+     50.91vmax) puts the circle exactly TANGENT to the viewport's corner: as
+     close as it can sit while still fully clear, so no part of --pt-duration
+     is spent crossing dead space where nothing is visible. Tangent is a single
+     shared point though — enough for an antialiased sliver to survive in the
+     corner — so this carries 2vmax of clearance on top. */
+  --pt-x-off: calc(50vw + 52.91vmax);
+  --pt-y-off: calc(50vh + 52.91vmax);
+
+  /* easeInQuad / easeOutQuad — the closest cubic-beziers to true t^2 motion. */
+  --pt-ease-fall: cubic-bezier(0.11, 0, 0.5, 0);
+  --pt-ease-rise: cubic-bezier(0.5, 1, 0.89, 1);
+
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.page-transition[data-phase="cover"],
+.page-transition[data-phase="reveal"] {
+  pointer-events: auto;
+}
+
+/* Zero-size positioning wrapper pinned to the viewport centre; only ever
+   carries the horizontal half of the motion. */
+.page-transition__x {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  transform: translateX(var(--pt-x-off));
+  will-change: transform;
+}
+
+.page-transition__ball {
+  position: absolute;
+  top: calc(-1 * var(--pt-r));
+  left: calc(-1 * var(--pt-r));
+  width: calc(2 * var(--pt-r));
+  height: calc(2 * var(--pt-r));
+  border-radius: 50%;
+  background-color: var(--pt-color);
+  transform: translateY(calc(-1 * var(--pt-y-off)));
+  will-change: transform;
+}
+
+.page-transition[data-phase="cover"] .page-transition__x {
+  animation: pt-x-in var(--pt-duration) linear forwards;
+}
+.page-transition[data-phase="cover"] .page-transition__ball {
+  animation: pt-y-fall var(--pt-duration) var(--pt-ease-fall) forwards;
+}
+
+.page-transition[data-phase="reveal"] .page-transition__x {
+  animation: pt-x-out var(--pt-duration) linear forwards;
+}
+.page-transition[data-phase="reveal"] .page-transition__ball {
+  animation: pt-y-rise var(--pt-duration) var(--pt-ease-rise) forwards;
+}
+
+/* Set before paint by the inline script in app/layout.tsx on EVERY entry load
+   — refresh, deep link, or a first visit to home — so the viewport is already
+   covered when the first frame paints. The ball parked dead centre is the
+   state the cover leg ends in, so the reveal (the second leg) runs straight
+   from it.
+
+   Matched on PRESENCE, not value — the script writes a bare "1" on every
+   route. */
+:root[data-pt-entry] .page-transition__x {
+  transform: translateX(0);
+}
+:root[data-pt-entry] .page-transition__ball {
+  transform: translateY(0);
+}
+
+/* The entry hold (HOLD_MS in PageTransition) runs while the phase is still
+   "idle", so the cover/reveal rule above doesn't cover it — without this, the
+   screen looks sealed but clicks land on the page underneath it. */
+:root[data-pt-entry] .page-transition {
+  pointer-events: auto;
+}
+
+@keyframes pt-x-in {
+  from {
+    transform: translateX(var(--pt-x-off));
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes pt-x-out {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(calc(-1 * var(--pt-x-off)));
+  }
+}
+
+@keyframes pt-y-fall {
+  from {
+    transform: translateY(calc(-1 * var(--pt-y-off)));
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+@keyframes pt-y-rise {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(calc(-1 * var(--pt-y-off)));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .page-transition {
+    display: none;
+  }
+}
