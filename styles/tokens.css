@@ -140,12 +140,10 @@
   --color--beige--300: #f4ede7;
   --text-weightt--title-500: 500;
   /* Webflow: --text--light\<deleted\|variable-bfdf30ce-bada-add2-e679-ff53deaf29d0\> (deleted-variable export artifact) */
-  /* NOTE: this is a second literal #fcfcfc, duplicating --color--neutral--100.
-     Deliberately left as a literal for now — collapsing it to
-     var(--color--neutral--100) is render-identical but is a value-layer change,
-     and this branch is scoped to deletions only. Revisit with the wider
-     near-white consolidation. */
-  --text--light: #fcfcfc;
+  /* Was a second literal #fcfcfc alongside --color--neutral--100. Pointed at
+     that primitive instead so the value has one definition site; the name is
+     kept because juliepaik.css still references it. */
+  --text--light: var(--color--neutral--100);
   --text-weightt--display-weight: 800;
   --text-size--display-tablet: 2.625rem;
   --text-height--display-mobile-height: 2.4rem;
