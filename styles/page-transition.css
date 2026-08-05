@@ -1,45 +1,39 @@
 /* Route-change wipe (components/PageTransition.tsx).
 
-   TWO pink balls, one after the other, meeting at the bottom-middle:
+   ONE pink ball on a parabola — a thrown-ball bounce. It falls in from off the
+   TOP-RIGHT, bottoms out dead centre (the sealed frame where the route swaps
+   underneath), then rises back out through the TOP-LEFT. In and out of
+   different corners, so the path is a true V across the viewport rather than a
+   retrace of one diagonal.
 
-     ball A  falls in from off the TOP-RIGHT, down to centre, then drops
-             STRAIGHT DOWN and out through the bottom of the frame.
-     ball B  rises STRAIGHT UP from that same point below the frame, stops dead
-             centre (the sealed frame the route swaps under), then carries on
-             out the TOP-LEFT.
+   HOW THE PARABOLA IS MADE. The two axes animate on two different elements
+   with two different timing functions — the only way to get a real projectile
+   arc out of CSS, since one element carries one timing function per property
+   and easing a single diagonal translate just makes it move faster and slower
+   along a straight line.
 
-   Because they leave and arrive at the same point below the bottom edge, it
-   reads as one ball bouncing with the impact hidden just off-frame. Each ball
-   also shows its round LEADING edge on the way in — A's arc bulges toward the
-   bottom-left, B's is the top of the ball rising with pink pooled beneath it.
+     __x    carries translateX, always LINEAR — constant horizontal speed,
+            exactly like a thrown ball.
+     __ball carries translateY, eased — accelerating on the way down
+            (gravity), decelerating on the way up.
 
-   SLOWER IN THAN OUT, WITH AIR TIME BETWEEN. Arrivals are slower than exits
-   (A in 360ms, B in 400ms, against 240ms for each departure), so the balls
-   drift in and snap away. Between them sits a deliberate 200ms with nothing on
-   screen: A lands out of frame at 600ms and B does not launch until 800ms.
-   Without that pause the two legs hand over on the same frame and the bounce
-   reads as a jolt.
+   Linear on one axis and quadratic on the other IS a parabola, so each leg
+   curves like a hand-drawn bounce and the vertex stays a sharp V (vertical
+   speed is at its maximum right where it reverses). Easing both axes together
+   would flatten it into an S-curve and lose the bounce.
 
-   A's drop uses an accelerating curve so it clears the frame decisively rather
-   than easing out and leaving the top of the ball hanging on the bottom edge.
-   That curve's slow start is invisible: A is dead centre and covering the whole
-   viewport at the moment the drop begins.
+   The ball also PARKS dead centre between the two legs — the cover animation's
+   forwards fill holds it there until React has committed the new route and
+   flipped the phase — so the swap has no timing race and no sliver of the new
+   page can show early.
 
-   THE SWAP IS UNDER BALL B, NOT BALL A. A leaving uncovers the screen, so
-   whatever is underneath shows between the two passes. Swapping under A would
-   put the NEW page there — revealed, covered again by B, then revealed a
-   second time, which is the flash. Under B, what shows between the passes is
-   the OLD page, unchanged: A reads as a flourish over the page you are still
-   on, and the content changes exactly once, sealed under B.
-
-   Both animations in the cover phase run the full phase duration — B holds at
-   its start position rather than using animation-delay — so they finish on the
-   same frame. animationend drives the phase machine, and a short animation
-   ending early would advance it while the other ball was still moving.
-
-   SIZE. Each ball alone must cover the viewport when centred, so r is the half-
-   diagonal: 0.5*sqrt(W^2 + H^2) is at most 0.7072 * max(W, H) (worst case a
-   square viewport), and 72vmax is the tightest radius that always clears it. */
+   SIZE. The ball has to cover the whole viewport at the vertex, so it is
+   necessarily bigger than the screen — it reads as a big round edge sweeping
+   through, not as a small ball. 72vmax is the tightest radius that always
+   works: the half-diagonal it must clear, 0.5*sqrt(W^2 + H^2), is at most
+   0.7072 * max(W, H) (the worst case being a square viewport). Keeping it
+   tight matters — an oversized circle presents a flatter arc and stops reading
+   as round. */
 
 .page-transition {
   /* The "Hi! I'm Julie" hero pink — var(--color--pink--color) in tokens.css.
@@ -47,27 +41,22 @@
      before hydration, see [data-pt-entry] below) can't depend on cascade
      order between the token sheet and this one. */
   --pt-color: #ed6b6b;
-
-  /* 1200 = 360 A-in + 240 A-drop + 200 EMPTY + 400 B-in.
-     That empty stretch is the point: without it A lands out of frame and B
-     launches on the very next frame, which reads as a jolt rather than a
-     bounce. 200ms of nothing gives the ball its air time. Reveal is a 240ms
-     departure — arrivals stay slower than exits. */
-  --pt-cover: 1200ms;
-  --pt-reveal: 240ms;
+  --pt-duration: 400ms;
 
   --pt-r: 72vmax;
 
-  /* Diagonal corners: 0.7071 * 72 = 50.91vmax past the corner on each axis is
-     exactly TANGENT, and tangent is one shared point — enough for an
-     antialiased sliver to survive — so this carries 2vmax of clearance.
-     Straight down needs only r past the edge, plus the same margin. */
+  /* Off-screen ends. 0.7071 * r along each axis past the corner (0.7071 * 72 =
+     50.91vmax) puts the circle exactly TANGENT to the viewport's corner: as
+     close as it can sit while still fully clear, so no part of the 400ms is
+     spent crossing dead space where nothing is visible. Tangent is a single
+     shared point though — enough for an antialiased sliver to survive in the
+     corner — so this carries 2vmax of clearance on top. */
   --pt-x-off: calc(50vw + 52.91vmax);
   --pt-y-off: calc(50vh + 52.91vmax);
-  --pt-drop: calc(50vh + 74vmax);
 
-  --pt-ease-in: cubic-bezier(0.11, 0, 0.5, 0);
-  --pt-ease-out: cubic-bezier(0.5, 1, 0.89, 1);
+  /* easeInQuad / easeOutQuad — the closest cubic-beziers to true t^2 motion. */
+  --pt-ease-fall: cubic-bezier(0.11, 0, 0.5, 0);
+  --pt-ease-rise: cubic-bezier(0.5, 1, 0.89, 1);
 
   position: fixed;
   inset: 0;
@@ -81,86 +70,89 @@
   pointer-events: auto;
 }
 
-.page-transition__ball {
+/* Zero-size positioning wrapper pinned to the viewport centre; only ever
+   carries the horizontal half of the motion. */
+.page-transition__x {
   position: absolute;
   top: 50%;
   left: 50%;
-  width: calc(2 * var(--pt-r));
-  height: calc(2 * var(--pt-r));
-  margin-top: calc(-1 * var(--pt-r));
-  margin-left: calc(-1 * var(--pt-r));
-  border-radius: 50%;
-  background-color: var(--pt-color);
+  width: 0;
+  height: 0;
+  transform: translateX(var(--pt-x-off));
   will-change: transform;
 }
 
-/* Resting: A off the top-right, B parked below the bottom edge. */
-.page-transition__ball--a {
-  transform: translate3d(var(--pt-x-off), calc(-1 * var(--pt-y-off)), 0);
-}
-.page-transition__ball--b {
-  transform: translate3d(0, var(--pt-drop), 0);
+.page-transition__ball {
+  position: absolute;
+  top: calc(-1 * var(--pt-r));
+  left: calc(-1 * var(--pt-r));
+  width: calc(2 * var(--pt-r));
+  height: calc(2 * var(--pt-r));
+  border-radius: 50%;
+  background-color: var(--pt-color);
+  transform: translateY(calc(-1 * var(--pt-y-off)));
+  will-change: transform;
 }
 
-.page-transition[data-phase="cover"] .page-transition__ball--a {
-  animation: pt-pass-a var(--pt-cover) forwards;
+.page-transition[data-phase="cover"] .page-transition__x {
+  animation: pt-x-in var(--pt-duration) linear forwards;
 }
-.page-transition[data-phase="cover"] .page-transition__ball--b {
-  animation: pt-rise-b var(--pt-cover) forwards;
+.page-transition[data-phase="cover"] .page-transition__ball {
+  animation: pt-y-fall var(--pt-duration) var(--pt-ease-fall) forwards;
 }
-.page-transition[data-phase="reveal"] .page-transition__ball--b {
-  animation: pt-out-b var(--pt-reveal) var(--pt-ease-out) forwards;
+
+.page-transition[data-phase="reveal"] .page-transition__x {
+  animation: pt-x-out var(--pt-duration) linear forwards;
+}
+.page-transition[data-phase="reveal"] .page-transition__ball {
+  animation: pt-y-rise var(--pt-duration) var(--pt-ease-rise) forwards;
 }
 
 /* Set before paint by the inline script in app/layout.tsx on entry loads
    (a refresh of any page, or a direct load of any page but home), so the
-   viewport is already covered when the first frame paints. B parked centred is
-   the state the cover phase ends in, so the reveal runs straight from it. */
-:root[data-pt-entry="1"] .page-transition__ball--b {
-  transform: translate3d(0, 0, 0);
+   viewport is already covered when the first frame paints. The ball parked
+   dead centre is the state the cover leg ends in, so the reveal runs straight
+   from it. */
+:root[data-pt-entry="1"] .page-transition__x {
+  transform: translateX(0);
+}
+:root[data-pt-entry="1"] .page-transition__ball {
+  transform: translateY(0);
 }
 
-/* Of 1200ms: 30% = 360ms (A reaches centre), 50% = 600ms (A is out of frame). */
-@keyframes pt-pass-a {
-  0% {
-    transform: translate3d(var(--pt-x-off), calc(-1 * var(--pt-y-off)), 0);
-    animation-timing-function: cubic-bezier(0.11, 0, 0.5, 0);
-  }
-  30% {
-    transform: translate3d(0, 0, 0);
-    /* accelerating, so it clears the frame rather than trailing off the
-       bottom edge; the slow start is hidden behind full coverage */
-    animation-timing-function: cubic-bezier(0.32, 0, 0.67, 0);
-  }
-  50%,
-  100% {
-    transform: translate3d(0, var(--pt-drop), 0);
-  }
-}
-
-/* Holds until 66.67% = 800ms, so nothing is on screen between 600ms and 800ms.
-   B then takes 400ms to rise — the slowest beat of the four. */
-@keyframes pt-rise-b {
-  0%,
-  66.67% {
-    transform: translate3d(0, var(--pt-drop), 0);
-    animation-timing-function: cubic-bezier(0.5, 1, 0.89, 1);
-  }
-  100% {
-    transform: translate3d(0, 0, 0);
-  }
-}
-
-@keyframes pt-out-b {
+@keyframes pt-x-in {
   from {
-    transform: translate3d(0, 0, 0);
+    transform: translateX(var(--pt-x-off));
   }
   to {
-    transform: translate3d(
-      calc(-1 * var(--pt-x-off)),
-      calc(-1 * var(--pt-y-off)),
-      0
-    );
+    transform: translateX(0);
+  }
+}
+
+@keyframes pt-x-out {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(calc(-1 * var(--pt-x-off)));
+  }
+}
+
+@keyframes pt-y-fall {
+  from {
+    transform: translateY(calc(-1 * var(--pt-y-off)));
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+@keyframes pt-y-rise {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(calc(-1 * var(--pt-y-off)));
   }
 }
 

@@ -10,10 +10,10 @@ import {
   type MouseEvent as ReactMouseEvent,
 } from "react";
 
-// Upper bound on a phase: --pt-cover (1200ms) is the longer of the two,
-// --pt-reveal is 240ms. Both live in styles/page-transition.css. Used only to
-// size the watchdog below, so it needs to be >= the real value, not exact.
-const DURATION_MS = 1200;
+// Mirrors --pt-duration in styles/page-transition.css, where the real timing
+// lives. Used only to size the watchdog below, so it needs to be >= the CSS
+// value, not exact.
+const DURATION_MS = 400;
 
 /* Full-viewport wipe played on navigation: a "V" sweep — enters top-right,
    dives down-left to a bottom vertex ("cover", where the route swaps
@@ -93,7 +93,11 @@ export default function PageTransition({
 
   useEffect(() => {
     function onClick(e: MouseEvent) {
-      if (e.defaultPrevented || isModifiedClick(e as unknown as ReactMouseEvent)) return;
+      if (
+        e.defaultPrevented ||
+        isModifiedClick(e as unknown as ReactMouseEvent)
+      )
+        return;
 
       const anchor = (e.target as HTMLElement).closest("a");
       if (!anchor) return;
@@ -159,7 +163,7 @@ export default function PageTransition({
         setPhase("idle");
       }
     },
-    [router]
+    [router],
   );
 
   /* Watchdog. A backgrounded tab stops compositing, and a CSS animation that
@@ -195,14 +199,14 @@ export default function PageTransition({
           if (phase !== "idle") advance(phase);
         }}
       >
-        {/* Two balls meeting at the bottom-middle. A falls in from the
-            top-right, then drops straight down and out of frame; B rises
-            straight back up from that same point, stops centred (the sealed
-            frame the route swaps under), and carries on out the top-left — so
-            it reads as one bounce with the impact hidden off-frame. Arrivals
-            are slower than departures. See styles/page-transition.css. */}
-        <div className="page-transition__ball page-transition__ball--a" />
-        <div className="page-transition__ball page-transition__ball--b" />
+        {/* One ball on a parabola: in from off the top-right, bottoming out
+            dead centre (the sealed frame the route swaps under), then back out
+            through the top-left. The wrapper carries the horizontal half of
+            the motion and the ball the vertical half — that split is what
+            makes the arc a parabola. See styles/page-transition.css. */}
+        <div className="page-transition__x">
+          <div className="page-transition__ball" />
+        </div>
       </div>
       {children}
     </>
