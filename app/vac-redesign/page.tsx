@@ -1,4 +1,7 @@
-import Image from "next/image";
+/* Every screenshot on this page opens the zoom — the component renders the
+   same <img> next/image did, plus the attributes that make it operable.
+   See components/ZoomableImage.tsx. */
+import ZoomableImage from "@/components/ZoomableImage";
 import type { Metadata } from "next";
 import CaseStudyBanner from "@/components/CaseStudyBanner";
 import ProgressBar from "@/components/ProgressBar";
@@ -87,7 +90,7 @@ export default function VACRedesign() {
             <div className="drawing-frame">
               <div className="card-media">
                 <div className="card-image-wrapper vac-intro-drawing-wrapper">
-                  <Image
+                  <ZoomableImage
                     src="/images/VAC-structure-1.png"
                     alt="Illustration of a person, teacher, and school with arrows pointing from person to school and teacher, and a double arrow between teacher and school"
                     width={680}
@@ -156,7 +159,7 @@ export default function VACRedesign() {
           </div>
           <div className="horizontal-container">
             <div className="image-wrapper-800">
-              <Image
+              <ZoomableImage
                 src="/images/old-dashboard-v2.png"
                 alt="Screenshot of VAC's original dashboard showing a disorganized hodgepodge of information"
                 width={580}
@@ -180,7 +183,7 @@ export default function VACRedesign() {
           </div>
           <div className="horizontal-container">
             <div className="image-wrapper-800">
-              <Image
+              <ZoomableImage
                 src="/images/vac-dashboard-03.png"
                 alt="A computer screen with a list of names and times for classes and teachers."
                 width={1512}
@@ -311,7 +314,7 @@ export default function VACRedesign() {
               <div className="media-card">
                 <div className="card-media">
                   <div className="card-image-wrapper">
-                    <Image
+                    <ZoomableImage
                       src="/images/old-dashboard--screenshot.png"
                       alt="Screen with list of schools and other information"
                       width={387}
@@ -327,7 +330,7 @@ export default function VACRedesign() {
               <div className="media-card">
                 <div className="card-media">
                   <div className="card-image-wrapper">
-                    <Image
+                    <ZoomableImage
                       src="/images/Schedule-screenshot.png"
                       alt="Screen with list of schools"
                       width={386}
@@ -343,7 +346,7 @@ export default function VACRedesign() {
               <div className="media-card">
                 <div className="card-media">
                   <div className="card-image-wrapper">
-                    <Image
+                    <ZoomableImage
                       src="/images/og-calendar-view.png"
                       alt="Screenshot of webpage showing an orange calendar view"
                       width={768}
@@ -467,7 +470,7 @@ export default function VACRedesign() {
             <div className="right-middle-half-width-container">
               <div className="image-4-col-wrapper">
                 <div className="card-media">
-                  <Image
+                  <ZoomableImage
                     src="/images/Employee-task-list-1.png"
                     alt="List of prioritized employee tasks"
                     width={680}
@@ -493,7 +496,7 @@ export default function VACRedesign() {
           </div>
           <div className="vertical-container">
             <div className="image-wrapper-800">
-              <Image
+              <ZoomableImage
                 src="/images/og-attendance-flow-blurred.png"
                 alt="Screenshot of screenshot flows going from login to a difficult to navigate dashboard to a difficult to view and navigate calendar, with a zoomed in shot of the current teacher attendance section"
                 width={1301}
@@ -542,7 +545,7 @@ export default function VACRedesign() {
           <div className="vertical-container">
             <div className="captioned-image">
               <div className="image-wrapper">
-                <Image
+                <ZoomableImage
                   src="/images/Attendance-flow-before.png"
                   alt="Flow chart"
                   width={820}
@@ -563,7 +566,7 @@ export default function VACRedesign() {
             </div>
             <div className="captioned-image">
               <div className="image-wrapper">
-                <Image
+                <ZoomableImage
                   src="/images/Attendance-flow-after.png"
                   alt="Flow chart"
                   width={820}
@@ -602,7 +605,7 @@ export default function VACRedesign() {
           <div className="horizontal-container">
             <div className="image-wrapper-800">
               <div className="image-800w">
-                <Image
+                <ZoomableImage
                   src="/images/vac-dashboard-04.png"
                   alt="A screenshot of a website with a list of classes and teachers and a button to confirm."
                   width={1079}
@@ -640,7 +643,7 @@ export default function VACRedesign() {
                 <div className="media-card">
                   <div className="card-media">
                     <div className="card-image-wrapper">
-                      <Image
+                      <ZoomableImage
                         src="/images/Assign-sub-before.png"
                         alt="Steps to assign a sub"
                         width={440}
@@ -656,7 +659,7 @@ export default function VACRedesign() {
                 <div className="media-card">
                   <div className="card-media">
                     <div className="card-image-wrapper">
-                      <Image
+                      <ZoomableImage
                         src="/images/Assign-sub-after.png"
                         alt="Number of steps to assign a sub"
                         width={772}
@@ -687,7 +690,7 @@ export default function VACRedesign() {
               <div className="captioned-image">
                 <div className="image-wrapper">
                   <div className="image-container-left-align">
-                    <Image
+                    <ZoomableImage
                       src="/images/og-subreq-page-blurred.png"
                       alt="Screenshot of webpage showing a list of teachers"
                       width={600}
@@ -715,7 +718,7 @@ export default function VACRedesign() {
                       stylesheet's bare `a { max-width: 100%; max-height: 100% }`
                       is what .image-max300h's `height: 100%` resolves against. */}
                   <a className="lightbox-link-5 w-inline-block">
-                    <Image
+                    <ZoomableImage
                       src="/images/vac-dashboard-06.png"
                       alt="A computer screen displaying sub requests for a teacher."
                       width={1512}
@@ -749,7 +752,7 @@ export default function VACRedesign() {
           <div className="vertical-container">
             <div className="media-card">
               <div className="card-media">
-                <Image
+                <ZoomableImage
                   src="/images/Teacher-assignment-flow-before.png"
                   alt="Flow chart"
                   width={2820}
@@ -764,7 +767,7 @@ export default function VACRedesign() {
             </div>
             <div className="media-card">
               <div className="card-media">
-                <Image
+                <ZoomableImage
                   src="/images/Teacher-assignment-flow-after.png"
                   alt="Flow chart"
                   width={2556}
@@ -793,7 +796,7 @@ export default function VACRedesign() {
               <div className="captioned-image">
                 <div className="image-wrapper">
                   <div className="image-container-left-align">
-                    <Image
+                    <ZoomableImage
                       src="/images/og-schools-classes-page.png"
                       alt="Screenshot of webpage showing a list of classes"
                       width={613}
@@ -817,7 +820,7 @@ export default function VACRedesign() {
                 <div className="image-wrapper left-align">
                   {/* Lightbox anchor, as above — load-bearing for height: 100%. */}
                   <a className="w-inline-block">
-                    <Image
+                    <ZoomableImage
                       src="/images/vac-dashboard-09.png"
                       alt="A computer screen displaying teacher assignment page"
                       width={1512}
@@ -859,7 +862,7 @@ export default function VACRedesign() {
           <div className="horizontal-container">
             <div className="side-text-horizontal-container">
               <div className="slide-image-side-container">
-                <Image
+                <ZoomableImage
                   src="/images/vac-dashboard-01.png"
                   alt="A screenshot of a computer screen showing a list of names and times for classes and teachers."
                   width={1512}
@@ -920,7 +923,7 @@ export default function VACRedesign() {
           <div className="horizontal-container">
             <div className="side-text-horizontal-container">
               <div className="slide-image-side-container">
-                <Image
+                <ZoomableImage
                   src="/images/vac-table.png"
                   alt="A computer screen displaying a list of teachers"
                   width={912}
@@ -973,7 +976,7 @@ export default function VACRedesign() {
           <div className="horizontal-container">
             <div className="side-text-horizontal-container">
               <div className="slide-image-side-container">
-                <Image
+                <ZoomableImage
                   src="/images/vac-dashboard-08.png"
                   alt="A website page with a list of teachers and their contact information."
                   width={1512}
@@ -1034,7 +1037,7 @@ export default function VACRedesign() {
               <div className="media-card">
                 <div className="card-media">
                   <div className="card-image-wrapper _2-x-1-image-fixed-height-wrapper">
-                    <Image
+                    <ZoomableImage
                       src="/images/image-65.png"
                       alt="Screen with grid of options"
                       width={800}
@@ -1057,7 +1060,7 @@ export default function VACRedesign() {
               <div className="media-card">
                 <div className="card-media">
                   <div className="card-image-wrapper _2-x-1-image-fixed-height-wrapper">
-                    <Image
+                    <ZoomableImage
                       src="/images/vac-dashboard-01.png"
                       alt="A screenshot of a computer screen showing a list of names and times for classes and teachers."
                       width={1512}
@@ -1096,7 +1099,7 @@ export default function VACRedesign() {
               <div className="media-card">
                 <div className="card-media">
                   <div className="card-image-wrapper _2-x-1-image-fixed-height-wrapper">
-                    <Image
+                    <ZoomableImage
                       src="/images/image.png"
                       alt="Screen with list of teachers"
                       width={800}
@@ -1119,7 +1122,7 @@ export default function VACRedesign() {
               <div className="media-card">
                 <div className="card-media">
                   <div className="card-image-wrapper _2-x-1-image-fixed-height-wrapper">
-                    <Image
+                    <ZoomableImage
                       src="/images/suggested-teachers-zoom.png"
                       alt="A computer screen displaying a table with teacher details"
                       width={1670}
@@ -1159,7 +1162,7 @@ export default function VACRedesign() {
               <div className="media-card">
                 <div className="card-media">
                   <div className="card-image-wrapper _2-x-1-image-fixed-height-wrapper">
-                    <Image
+                    <ZoomableImage
                       src="/images/image-85.png"
                       alt="Screen with grid of teachers"
                       width={800}
@@ -1181,7 +1184,7 @@ export default function VACRedesign() {
               <div className="media-card">
                 <div className="card-media">
                   <div className="card-image-wrapper _2-x-1-image-fixed-height-wrapper">
-                    <Image
+                    <ZoomableImage
                       src="/images/vac-table.png"
                       alt="A computer screen displaying a list of teachers"
                       width={912}

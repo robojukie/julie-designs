@@ -40,7 +40,17 @@ const ACTIVE_CLASS = "has-custom-cursor";
    wrapper and is the only such attribute on his page. */
 const GRAPHIC_TEXT = "[data-graphic-text]";
 
-type State = "default" | "text";
+/* Images that open the zoom, tagged by components/ZoomableImage.tsx. They are
+   `<img role="button">` with no button chrome and — because the rig means
+   `cursor` stays `none` over them — no native pointer change either, so on a
+   fine pointer the rig IS the affordance. Without this state a zoomable image
+   and a decorative one look identical to the hand.
+
+   KEEP IN SYNC with the data-zoomable attribute in that file and the
+   [data-state="image"] rules in styles/cursor.css. */
+const ZOOMABLE = "[data-zoomable]";
+
+type State = "default" | "text" | "image";
 
 /* True when the element paints text of its own, as opposed to merely
    containing something that does. Checking for a direct non-empty text child
@@ -120,16 +130,20 @@ export default function Cursor() {
             unless it has been marked as artwork, which is checked first
             precisely because such elements ARE text and would otherwise pass
             the test below.
-         3. Otherwise the resting dot. Images land here, along with the page's
-            own background: they have no cursor of their own, so the default
-            arrow is what they would otherwise get, and the dot is what stands
-            in for it. */
+         3. Then a zoomable image, which is checked before text only because
+            it can't BE text — the ordering is for the reader, not the machine.
+         4. Otherwise the resting dot. Images with no zoom land here, along
+            with the page's own background: they have no cursor of their own,
+            so the default arrow is what they would otherwise get, and the dot
+            is what stands in for it. */
       if (window.getComputedStyle(under).cursor !== "none") {
         rig.dataset.visible = "false";
         return;
       }
 
-      if (!under.closest(GRAPHIC_TEXT) && paintsText(under)) {
+      if (under.closest(ZOOMABLE)) {
+        setState("image");
+      } else if (!under.closest(GRAPHIC_TEXT) && paintsText(under)) {
         setTextHeight(lineHeightOf(under));
         setState("text");
       } else {
@@ -195,7 +209,11 @@ export default function Cursor() {
       aria-hidden="true"
     >
       <span className="cursor-ring" />
+      {/* Two bars, not three parts: the caret is the text state's caret AND
+          the vertical stroke of the image state's "+", which is what lets the
+          two states morph into each other instead of swapping. */}
       <span className="cursor-caret" />
+      <span className="cursor-plus" />
     </div>
   );
 }

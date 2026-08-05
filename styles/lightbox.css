@@ -1,0 +1,143 @@
+/* The image zoom that stands in for Webflow's lightbox. Behaviour and the
+   reasoning behind the DOM shape live in components/ZoomableImage.tsx; this
+   file is only what the overlay looks like.
+
+   The backdrop is --translucent-black (#000000a8) from styles/tokens.css —
+   the token the export already used for scrims — rather than a new literal, so
+   the zoom sits on the same value as the rest of the site's dark overlays. */
+
+.lightbox {
+  position: fixed;
+  inset: 0;
+
+  /* One below the cursor rig's 2147483647. styles/cursor.css states the rig
+     should keep tracking OVER a full-viewport overlay rather than vanish under
+     one, and that is only true if every overlay stays beneath it. */
+  z-index: 2147483000;
+
+  background: var(--translucent-black);
+  /* Blur rather than a heavier scrim: the page stays legible as context behind
+     the image, which is what keeps the zoom feeling like a magnifier held over
+     the case study rather than a navigation away from it.
+
+     DO NOT add the -webkit- prefixed twin. Pairing them makes Next's CSS
+     minifier drop BOTH declarations — the rule shipped without any blur at all
+     until the prefix came back out, and it fails silently, since everything
+     else in this rule still applies. Next prefixes from browserslist anyway. */
+  backdrop-filter: blur(6px);
+
+  /* Overrides html.has-custom-cursor's `cursor: none`. Inside the overlay the
+     pink rig is the wrong pointer — it means "this surface has no cursor of
+     its own", and here every surface does: the backdrop closes, the frame
+     zooms or drags. Cursor.tsx reads the computed value and hides the rig
+     wherever it isn't `none`, so authoring a cursor here is also what hands
+     the pointer back to the native one for the length of the zoom. */
+  cursor: zoom-out;
+}
+
+/* Positioned by motion, which writes top/left/width/height per frame — so this
+   rule sets everything EXCEPT those four. */
+.lightbox-frame {
+  position: fixed;
+  overflow: hidden;
+  border-radius: var(--large-radius);
+  /* The frame is the same size as the image inside it, so without this the
+     image's own corners square off the radius above. */
+  background: var(--background-color--background-main);
+  box-shadow: 0 24px 60px #00000059;
+  will-change: top, left, width, height;
+}
+
+.lightbox-frame img {
+  display: block;
+  /* object-fit guards the one frame where the animated box and the image's
+     aspect ratio can disagree: a resize landing mid-flight. */
+  object-fit: contain;
+  user-select: none;
+}
+
+/* --- the second level of zoom --- */
+
+/* At 1:1 the frame is draggable, and the cursor is the only thing that says
+   so. Not `zoom-out`: the drag is the primary gesture at this level and the
+   click-to-fit is secondary, so the grab hand is the honest affordance. */
+.lightbox-frame[data-actual="true"] {
+  cursor: grab;
+}
+
+.lightbox-frame[data-actual="true"]:active {
+  cursor: grabbing;
+}
+
+.lightbox-frame[data-actual="false"] {
+  cursor: zoom-in;
+}
+
+/* --- close button --- */
+
+.lightbox-close {
+  position: fixed;
+  top: 1.25rem;
+  right: 1.25rem;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.75rem;
+  height: 2.75rem;
+
+  border: none;
+  border-radius: 9999px;
+  background: var(--translucent-white);
+  color: var(--og-colors--black-1000);
+  font-family: var(--heading-font);
+  font-size: 1.75rem;
+  line-height: 1;
+  cursor: pointer;
+
+  transition:
+    transform 0.16s ease-out,
+    background 0.16s ease-out;
+}
+
+.lightbox-close:hover {
+  transform: scale(1.08);
+  background: #fff;
+}
+
+/* The overlay's only focusable element, and the keyboard's only exit besides
+   Escape — so the ring is not optional. Matches the focus treatment in
+   styles/custom.css section 13. */
+.lightbox-close:focus-visible {
+  outline: 3px solid var(--color--pink--color);
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lightbox-close {
+    transition: none;
+  }
+
+  .lightbox-close:hover {
+    transform: none;
+  }
+}
+
+/* --- the zoomable image on the page --- */
+
+/* The keyboard's half of the affordance. On a fine pointer the pink rig's
+   `image` state carries the hover hint (see styles/cursor.css) and this ring
+   never shows; on a keyboard it is the only thing that marks these images as
+   operable, since they are <img role="button"> with no button chrome. */
+[data-zoomable]:focus-visible {
+  outline: 3px solid var(--color--pink--color);
+  outline-offset: 4px;
+}
+
+/* Coarse pointers get no custom cursor and no rig, so the zoom is undiscoverable
+   there unless the native affordance is asked for explicitly. */
+@media (hover: none), (pointer: coarse) {
+  [data-zoomable] {
+    cursor: zoom-in;
+  }
+}
