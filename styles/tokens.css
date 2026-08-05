@@ -1,8 +1,23 @@
-/* Auto-generated from juliepaik.webflow/css/juliepaik.webflow.css :root block.
-   Do not hand-edit — regenerate from the export if the source changes.
+/* Seeded from the original Webflow export's :root block, now hand-maintained.
    Webflow variable names with a "<deleted|variable-...>" suffix mean the variable
    was deleted in the Designer but is still referenced by some elements; the suffix
-   is stripped here and the original raw name is noted inline for cross-reference. */
+   is stripped here and the original raw name is noted inline for cross-reference.
+
+   This file used to say "auto-generated, do not hand-edit". That was never true:
+   port-custom-css.js STRIPS the :root block out of juliepaik.css but does not
+   write this file, and no other script does either — so there is nothing to
+   regenerate from and the warning only discouraged maintaining it. Edit freely,
+   but keep two rules:
+
+     1. Every name here is still referenced by styles/juliepaik.css, which IS
+        generated. Renaming a token means editing that generated file, so rename
+        only alongside a change to the porting script.
+     2. styles/theme.ts mirrors this file for JS/TS consumers. Keep them in sync.
+
+   2026-08-04: pruned 56 tokens that no stylesheet referenced, directly or
+   through another token — the whole --surface--*, --color--*-primitive and
+   --border--* tier. What remains is the live set: primitives plus the semantic
+   aliases that point at them. */
 
 :root {
   --text-body-font: Nunito, sans-serif;
@@ -125,6 +140,11 @@
   --color--beige--300: #f4ede7;
   --text-weightt--title-500: 500;
   /* Webflow: --text--light\<deleted\|variable-bfdf30ce-bada-add2-e679-ff53deaf29d0\> (deleted-variable export artifact) */
+  /* NOTE: this is a second literal #fcfcfc, duplicating --color--neutral--100.
+     Deliberately left as a literal for now — collapsing it to
+     var(--color--neutral--100) is render-identical but is a value-layer change,
+     and this branch is scoped to deletions only. Revisit with the wider
+     near-white consolidation. */
   --text--light: #fcfcfc;
   --text-weightt--display-weight: 800;
   --text-size--display-tablet: 2.625rem;
@@ -136,69 +156,13 @@
   --text-size--display-thin-mobile: 1.3rem;
   --text-height--display-thin-mobile-height: 2rem;
   --color--neutral--cool--400: #e7e7e6;
-  --white: #fdfefd;
-  --translucent-black: #000000a8;
-  --background-color--old-background-dark: var(--color--neutral--800);
   --shadow-color: #0000001a;
-  --shadow-blur: 8px;
-  --text-colors--disabled-text: #8d8d8d;
-  --inline-link: var(--text-colors--text-primary);
-  --accents--bold--accent-blue: #d8e0e0;
-  --width--lightbox-width: 1024px;
-  --background-color--background-brainsprout: #f8f4f1;
-  --text-weightt--h3: 200;
-  --accents--bold--light-green: #bec4a3;
-  --accents--pastel--purple: #cfc9dd;
-  --accents--pastel--green: #c9ddc9;
-  --border--annotation: var(--accents--bold--pink);
-  --border--primary: #c1bfbf;
-  --color--beige--500: #e8dfd9;
-  --color--beige--200: #faf9f9;
-  --color--beige--350: #f8f4f1;
-  --color--beige--700: #524e4b;
-  --color--blue--600: #87bbbb;
-  --color--blue--400: #d5e9f2;
-  --color--green--muted--500: #e8f0c7;
-  --color--green--muted--800: #a2ad90;
-  --color--green--muted--100: #f7faef;
-  --color--neutral--1000: black;
   --color--neutral--800: #272727;
-  --color--neutral--900: #1f1f1f;
-  --color--neutral--0: #fff;
   --color--neutral--100: #fcfcfc;
-  --color--neutral--cool--300: #f0f0f0;
-  --color--neutral--cool--200: #f8f8f8;
-  --color--neutral--cool--700: #5d5c5c;
-  --color--neutral--cool--500: #d8d7d6;
-  --color--neutral--cool--600: #a2a1a1;
-  --color--neutral--warm--700: #898787;
-  --color--neutral--warm--500: #dbd8d8;
   --color--neutral--warm--200: #faf8f8;
-  --color--neutral--warm--300: #f0ecec;
-  --color--neutral--warm--600: #c1bfbf;
-  --color--neutral--warm--old: #f7f4f0;
-  --color--peach--200: #f7f5f2;
-  --color--peach--400: #f5cdb2;
-  --color--peach--800: #ed6b6b;
   --color--peach--600: #ff988a;
-  --color--pink--800: #de225d;
   --color--pink--color: #ed6b6b;
-  --color--purple--400: #eae4f7;
-  --components--link--primary: var(--color--pink--800);
-  --icon--primary: #272727;
-  --surface--annotation--cool: #f8f8f8;
-  --surface--annotation--warm: #faf8f8;
-  --surface--background--case-study--background: #fcfcfc;
-  --surface--background--dark--background: #272727;
-  --surface--thumbnail--purple: #eae4f7;
-  --surface--thumbnail--peach-2: #f5cdb2;
-  --surface--thumbnail--peach-1: #f7e7dc;
-  --surface--thumbnail--green-1: #e8f0c7;
-  --surface--thumbnail--blue: #d5e9f2;
   --accents--bold--green: #43a363;
-  --accents--bold--orange: #ed6b6b;
-  --accents--bold--yellow: #f1e534;
   --accents--bold--pink: #de225d;
   --accents--bold--blue: #52afcf;
-  --text-colors--disabled: #c1bfbf;
 }

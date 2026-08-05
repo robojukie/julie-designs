@@ -19,7 +19,7 @@ export default function Writing() {
           <div className="page-title-container">
             <div className="page-title">
               {/* Page titles read as artwork rather than prose — see
-                  styles/custom.css section 13. */}
+                  styles/custom.css section 14. */}
               <h1 className="hero-title-text main-page" data-graphic-text>
                 Blog posts
               </h1>
