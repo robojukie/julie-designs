@@ -464,3 +464,33 @@
 .image-wrapper-800 > .image-single {
   width: 100%;
 }
+
+/* ---------------------------------------------------------------------------
+   "Screenshots of original app": one row height  — NOT IN THE EXPORT
+
+   The three figures in that section are the only users of .screenshot-shadow
+   anywhere on the site, in the port and in the export alike, so this rule
+   cannot reach anything else.
+
+   They are three separate screen captures, so their aspect ratios differ
+   slightly — 387x203, 386x204 and 768x402, i.e. 1.9064, 1.8922 and 1.9104.
+   .screenshot-shadow is `width: 100%; height: auto`, so each derives its own
+   height from its own ratio and the row lands on 203 / 204 / 202px: a 2px
+   stagger along the bottom edge of a set that reads as a single row. The
+   export has the same stagger; this is a deliberate change, not a port fix.
+
+   A shared aspect-ratio rather than a fixed px height, because the grid is
+   responsive — this keeps the three equal at every column width instead of
+   only at the one breakpoint the height was measured at. Applies to the border
+   box (box-sizing is border-box globally), so .bordered's 1px border and 1px
+   outline are inside the figure and don't reintroduce a difference.
+
+   1.903 is the mean of the three, so the largest correction is 0.75% — under
+   1.5px at the widest the column ever gets — taken off the edges by
+   object-fit: cover rather than letterboxed by `contain`, which would leave a
+   visible gap inside the border.
+--------------------------------------------------------------------------- */
+.screenshot-shadow {
+  aspect-ratio: 1.903;
+  object-fit: cover;
+}

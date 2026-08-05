@@ -349,6 +349,7 @@ export default function VACRedesign() {
                       width={768}
                       height={402}
                       sizes="(max-width: 479px) 100vw, 386px"
+                      unoptimized
                       className="screenshot-shadow bordered"
                       style={{ height: "auto" }}
                     />
