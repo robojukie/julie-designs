@@ -1,4 +1,7 @@
-import Image from "next/image";
+/* Every screenshot on this page opens the zoom — the component renders the
+   same <img> next/image did, plus the attributes that make it operable.
+   See components/ZoomableImage.tsx. */
+import ZoomableImage from "@/components/ZoomableImage";
 import type { Metadata } from "next";
 import CaseStudyBanner from "@/components/CaseStudyBanner";
 import CaseStudyHero from "@/components/CaseStudyHero";
@@ -80,7 +83,7 @@ export default function BankGreen() {
       </div>
 
       <div className="sticky-section">
-        <Image
+        <ZoomableImage
           src="/images/Web-screens-grid.png"
           alt="Image of grid of screenshots on light green background"
           width={1440}
@@ -154,7 +157,7 @@ export default function BankGreen() {
           <div className="_3-x-1-card-grid">
             <div className="captioned-image">
               <div className="image-wrapper">
-                <Image
+                <ZoomableImage
                   src="/images/tool-screenshot.png"
                   alt="A screenshot of a spreadsheet with a green background."
                   width={784}
@@ -174,7 +177,7 @@ export default function BankGreen() {
             </div>
             <div className="captioned-image">
               <div className="image-wrapper">
-                <Image
+                <ZoomableImage
                   src="/images/tool-screenshot-1.png"
                   alt="A screenshot of a computer screen with a kanban style board of bank items"
                   width={784}
@@ -194,7 +197,7 @@ export default function BankGreen() {
             </div>
             <div className="captioned-image">
               <div className="image-wrapper">
-                <Image
+                <ZoomableImage
                   src="/images/tool-screenshot-2.png"
                   alt="A computer screen with a list of items on it."
                   width={784}
@@ -339,7 +342,7 @@ export default function BankGreen() {
                 <strong>Initial migration attempt</strong>
               </p>
               <div className="image-wrapper">
-                <Image
+                <ZoomableImage
                   src="/images/Annotation-v1.png"
                   alt="Screenshot of page with annotations on the side"
                   width={1648}
@@ -371,7 +374,7 @@ export default function BankGreen() {
               </p>
               <div className="captioned-image">
                 <div className="image-wrapper">
-                  <Image
+                  <ZoomableImage
                     src="/images/Annotation-v2.png"
                     alt="Image of webpage with annotations on the side"
                     width={1649}
@@ -390,7 +393,7 @@ export default function BankGreen() {
           <div className="container-800">
             <div className="captioned-image">
               <div className="image-wrapper">
-                <Image
+                <ZoomableImage
                   src="/images/Annotation-v3.png"
                   alt="Image of webpage with annotations on the side"
                   width={1648}
@@ -417,7 +420,7 @@ export default function BankGreen() {
             <div className="w-layout-grid _2-x-1-grid-real">
               <div className="media-card">
                 <div className="card-media border-radius">
-                  <Image
+                  <ZoomableImage
                     src="/images/image-frame-large.png"
                     alt="Screenshot of an app created in Retool showing a data table on top half of screen and form section on bottom half of screen"
                     width={797}
@@ -439,7 +442,7 @@ export default function BankGreen() {
               </div>
               <div className="media-card">
                 <div className="card-media border-radius">
-                  <Image
+                  <ZoomableImage
                     src="/images/image-frame-large-1.png"
                     alt="A screenshot of a website page with a green background."
                     width={797}
@@ -540,7 +543,7 @@ export default function BankGreen() {
       </div>
 
       <div className="sticky-section">
-        <Image
+        <ZoomableImage
           src="/images/user-flows.png"
           alt="background image of a grid of flow charts"
           width={2880}
@@ -634,7 +637,7 @@ export default function BankGreen() {
                 actions to fail at a later time.
               </p>
               <div className="image-wrapper">
-                <Image
+                <ZoomableImage
                   src="/images/modal-errors.png"
                   alt="A screenshot of a document upload page with a red X in the lower right corner."
                   width={3009}
@@ -658,7 +661,7 @@ export default function BankGreen() {
                 to recover from errors after leaving and returning to app.
               </p>
               <div className="image-wrapper">
-                <Image
+                <ZoomableImage
                   src="/images/Asynchronous-flow.png"
                   alt="Flow chart of webpages leading to another"
                   width={10564}

@@ -1,4 +1,7 @@
-import Image from "next/image";
+/* Every screenshot on this page opens the zoom — the component renders the
+   same <img> next/image did, plus the attributes that make it operable.
+   See components/ZoomableImage.tsx. */
+import ZoomableImage from "@/components/ZoomableImage";
 import Link from "next/link";
 import type { Metadata } from "next";
 import CaseStudyBanner from "@/components/CaseStudyBanner";
@@ -125,7 +128,7 @@ export default function BrainSprout() {
                   </h3>
                 </div>
                 <div className="image-wrapper-small">
-                  <Image
+                  <ZoomableImage
                     src="/images/NYT-image.png"
                     alt="Image from The New York Times showing school children standing on different platform levels to depict educational inequality"
                     width={708}
@@ -169,7 +172,7 @@ export default function BrainSprout() {
                   </div>
                 </div>
                 <div className="image-wrapper-small">
-                  <Image
+                  <ZoomableImage
                     src="/images/online-learning-statistics.png"
                     alt="Online learning statistics"
                     width={1160}
@@ -260,7 +263,7 @@ export default function BrainSprout() {
             <div className="grid-2-col-first">
               <div className="column column-media">
                 <div className="image-wrapper-grid">
-                  <Image
+                  <ZoomableImage
                     src="/images/screenshot-of-bootcamp-w-annotation.png"
                     alt="Thinkific platform with expanded left menu displaying course overview but no time estimates"
                     width={1716}
@@ -283,7 +286,7 @@ export default function BrainSprout() {
             <div className="grid-2-col-last">
               <div className="column column-media">
                 <div className="image-wrapper-grid">
-                  <Image
+                  <ZoomableImage
                     src="/images/screenshot-of-coursera-w-annotation.png"
                     alt='"My courses" page of Coursera, showing 3 courses and pagination of 25 pages to click through'
                     width={1437}
@@ -332,7 +335,7 @@ export default function BrainSprout() {
               </div>
             </div>
             <div className="image-wrapper-full">
-              <Image
+              <ZoomableImage
                 src="/images/Feature-analysis.png"
                 alt="Competitor analysis table showing Coursera, Udemy, LinkedIn Learning, and Khan Academy with different feature availability for things like downloading content and transcript for videos"
                 width={1599}
@@ -397,7 +400,7 @@ export default function BrainSprout() {
                   </ul>
                 </div>
                 <div className="image-wrapper-small">
-                  <Image
+                  <ZoomableImage
                     src="/images/screenshot-of-speechify-widget.png"
                     alt="Screenshot of website with Speechify Chrome extension in use"
                     width={1431}
@@ -480,7 +483,7 @@ export default function BrainSprout() {
               <div className="grid-2-col-first">
                 <div className="column column-media _2-items">
                   <div className="image-wrapper-grid image-wrapper-with-2-images">
-                    <Image
+                    <ZoomableImage
                       src="/images/01-before-screen-of-audio-player-and-reading-indicator.png"
                       alt="Screen of first reading features implementation feature"
                       width={1440}
@@ -520,7 +523,7 @@ export default function BrainSprout() {
             <div className="grid-2-col-last">
               <div className="column column-media">
                 <div className="image-wrapper-grid-3">
-                  <Image
+                  <ZoomableImage
                     src="/images/02-iteration-1-screen-of-audio-player-and-reading-indicator.png"
                     alt="Screen of first iteration of  reading lesson features"
                     width={1440}
@@ -563,7 +566,7 @@ export default function BrainSprout() {
               <div className="grid-2-col-first">
                 <div className="column column-media">
                   <div className="image-wrapper-grid-3">
-                    <Image
+                    <ZoomableImage
                       src="/images/04-_before_-screen-of-reading-indicator-high-fidelity.png"
                       alt="High fidelity screen of reading lesson with vertical reading progress indicator aligned close to page margin"
                       width={1440}
@@ -608,7 +611,7 @@ export default function BrainSprout() {
               <div className="grid-2-col-last">
                 <div className="column column-media">
                   <div className="image-wrapper-grid-3">
-                    <Image
+                    <ZoomableImage
                       src="/images/03-_after_-screen-of-reading-indicator-high-fidelity.png"
                       alt="High fidelity screen of reading lesson with vertical reading progress indicator aligned close to right margin of reading lesson"
                       width={1440}
@@ -669,7 +672,7 @@ export default function BrainSprout() {
               <div className="grid-2-col-first">
                 <div className="column column-media">
                   <div className="image-wrapper-grid-3">
-                    <Image
+                    <ZoomableImage
                       src="/images/05-before-screen-of-search-feature.png"
                       alt='Screen of "dog earing" idea attempt'
                       width={1440}
@@ -710,7 +713,7 @@ export default function BrainSprout() {
               <div className="grid-long-text grid-2-col-last">
                 <div className="column column-media">
                   <div className="image-wrapper-grid-3">
-                    <Image
+                    <ZoomableImage
                       src="/images/06-after-screen-of-search-feature.png"
                       alt="Screen of updated search flow"
                       width={1440}
@@ -756,7 +759,7 @@ export default function BrainSprout() {
               <div className="grid-2-col-first">
                 <div className="column column-media">
                   <div className="image-wrapper-grid-3">
-                    <Image
+                    <ZoomableImage
                       src="/images/07-screen-of-video-lesson-using-external-discussion-feature.png"
                       alt="Screen of external discussion feature exploration"
                       width={1440}
@@ -784,7 +787,7 @@ export default function BrainSprout() {
               <div className="grid-long-text grid-2-col-last">
                 <div className="column column-media">
                   <div className="image-wrapper-grid-3">
-                    <Image
+                    <ZoomableImage
                       src="/images/08-screen-of-video-lesson-using-internal-discussion-feature.png"
                       alt="Screen of updated discussion feature to internal"
                       width={1440}
@@ -817,7 +820,7 @@ export default function BrainSprout() {
               <div className="grid-long-text grid-2-col-first">
                 <div className="column column-media">
                   <div className="image-wrapper-grid-3">
-                    <Image
+                    <ZoomableImage
                       src="/images/09-before-screen-of-assignments.png"
                       alt="Screen of assignments page before"
                       width={1440}
@@ -847,7 +850,7 @@ export default function BrainSprout() {
               <div className="grid-long-text grid-2-col-last">
                 <div className="column column-media">
                   <div className="image-wrapper-grid-3">
-                    <Image
+                    <ZoomableImage
                       src="/images/10-after-screen-of-assignments.png"
                       alt="Screen of assignments page after"
                       width={1440}
@@ -943,7 +946,7 @@ export default function BrainSprout() {
               <div className="column column-media double-image">
                 <div className="dual-images-stacked">
                   <div className="dual-lightbox-image-wrapper">
-                    <Image
+                    <ZoomableImage
                       src="/images/00-more-options-for-reading-lessons.png"
                       alt="Screen of reading lesson options expanded"
                       width={1532}
@@ -972,7 +975,7 @@ export default function BrainSprout() {
             <div className="grid-long-text grid-2-col-first">
               <div className="column column-media">
                 <div className="lightbox-wrapper">
-                  <Image
+                  <ZoomableImage
                     src="/images/01-Features-to-help-users-retain-information.png"
                     alt="Reading lesson screen with audio player open and text highlighted to show bookmarking feature"
                     width={1512}
@@ -1011,7 +1014,7 @@ export default function BrainSprout() {
             <div className="grid-long-text grid-2-col-first long-shot">
               <div className="column column-media double-image">
                 <div className="dual-lightbox-image-wrapper">
-                  <Image
+                  <ZoomableImage
                     src="/images/02-Time-estimates-on-course-overview_1.webp"
                     alt="Final design screen of course overview with progress and time tracking"
                     width={1512}
@@ -1042,7 +1045,7 @@ export default function BrainSprout() {
             <div className="grid-long-text grid-2-col-first">
               <div className="column column-media double-image">
                 <div className="dual-lightbox-image-wrapper">
-                  <Image
+                  <ZoomableImage
                     src="/images/03-Time-estimates-on-lesson-side-outline-navigation_1.webp"
                     alt="Final design screen of video lesson with app side navigation expanded"
                     width={1512}
@@ -1069,7 +1072,7 @@ export default function BrainSprout() {
             <div className="grid-long-text grid-2-col-first long-shot">
               <div className="column column-media">
                 <div className="lightbox-wrapper">
-                  <Image
+                  <ZoomableImage
                     src="/images/04-Assignments-page.png"
                     alt="Final design screen of assignments page"
                     width={1512}
@@ -1101,7 +1104,7 @@ export default function BrainSprout() {
             <div className="grid-long-text grid-2-col-first">
               <div className="column column-media">
                 <div className="lightbox-wrapper">
-                  <Image
+                  <ZoomableImage
                     src="/images/05-Selected-search-result.png"
                     alt="Final design screen of selected search result"
                     width={1512}

@@ -17,6 +17,18 @@
                anything else with no cursor of its own.
      text      Ring hidden; the bar becomes a 2px caret whose height is the
                underlying line-height, passed in as --cursor-text-h.
+     image     Over a zoomable case-study image. The dot opens into a 20px
+               outlined ring with a "+" at its centre — the ring is the same
+               element as the resting dot, grown and hollowed, so the two read
+               as one shape changing size rather than two shapes swapping.
+     zoom-out  Anywhere inside the open zoom overlay. The same ring, with the
+               "+" losing its vertical stroke to leave a "−". The whole
+               overlay closes on click, so the mark describes the surface
+               rather than any one target within it.
+
+   image AND zoom-out ARE THE SAME SHAPE ONE STROKE APART, which is the point:
+   going in and coming back out are one gesture reversed, so they are one
+   cursor with a stroke added or removed rather than two unrelated icons.
 
    EVERYTHING ELSE KEEPS THE NATIVE CURSOR. Anywhere the stylesheets ask for a
    specific cursor — cursor: pointer on links and buttons, the I-beam in a text
@@ -29,10 +41,9 @@
    resolves to `none`. Doing this with `*` and !important would flatten the very
    distinction being drawn.
 
-   (An `image` state — the ring growing to a 20px outline around a "+" over
-   case-study lightbox frames — was built and then removed, to be handled
-   alongside the lightboxes themselves. Nothing here is shaped around it; it
-   would come back as a third data-state plus a second bar.)
+   (The `image` state was built, removed, and is now back — restored alongside
+   the zoom it belongs to, as a third data-state plus the second bar the note
+   that stood here predicted. See components/ZoomableImage.tsx.)
 
    COLOR is the "Hi! I'm Julie" hero pink. See --cursor-color below.
 
@@ -90,16 +101,22 @@
     height: 0;
 
     pointer-events: none;
-    /* One above the highest z-index in the app: .progress-bar and the mobile
-       .nav-menu, both 999999 in juliepaik.css. Below those sits the
-       page-transition panel at 9999 — the cursor should keep tracking over the
-       wipe rather than vanishing under it. Raise this if anything is ever
-       stacked higher.
+    /* One above the highest z-index in the app: the zoom overlay at 1000000 in
+       styles/lightbox.css, then .progress-bar and the mobile .nav-menu, both
+       999999 in juliepaik.css. Below those sits the page-transition panel at
+       9999 — the cursor should keep tracking over the wipe rather than
+       vanishing under it. Raise this if anything is ever stacked higher.
+
+       The zoom overlay in particular MUST stay below this: the rig is what
+       draws the pointer inside it, so an overlay above the rig would cover the
+       cursor with its own scrim. That is why this went 1000000 -> 1000001 when
+       the overlay arrived rather than the overlay squeezing in underneath —
+       there is no integer between 999999 and 1000000 to squeeze into.
 
        Was 2147483647 (int32 max), which paired with the Webflow badge that
        webflow.css pinned at the same value. Those rules are gone, so there is
        no longer a tie to win and no need for the headroom. */
-    z-index: 1000000;
+    z-index: 1000001;
 
     /* Only the fade is animated here. The rig's POSITION is deliberately not
        transitioned: it tracks the pointer 1:1, so any easing would show up as
@@ -121,10 +138,11 @@
     opacity: 1;
   }
 
-  /* Both parts sit centred on the rig's origin, i.e. on the pointer. These
+  /* Every part sits centred on the rig's origin, i.e. on the pointer. These
      transforms are static — only .cursor-root's is rewritten per frame. */
   .cursor-ring,
-  .cursor-caret {
+  .cursor-caret,
+  .cursor-plus {
     position: absolute;
     top: 0;
     left: 0;
@@ -137,7 +155,17 @@
     height: 12px;
     border-radius: 9999px;
     background: var(--cursor-color);
-    transition: opacity 0.16s ease-out;
+    /* Zero-width at rest rather than absent, so growing into the image state's
+       ring animates the border thickening instead of popping one in. The
+       box-sizing: border-box above is what keeps the border inside the 12px
+       and stops the dot jumping a size when it appears. */
+    border: 0 solid var(--cursor-color);
+    transition:
+      width var(--cursor-morph),
+      height var(--cursor-morph),
+      border-width var(--cursor-morph),
+      background var(--cursor-morph),
+      opacity 0.16s ease-out;
   }
 
   /* Zero-height at rest rather than display:none, so switching into the text
@@ -151,6 +179,20 @@
     transition: height var(--cursor-morph), opacity 0.16s ease-out;
   }
 
+  /* The "+"'s horizontal stroke. Its vertical stroke is .cursor-caret, which
+     is why this is the only part the image state adds. Zero-WIDTH at rest for
+     the same reason the caret is zero-height: it grows out of the centre. */
+  .cursor-plus {
+    width: 0;
+    height: 2px;
+    border-radius: 2px;
+    background: var(--cursor-color);
+    opacity: 0;
+    transition:
+      width var(--cursor-morph),
+      opacity 0.16s ease-out;
+  }
+
   /* --- text: a caret the height of the line it is over --- */
 
   .cursor-root[data-state="text"] .cursor-ring {
@@ -159,6 +201,49 @@
 
   .cursor-root[data-state="text"] .cursor-caret {
     height: var(--cursor-text-h);
+    opacity: 1;
+  }
+
+  /* --- image: an outlined ring around a "+" --- */
+
+  /* The dot hollows out and grows: transparent fill, 2px border, 20px box.
+     Hollow because the mark sits INSIDE it and a filled dot would swallow it.
+     Shared with zoom-out so the ring is literally continuous across the two —
+     opening the zoom changes the strokes inside it and nothing else. */
+  .cursor-root[data-state="image"] .cursor-ring,
+  .cursor-root[data-state="zoom-out"] .cursor-ring {
+    width: 20px;
+    height: 20px;
+    background: transparent;
+    border-width: 2px;
+  }
+
+  /* 8px, not the ring's full 20px: the strokes have to stop short of the
+     border or the "+" reads as a wheel with spokes rather than a mark set in
+     a ring. */
+  .cursor-root[data-state="image"] .cursor-caret,
+  .cursor-root[data-state="image"] .cursor-plus {
+    opacity: 1;
+  }
+
+  .cursor-root[data-state="image"] .cursor-caret {
+    height: 8px;
+  }
+
+  .cursor-root[data-state="image"] .cursor-plus {
+    width: 8px;
+  }
+
+  /* --- zoom-out: the same ring around a "−" --- */
+
+  /* Only the horizontal stroke. .cursor-caret keeps its resting height of 0,
+     so moving from image to zoom-out animates the vertical stroke retracting
+     into the bar — the "+" closing into a "−" — on the same --cursor-morph the
+     other states use. Nothing here restates the ring or the colour: both come
+     from the rules above, which is what keeps the pink continuous from the
+     page into the overlay. */
+  .cursor-root[data-state="zoom-out"] .cursor-plus {
+    width: 8px;
     opacity: 1;
   }
 }
