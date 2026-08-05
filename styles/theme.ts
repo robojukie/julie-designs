@@ -1,4 +1,4 @@
-/* Auto-generated from juliepaik.webflow/css/juliepaik.webflow.css :root block.
+/* Auto-generated from the original Webflow export's :root block.
    Do not hand-edit — regenerate from the export if the source changes.
    Every value here is a CSS var() reference into styles/tokens.css (imported
    globally via app/globals.css), so JS/TS consumers (Motion animation values,
@@ -159,8 +159,6 @@ export const fontWeight = {
   textWeighttTitle500: "var(--text-weightt--title-500)",
   /** Webflow: --text-weightt--display-weight */
   textWeighttDisplayWeight: "var(--text-weightt--display-weight)",
-  /** Webflow: --text-weightt--h3 */
-  textWeighttH3: "var(--text-weightt--h3)",
 } as const;
 
 export const colors = {
@@ -178,70 +176,16 @@ export const colors = {
   colorBeige300: "var(--color--beige--300)",
   /** Webflow: --color--neutral--cool--400 */
   colorNeutralCool400: "var(--color--neutral--cool--400)",
-  /** Webflow: --color--beige--500 */
-  colorBeige500: "var(--color--beige--500)",
-  /** Webflow: --color--beige--200 */
-  colorBeige200: "var(--color--beige--200)",
-  /** Webflow: --color--beige--350 */
-  colorBeige350: "var(--color--beige--350)",
-  /** Webflow: --color--beige--700 */
-  colorBeige700: "var(--color--beige--700)",
-  /** Webflow: --color--blue--600 */
-  colorBlue600: "var(--color--blue--600)",
-  /** Webflow: --color--blue--400 */
-  colorBlue400: "var(--color--blue--400)",
-  /** Webflow: --color--green--muted--500 */
-  colorGreenMuted500: "var(--color--green--muted--500)",
-  /** Webflow: --color--green--muted--800 */
-  colorGreenMuted800: "var(--color--green--muted--800)",
-  /** Webflow: --color--green--muted--100 */
-  colorGreenMuted100: "var(--color--green--muted--100)",
-  /** Webflow: --color--neutral--1000 */
-  colorNeutral1000: "var(--color--neutral--1000)",
   /** Webflow: --color--neutral--800 */
   colorNeutral800: "var(--color--neutral--800)",
-  /** Webflow: --color--neutral--900 */
-  colorNeutral900: "var(--color--neutral--900)",
-  /** Webflow: --color--neutral--0 */
-  colorNeutral0: "var(--color--neutral--0)",
   /** Webflow: --color--neutral--100 */
   colorNeutral100: "var(--color--neutral--100)",
-  /** Webflow: --color--neutral--cool--300 */
-  colorNeutralCool300: "var(--color--neutral--cool--300)",
-  /** Webflow: --color--neutral--cool--200 */
-  colorNeutralCool200: "var(--color--neutral--cool--200)",
-  /** Webflow: --color--neutral--cool--700 */
-  colorNeutralCool700: "var(--color--neutral--cool--700)",
-  /** Webflow: --color--neutral--cool--500 */
-  colorNeutralCool500: "var(--color--neutral--cool--500)",
-  /** Webflow: --color--neutral--cool--600 */
-  colorNeutralCool600: "var(--color--neutral--cool--600)",
-  /** Webflow: --color--neutral--warm--700 */
-  colorNeutralWarm700: "var(--color--neutral--warm--700)",
-  /** Webflow: --color--neutral--warm--500 */
-  colorNeutralWarm500: "var(--color--neutral--warm--500)",
   /** Webflow: --color--neutral--warm--200 */
   colorNeutralWarm200: "var(--color--neutral--warm--200)",
-  /** Webflow: --color--neutral--warm--300 */
-  colorNeutralWarm300: "var(--color--neutral--warm--300)",
-  /** Webflow: --color--neutral--warm--600 */
-  colorNeutralWarm600: "var(--color--neutral--warm--600)",
-  /** Webflow: --color--neutral--warm--old */
-  colorNeutralWarmOld: "var(--color--neutral--warm--old)",
-  /** Webflow: --color--peach--200 */
-  colorPeach200: "var(--color--peach--200)",
-  /** Webflow: --color--peach--400 */
-  colorPeach400: "var(--color--peach--400)",
-  /** Webflow: --color--peach--800 */
-  colorPeach800: "var(--color--peach--800)",
   /** Webflow: --color--peach--600 */
   colorPeach600: "var(--color--peach--600)",
-  /** Webflow: --color--pink--800 */
-  colorPink800: "var(--color--pink--800)",
   /** Webflow: --color--pink--color */
   colorPinkColor: "var(--color--pink--color)",
-  /** Webflow: --color--purple--400 */
-  colorPurple400: "var(--color--purple--400)",
 } as const;
 
 export const backgroundColors = {
@@ -261,10 +205,6 @@ export const backgroundColors = {
   backgroundColorBackgroundLightBlue: "var(--background-color--background-light-blue)",
   /** Webflow: --background-color--background-dark-blue */
   backgroundColorBackgroundDarkBlue: "var(--background-color--background-dark-blue)",
-  /** Webflow: --background-color--old-background-dark */
-  backgroundColorOldBackgroundDark: "var(--background-color--old-background-dark)",
-  /** Webflow: --background-color--background-brainsprout */
-  backgroundColorBackgroundBrainsprout: "var(--background-color--background-brainsprout)",
 } as const;
 
 export const accents = {
@@ -286,20 +226,8 @@ export const accents = {
   accentsBoldAccentGreen: "var(--accents--bold--accent-green)",
   /** Webflow: --accents--bold--accent-deep-blue */
   accentsBoldAccentDeepBlue: "var(--accents--bold--accent-deep-blue)",
-  /** Webflow: --accents--bold--accent-blue */
-  accentsBoldAccentBlue: "var(--accents--bold--accent-blue)",
-  /** Webflow: --accents--bold--light-green */
-  accentsBoldLightGreen: "var(--accents--bold--light-green)",
-  /** Webflow: --accents--pastel--purple */
-  accentsPastelPurple: "var(--accents--pastel--purple)",
-  /** Webflow: --accents--pastel--green */
-  accentsPastelGreen: "var(--accents--pastel--green)",
   /** Webflow: --accents--bold--green */
   accentsBoldGreen: "var(--accents--bold--green)",
-  /** Webflow: --accents--bold--orange */
-  accentsBoldOrange: "var(--accents--bold--orange)",
-  /** Webflow: --accents--bold--yellow */
-  accentsBoldYellow: "var(--accents--bold--yellow)",
   /** Webflow: --accents--bold--pink */
   accentsBoldPink: "var(--accents--bold--pink)",
   /** Webflow: --accents--bold--blue */
@@ -313,40 +241,11 @@ export const textColors = {
   textColorsTextLight: "var(--text-colors--text-light)",
   /** Webflow: --text-colors--muted-dark-blue */
   textColorsMutedDarkBlue: "var(--text-colors--muted-dark-blue)",
-  /** Webflow: --text-colors--disabled-text */
-  textColorsDisabledText: "var(--text-colors--disabled-text)",
-  /** Webflow: --text-colors--disabled */
-  textColorsDisabled: "var(--text-colors--disabled)",
 } as const;
 
 export const surfaces = {
   /** Webflow: --surface */
   surface: "var(--surface)",
-  /** Webflow: --surface--annotation--cool */
-  surfaceAnnotationCool: "var(--surface--annotation--cool)",
-  /** Webflow: --surface--annotation--warm */
-  surfaceAnnotationWarm: "var(--surface--annotation--warm)",
-  /** Webflow: --surface--background--case-study--background */
-  surfaceBackgroundCaseStudyBackground: "var(--surface--background--case-study--background)",
-  /** Webflow: --surface--background--dark--background */
-  surfaceBackgroundDarkBackground: "var(--surface--background--dark--background)",
-  /** Webflow: --surface--thumbnail--purple */
-  surfaceThumbnailPurple: "var(--surface--thumbnail--purple)",
-  /** Webflow: --surface--thumbnail--peach-2 */
-  surfaceThumbnailPeach2: "var(--surface--thumbnail--peach-2)",
-  /** Webflow: --surface--thumbnail--peach-1 */
-  surfaceThumbnailPeach1: "var(--surface--thumbnail--peach-1)",
-  /** Webflow: --surface--thumbnail--green-1 */
-  surfaceThumbnailGreen1: "var(--surface--thumbnail--green-1)",
-  /** Webflow: --surface--thumbnail--blue */
-  surfaceThumbnailBlue: "var(--surface--thumbnail--blue)",
-} as const;
-
-export const borders = {
-  /** Webflow: --border--annotation */
-  borderAnnotation: "var(--border--annotation)",
-  /** Webflow: --border--primary */
-  borderPrimary: "var(--border--primary)",
 } as const;
 
 export const widths = {
@@ -362,8 +261,6 @@ export const widths = {
   widthVideoWidth: "var(--width--video-width)",
   /** Webflow: --width--main-content-width */
   widthMainContentWidth: "var(--width--main-content-width)",
-  /** Webflow: --width--lightbox-width */
-  widthLightboxWidth: "var(--width--lightbox-width)",
 } as const;
 
 export const radii = {
@@ -376,8 +273,6 @@ export const radii = {
 export const shadows = {
   /** Webflow: --shadow-color */
   shadowColor: "var(--shadow-color)",
-  /** Webflow: --shadow-blur */
-  shadowBlur: "var(--shadow-blur)",
 } as const;
 
 export const misc = {
@@ -393,16 +288,6 @@ export const misc = {
   darkDarkDarkGrayBlue: "var(--dark-dark-dark-gray-blue)",
   /** Webflow: --beige */
   beige: "var(--beige)",
-  /** Webflow: --white */
-  white: "var(--white)",
-  /** Webflow: --translucent-black */
-  translucentBlack: "var(--translucent-black)",
-  /** Webflow: --inline-link */
-  inlineLink: "var(--inline-link)",
-  /** Webflow: --components--link--primary */
-  componentsLinkPrimary: "var(--components--link--primary)",
-  /** Webflow: --icon--primary */
-  iconPrimary: "var(--icon--primary)",
 } as const;
 
 export const theme = {
@@ -415,7 +300,6 @@ export const theme = {
   accents,
   textColors,
   surfaces,
-  borders,
   widths,
   radii,
   shadows,
