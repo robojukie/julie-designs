@@ -1,4 +1,7 @@
-import Image from "next/image";
+/* The banner screenshot opens the zoom, on every case study. In the export
+   only vac-redesign's banner was a lightbox (hence lightboxWrapper below);
+   the others are the same kind of image and now behave the same way. */
+import ZoomableImage from "@/components/ZoomableImage";
 
 type CaseStudyBannerProps = {
   // Absent on brainsprout, which uses the bare .project-banner-section.
@@ -18,13 +21,14 @@ type CaseStudyBannerProps = {
   // Mirrors the export's own sizes attribute, which differs per image.
   sizes: string;
   eagerLoad?: boolean;
-  /* vac-redesign wraps its banner image in a Webflow lightbox anchor. The
-     lightbox itself needs webflow.js, which we don't run, so the anchor gets no
-     href — but it must stay an <a>. The export's stylesheet has a bare element
-     rule, `a { max-width: 100%; max-height: 100% }`, and that max-height is
-     what gives this wrapper a definite height for the image's `height: 100%`
-     to resolve against. Rendered as a <div> it collapsed to the image's
-     intrinsic size — 441x273 instead of 598x370. */
+  /* vac-redesign wraps its banner image in the export's lightbox anchor. The
+     anchor is now purely a sizing device — the zoom it used to trigger lives
+     on the image itself (see components/ZoomableImage.tsx for why it sits
+     there and not on a wrapper) — but it must still be an <a>. The export's
+     stylesheet has a bare element rule, `a { max-width: 100%; max-height:
+     100% }`, and that max-height is what gives this wrapper a definite height
+     for the image's `height: 100%` to resolve against. Rendered as a <div> it
+     collapsed to the image's intrinsic size — 441x273 instead of 598x370. */
   lightboxWrapper?: boolean;
 };
 
@@ -40,7 +44,7 @@ export default function CaseStudyBanner({
   lightboxWrapper,
 }: CaseStudyBannerProps) {
   const image = (
-    <Image
+    <ZoomableImage
       src={imageSrc}
       alt={imageAlt}
       width={width}

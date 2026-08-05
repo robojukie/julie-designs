@@ -1,4 +1,7 @@
-import Image from "next/image";
+/* Every screenshot on this page opens the zoom — the component renders the
+   same <img> next/image did, plus the attributes that make it operable.
+   See components/ZoomableImage.tsx. */
+import ZoomableImage from "@/components/ZoomableImage";
 import Link from "next/link";
 import type { Metadata } from "next";
 import CaseStudyBanner from "@/components/CaseStudyBanner";
@@ -171,7 +174,7 @@ export default function BrainSproutAccessibility() {
                 <h3>Widening inequality in education extends into adulthood</h3>
               </div>
               <div className="image-wrapper-small">
-                <Image
+                <ZoomableImage
                   src="/images/NYT-image.png"
                   alt="Image from The New York Times showing school children standing on different platform levels to depict educational inequality"
                   width={708}
@@ -309,7 +312,7 @@ export default function BrainSproutAccessibility() {
                 <p>Only Coursera allows for downloading content on web for offline access</p>
               </div>
               <div className="image-wrapper-small">
-                <Image
+                <ZoomableImage
                   src="/images/01-Competitor-analysis---offline-content.png"
                   alt="Competitive analysis table"
                   width={322}
@@ -326,7 +329,7 @@ export default function BrainSproutAccessibility() {
                 <p>Only Coursera has transcripts on mobile devices</p>
               </div>
               <div className="image-wrapper-small">
-                <Image
+                <ZoomableImage
                   src="/images/02-Competitor-analysis---video-transcripts.png"
                   alt="Competitive analysis table of video transcripts"
                   width={322}
@@ -343,7 +346,7 @@ export default function BrainSproutAccessibility() {
                 </p>
               </div>
               <div className="image-wrapper-small">
-                <Image
+                <ZoomableImage
                   src="/images/03-Competitor-analysis---offline-transcript.png"
                   alt="Competitive analysis table"
                   width={354}
@@ -361,7 +364,7 @@ export default function BrainSproutAccessibility() {
               <div className="body-text-container">
                 <p>Only half the examined competitors have multiple lesson formats</p>
                 <div className="image-wrapper-small">
-                  <Image
+                  <ZoomableImage
                     src="/images/03-Competitor-analysis---offline-transcript.png"
                     alt="Competitive analysis table"
                     width={354}
@@ -380,7 +383,7 @@ export default function BrainSproutAccessibility() {
                 </p>
               </div>
               <div className="image-wrapper-small">
-                <Image
+                <ZoomableImage
                   src="/images/05-Competitor-analysis---audio-only-for-video.png"
                   alt="Competitive analysis table"
                   width={354}
@@ -529,7 +532,7 @@ export default function BrainSproutAccessibility() {
                 </h3>
               </div>
               <div className="lightbox-wrapper">
-                <Image
+                <ZoomableImage
                   src="/images/Course-Module-Page---bionic-reading.png"
                   alt="A website wireframe with a page titled Discovery Phase."
                   width={1520}
@@ -545,7 +548,7 @@ export default function BrainSproutAccessibility() {
                 <h3>Option to download content for offline access</h3>
               </div>
               <div className="screenshot-wrapper">
-                <Image
+                <ZoomableImage
                   src="/images/Course-Module-Page---Downloads-Tab.png"
                   alt="A website wireframe with a course on design."
                   width={1520}
@@ -564,7 +567,7 @@ export default function BrainSproutAccessibility() {
                 </h3>
               </div>
               <div className="screenshot-wrapper">
-                <Image
+                <ZoomableImage
                   src="/images/video---open-transcript.png"
                   alt="A website page with a black background and white text."
                   width={1520}
@@ -593,7 +596,7 @@ export default function BrainSproutAccessibility() {
               <h4>Font-size options</h4>
             </div>
             <div className="lightbox-wrapper">
-              <Image
+              <ZoomableImage
                 src="/images/reading---all-expanded.png"
                 alt="A website wireframe with a course on design."
                 width={1520}
@@ -609,7 +612,7 @@ export default function BrainSproutAccessibility() {
               <h4>Text-to-speech audio player for reading lessons</h4>
             </div>
             <div className="lightbox-wrapper">
-              <Image
+              <ZoomableImage
                 src="/images/MacBook-Pro-14_---26.png"
                 alt="A website wireframe with a course on design."
                 width={1520}
@@ -754,7 +757,7 @@ export default function BrainSproutAccessibility() {
                 </div>
               </div>
               <div className="lightbox-wrapper">
-                <Image
+                <ZoomableImage
                   src="/images/final---video-lesson-options.png"
                   alt="Screen depicting a video still with 2 cartoon robot characters are holding a box with a heart on it"
                   width={2268}
@@ -783,7 +786,7 @@ export default function BrainSproutAccessibility() {
                 </div>
               </div>
               <div className="lightbox-wrapper">
-                <Image
+                <ZoomableImage
                   src="/images/final---multiple-format-downloads-available.png"
                   alt="Screen depicting a video still with 2 cartoon robot characters are holding a box with a heart on it"
                   width={3024}
