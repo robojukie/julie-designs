@@ -10,13 +10,13 @@ import {
   type MouseEvent as ReactMouseEvent,
 } from "react";
 
-/* Mirror --pt-duration / --pt-duration-entry-home in
-   styles/page-transition.css, where the real timing lives. Used only to size
-   the watchdog below, but they must not be LOWER than the CSS values: the
-   watchdog force-advances the phase, which tears down a still-running
-   animation. A too-small number here silently cancels the leg mid-flight. */
+/* Mirrors --pt-duration in styles/page-transition.css, where the real timing
+   lives. Used only to size the watchdog below, but it must not be LOWER than
+   the CSS value: the watchdog force-advances the phase, which tears down a
+   still-running animation. A too-small number here silently cancels the leg
+   mid-flight. Erring high is harmless — the animationend event beats the
+   watchdog in every case except the one it exists for. */
 const DURATION_MS = 400;
-const ENTRY_HOME_DURATION_MS = 600;
 
 /* Full-viewport wipe played on navigation: a "V" sweep — enters top-right,
    dives down-left to a bottom vertex ("cover", where the route swaps
@@ -57,15 +57,12 @@ const HOLD_MS = 300;
    Every load gets it now, home and first visits included, so there is no
    navigation-type check left — an earlier version read
    performance.getEntriesByType("navigation")[0].type to tell a refresh from a
-   first load, purely to exempt home.
-
-   The flag's VALUE carries the one distinction still needed: "home" vs "1".
-   Home's entry reveal runs slower (see ENTRY_HOME_DURATION_MS), and the
-   decision has to be made here rather than in React because the pathname is
-   read before hydration, in the same breath as the cover itself. */
+   first load, purely to exempt home. The flag carried a "home" vs "1" value
+   for a while too, back when home's entry reveal ran slower; every route is
+   the same speed now, so its presence is the whole signal. */
 export const ENTRY_SCRIPT = `(function(){try{
 if(matchMedia("(prefers-reduced-motion: reduce)").matches)return;
-document.documentElement.setAttribute("${ENTRY_ATTR}",location.pathname==="/"?"home":"1");
+document.documentElement.setAttribute("${ENTRY_ATTR}","1");
 // Safety net: if the bundle never executes, don't strand the page behind an
 // opaque panel with no way out.
 setTimeout(function(){document.documentElement.removeAttribute("${ENTRY_ATTR}")},3000);
@@ -83,8 +80,6 @@ export default function PageTransition({
   const pathname = usePathname();
   const router = useRouter();
   const [phase, setPhase] = useState<"idle" | "cover" | "reveal">("idle");
-  // True only while home's entry reveal is playing; see the useLayoutEffect below.
-  const [slowEntry, setSlowEntry] = useState(false);
   const pendingHref = useRef<string | null>(null);
   // True once a "cover" we triggered has finished landing, so the pathname
   // effect below knows a route change is one we should reveal for (vs. a
@@ -97,20 +92,12 @@ export default function PageTransition({
      runs. useLayoutEffect, not useEffect, so the swap to "reveal" is in the
      same frame and the covered panel never flickers. */
   useLayoutEffect(() => {
-    const root = document.documentElement;
-    const flag = root.getAttribute(ENTRY_ATTR);
-    if (flag === null) return;
+    if (!document.documentElement.hasAttribute(ENTRY_ATTR)) return;
     /* The attribute is what pins the ball centre, so it stays put for the
        duration of the hold and is cleared by the effect below instead — in the
        same commit as the phase flip, so there is no frame where the cover has
        been released but the reveal has not started. */
-    const id = window.setTimeout(() => {
-      /* Only home's entry leg is slowed, and only that one leg — cleared again
-         in advance() so a later click transition on the same page load runs at
-         the normal speed. */
-      if (flag === "home") setSlowEntry(true);
-      setPhase("reveal");
-    }, HOLD_MS);
+    const id = window.setTimeout(() => setPhase("reveal"), HOLD_MS);
     return () => window.clearTimeout(id);
   }, []);
 
@@ -200,7 +187,6 @@ export default function PageTransition({
         if (href) router.push(href);
       } else {
         setPhase("idle");
-        setSlowEntry(false);
       }
     },
     [router],
@@ -218,14 +204,9 @@ export default function PageTransition({
       advancedFor.current = null;
       return;
     }
-    /* Home's entry reveal is the longer leg — sizing this off the 400ms figure
-       would fire the watchdog at 550ms and tear the animation down before it
-       finished. */
-    const legMs =
-      slowEntry && phase === "reveal" ? ENTRY_HOME_DURATION_MS : DURATION_MS;
-    const id = window.setTimeout(() => advance(phase), legMs + 150);
+    const id = window.setTimeout(() => advance(phase), DURATION_MS + 150);
     return () => window.clearTimeout(id);
-  }, [phase, advance, slowEntry]);
+  }, [phase, advance]);
 
   return (
     <>
@@ -239,7 +220,6 @@ export default function PageTransition({
       <div
         className="page-transition"
         data-phase={phase}
-        data-slow-entry={slowEntry ? "" : undefined}
         aria-hidden="true"
         onAnimationEnd={() => {
           if (phase !== "idle") advance(phase);

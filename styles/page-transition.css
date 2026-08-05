@@ -41,16 +41,17 @@
      before hydration, see [data-pt-entry] below) can't depend on cascade
      order between the token sheet and this one. */
   --pt-color: #ed6b6b;
-  --pt-duration: 400ms;
-  /* Home's entry reveal only — see [data-slow-entry] below. */
-  --pt-duration-entry-home: 600ms;
+  /* One leg. Every leg on every route runs at this — cover, reveal, entry or
+     click. Mirrored as DURATION_MS in PageTransition.tsx, which sizes the
+     watchdog off it. */
+  --pt-duration: 300ms;
 
   --pt-r: 72vmax;
 
   /* Off-screen ends. 0.7071 * r along each axis past the corner (0.7071 * 72 =
      50.91vmax) puts the circle exactly TANGENT to the viewport's corner: as
-     close as it can sit while still fully clear, so no part of the 400ms is
-     spent crossing dead space where nothing is visible. Tangent is a single
+     close as it can sit while still fully clear, so no part of --pt-duration
+     is spent crossing dead space where nothing is visible. Tangent is a single
      shared point though — enough for an antialiased sliver to survive in the
      corner — so this carries 2vmax of clearance on top. */
   --pt-x-off: calc(50vw + 52.91vmax);
@@ -110,24 +111,14 @@
   animation: pt-y-rise var(--pt-duration) var(--pt-ease-rise) forwards;
 }
 
-/* Home's entry reveal, and nothing else. PageTransition sets data-slow-entry
-   for exactly that one leg and clears it again once the leg finishes, so a
-   click transition later in the same page load is back to --pt-duration.
-   Note the watchdog in PageTransition has to know about this too — it would
-   otherwise fire at 550ms and cancel the longer leg mid-flight. */
-.page-transition[data-slow-entry][data-phase="reveal"] .page-transition__x,
-.page-transition[data-slow-entry][data-phase="reveal"] .page-transition__ball {
-  animation-duration: var(--pt-duration-entry-home);
-}
-
 /* Set before paint by the inline script in app/layout.tsx on EVERY entry load
    — refresh, deep link, or a first visit to home — so the viewport is already
    covered when the first frame paints. The ball parked dead centre is the
    state the cover leg ends in, so the reveal (the second leg) runs straight
    from it.
 
-   Matched on PRESENCE, not value: the script writes "home" on home and "1"
-   elsewhere, and both have to park the ball. */
+   Matched on PRESENCE, not value — the script writes a bare "1" on every
+   route. */
 :root[data-pt-entry] .page-transition__x {
   transform: translateX(0);
 }
