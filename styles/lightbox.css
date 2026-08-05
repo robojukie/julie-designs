@@ -10,10 +10,20 @@
   position: fixed;
   inset: 0;
 
-  /* One below the cursor rig's 2147483647. styles/cursor.css states the rig
-     should keep tracking OVER a full-viewport overlay rather than vanish under
-     one, and that is only true if every overlay stays beneath it. */
-  z-index: 2147483000;
+  /* Strictly above everything the page stacks — the progress bar and the
+     mobile nav menu at 999999 — and strictly below the cursor rig, which
+     styles/cursor.css keeps one above the highest value here.
+
+     The lower bound and the upper bound are both load-bearing. Below the nav
+     and a full-viewport overlay isn't full-viewport; above the rig and the
+     scrim covers the pointer, leaving the zoom with no cursor at all — which
+     is the whole of what the rig's `zoom-out` state exists to draw.
+
+     This is the app's new highest, so cursor.css moved from 1000000 to
+     1000001 to stay above it. There is no integer between 999999 and 1000000,
+     so one of the two had to move; raising the rig keeps the invariant true by
+     construction rather than resting it on document order. */
+  z-index: 1000000;
 
   background: var(--translucent-black);
   /* Blur rather than a heavier scrim: the page stays legible as context behind
