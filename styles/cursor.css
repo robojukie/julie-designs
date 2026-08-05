@@ -90,12 +90,16 @@
     height: 0;
 
     pointer-events: none;
-    /* The maximum, because the rig has to clear the Webflow badge — which
-       webflow.css pins at this same value — as well as any full-viewport
-       overlay the site grows later: the cursor should keep tracking over one,
-       not vanish under it. Equal z-index is settled by document order, and
-       Cursor.tsx mounts last in <body>, so the rig wins that tie. */
-    z-index: 2147483647;
+    /* One above the highest z-index in the app: .progress-bar and the mobile
+       .nav-menu, both 999999 in juliepaik.css. Below those sits the
+       page-transition panel at 9999 — the cursor should keep tracking over the
+       wipe rather than vanishing under it. Raise this if anything is ever
+       stacked higher.
+
+       Was 2147483647 (int32 max), which paired with the Webflow badge that
+       webflow.css pinned at the same value. Those rules are gone, so there is
+       no longer a tie to win and no need for the headroom. */
+    z-index: 1000000;
 
     /* Only the fade is animated here. The rig's POSITION is deliberately not
        transitioned: it tracks the pointer 1:1, so any easing would show up as
