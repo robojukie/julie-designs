@@ -32,7 +32,7 @@ const ACTIVE_CLASS = "has-custom-cursor";
    Case studies are excluded now because they simply don't carry the tag,
    rather than because they root at a different class.
 
-   KEEP IN SYNC with styles/custom.css section 13, which makes the same
+   KEEP IN SYNC with styles/custom.css section 14, which makes the same
    attribute unselectable. Both halves of "this is a picture of words" answer
    the same question, so they read from the same selector.
 

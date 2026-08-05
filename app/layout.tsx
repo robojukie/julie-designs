@@ -49,9 +49,8 @@ export default function RootLayout({
           <Nav />
           {children}
           <Footer />
-          {/* Last in <body> deliberately: the rig shares the maximum z-index
-              with the Webflow badge, and document order is what breaks that
-              tie in the rig's favour. See styles/cursor.css. */}
+          {/* Last in <body> so the rig stacks above everything before it even
+              against an equal z-index. See styles/cursor.css. */}
           <Cursor />
         </PageTransition>
       </body>

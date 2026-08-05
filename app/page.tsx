@@ -23,7 +23,7 @@ export default function Home() {
                  text caret. Set here, on the wrapper around both the "Hi"
                  Lottie and the letters, because user-select inherits — one
                  attribute covers the whole mark. See styles/custom.css
-                 section 13. */
+                 section 14. */
               data-graphic-text
               onMouseEnter={() => hiLottieRef.current?.replay()}
               onClick={() => hiLottieRef.current?.replay()}

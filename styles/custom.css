@@ -386,7 +386,78 @@
 }
 
 /* ---------------------------------------------------------------------------
-   13. Graphic text  — NEW BEHAVIOUR, NOT IN THE EXPORT
+   13. Keyboard focus  — NEW BEHAVIOUR, NOT IN THE EXPORT
+
+   The export ships no focus styling at all: fifteen :hover rules, and the only
+   :focus rule in juliepaik.css is `.menu-button:focus { margin-right: 0 }`.
+   Webflow's own framework then actively removes the browser default in several
+   places (`.w-input:focus`, `.w-nav-button:focus`, `.w-dropdown-*:focus` — all
+   `outline: 0`), so parts of the site are keyboard-navigable with no visible
+   indicator whatsoever.
+
+   :focus-visible rather than :focus, so pointer users never see a ring on
+   click while keyboard users always do. Every browser we target supports it.
+
+   Colour: --accents--bold--pink (#de225d), NOT the link colour
+   --accents--bold--accent-heading (#ed6b6b). WCAG 2.1 SC 1.4.11 wants 3:1
+   against the adjacent ground for a non-text indicator, and #ed6b6b measures
+   2.78:1 on the body paper, 2.87:1 on the case-study ground and 2.96:1 on
+   white — it fails on every surface the site actually has. #de225d measures
+   4.27 / 4.42 / 4.56:1 and passes on all three.
+
+   The `.w-*` selectors are deliberately duplicated alongside their bare
+   element equivalents: webflow.css's `outline: 0` rules are class-level
+   (0,2,0), so a plain `input:focus-visible` (0,1,1) would lose to them. The
+   class form ties on specificity and this file loads later, so it wins.
+
+   Outline, not box-shadow: it follows border-radius, survives forced-colors
+   mode, and is not clipped by an element's own overflow:hidden — which
+   .menu-button, .article-card and .image-wrapper-cover all set.
+--------------------------------------------------------------------------- */
+:root {
+  --focus-ring-color: var(--accents--bold--pink);
+  --focus-ring-width: 2px;
+  --focus-ring-offset: 2px;
+}
+
+a:focus-visible,
+button:focus-visible,
+summary:focus-visible,
+[tabindex]:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible,
+.w-input:focus-visible,
+.w-select:focus-visible,
+.w-nav-button:focus-visible,
+.w-nav-link:focus-visible,
+.w-dropdown-toggle:focus-visible,
+.w-dropdown-link:focus-visible,
+.w-tab-link:focus-visible,
+.w-slider-dot:focus-visible,
+.w-slider-arrow-left:focus-visible,
+.w-slider-arrow-right:focus-visible {
+  outline: var(--focus-ring-width) solid var(--focus-ring-color);
+  outline-offset: var(--focus-ring-offset);
+}
+
+/* The nav bar is only 60px tall and the links sit tight against its edges, so
+   a 2px offset ring would be clipped by the viewport at the top of the page.
+   Tuck it inward for the nav only. */
+.navbar a:focus-visible {
+  outline-offset: 0;
+}
+
+/* Cards are large targets whose ring reads better hugging the surface than
+   floating 2px off it, and .article-card rotates on hover — an offset ring
+   would visibly detach mid-transform. */
+.container-project-link:focus-visible,
+.article-card:focus-visible {
+  outline-offset: -2px;
+}
+
+/* ---------------------------------------------------------------------------
+   14. Graphic text  — NEW BEHAVIOUR, NOT IN THE EXPORT
    Marks text that should read as a piece of artwork rather than as prose: it
    can't be selected, doesn't raise a long-press callout on touch, and
    components/Cursor.tsx shows the resting dot over it instead of the text
