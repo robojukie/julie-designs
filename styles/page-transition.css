@@ -42,6 +42,8 @@
      order between the token sheet and this one. */
   --pt-color: #ed6b6b;
   --pt-duration: 400ms;
+  /* Home's entry reveal only — see [data-slow-entry] below. */
+  --pt-duration-entry-home: 600ms;
 
   --pt-r: 72vmax;
 
@@ -108,16 +110,36 @@
   animation: pt-y-rise var(--pt-duration) var(--pt-ease-rise) forwards;
 }
 
-/* Set before paint by the inline script in app/layout.tsx on entry loads
-   (a refresh of any page, or a direct load of any page but home), so the
-   viewport is already covered when the first frame paints. The ball parked
-   dead centre is the state the cover leg ends in, so the reveal runs straight
-   from it. */
-:root[data-pt-entry="1"] .page-transition__x {
+/* Home's entry reveal, and nothing else. PageTransition sets data-slow-entry
+   for exactly that one leg and clears it again once the leg finishes, so a
+   click transition later in the same page load is back to --pt-duration.
+   Note the watchdog in PageTransition has to know about this too — it would
+   otherwise fire at 550ms and cancel the longer leg mid-flight. */
+.page-transition[data-slow-entry][data-phase="reveal"] .page-transition__x,
+.page-transition[data-slow-entry][data-phase="reveal"] .page-transition__ball {
+  animation-duration: var(--pt-duration-entry-home);
+}
+
+/* Set before paint by the inline script in app/layout.tsx on EVERY entry load
+   — refresh, deep link, or a first visit to home — so the viewport is already
+   covered when the first frame paints. The ball parked dead centre is the
+   state the cover leg ends in, so the reveal (the second leg) runs straight
+   from it.
+
+   Matched on PRESENCE, not value: the script writes "home" on home and "1"
+   elsewhere, and both have to park the ball. */
+:root[data-pt-entry] .page-transition__x {
   transform: translateX(0);
 }
-:root[data-pt-entry="1"] .page-transition__ball {
+:root[data-pt-entry] .page-transition__ball {
   transform: translateY(0);
+}
+
+/* The entry hold (HOLD_MS in PageTransition) runs while the phase is still
+   "idle", so the cover/reveal rule above doesn't cover it — without this, the
+   screen looks sealed but clicks land on the page underneath it. */
+:root[data-pt-entry] .page-transition {
+  pointer-events: auto;
 }
 
 @keyframes pt-x-in {

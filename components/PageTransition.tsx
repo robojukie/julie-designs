@@ -10,10 +10,13 @@ import {
   type MouseEvent as ReactMouseEvent,
 } from "react";
 
-// Mirrors --pt-duration in styles/page-transition.css, where the real timing
-// lives. Used only to size the watchdog below, so it needs to be >= the CSS
-// value, not exact.
+/* Mirror --pt-duration / --pt-duration-entry-home in
+   styles/page-transition.css, where the real timing lives. Used only to size
+   the watchdog below, but they must not be LOWER than the CSS values: the
+   watchdog force-advances the phase, which tears down a still-running
+   animation. A too-small number here silently cancels the leg mid-flight. */
 const DURATION_MS = 400;
+const ENTRY_HOME_DURATION_MS = 600;
 
 /* Full-viewport wipe played on navigation: a "V" sweep — enters top-right,
    dives down-left to a bottom vertex ("cover", where the route swaps
@@ -24,32 +27,45 @@ const DURATION_MS = 400;
    the two legs. Timing/easing/curve are matched to austlee.com — see that
    stylesheet's header for the specifics.
 
-   It runs in three cases:
+   It runs in two cases:
      1. Page-to-page clicks — both legs, cover then reveal.
-     2. Entry loads (a refresh of any page, or a direct load of anything but
-        home) — reveal only, out of the pre-painted covered state that
-        ENTRY_SCRIPT in app/layout.tsx sets up.
-     3. Never on a first load of home, so the hero's "Hi! I'm Julie" sequence
-        plays against an unobstructed page. */
+     2. Every entry load, home included — reveal only (the second leg), played
+        out of the pre-painted covered state that ENTRY_SCRIPT in
+        app/layout.tsx sets up. */
 
 const ENTRY_ATTR = "data-pt-entry";
+
+/* How long the ball sits parked dead centre — screen fully covered, nothing
+   moving — before the reveal leg runs. The cover animation's forwards fill is
+   what holds it there, so this is purely a delay before the phase flips.
+
+   Deliberately a FLAT timer, not a readiness gate. austlee.com holds its panel
+   until document.fonts.ready plus above-fold images resolve (capped at 2s),
+   which on a warm load lands around 0.4-0.6s but stretches on image-heavy
+   routes. That variability is fine there because nothing is sequenced behind
+   it; here the hero intro plays immediately after the reveal, so the hold has
+   to be the same length every time or the two fall out of step. */
+const HOLD_MS = 300;
 
 /* Runs before first paint, inlined into the document — see app/layout.tsx.
 
    The covered-on-entry state has to be decided and painted before React
-   hydrates, otherwise a refresh flashes the page content for however long
-   hydration takes before the panel could cover it. Deliberately not a React
-   concern for that reason; PageTransition just picks the flag up on mount.
+   hydrates, otherwise the page content shows for however long hydration takes
+   before the ball could cover it. Deliberately not a React concern for that
+   reason; PageTransition just picks the flag up on mount.
 
-   performance.getEntriesByType("navigation")[0].type distinguishes a refresh
-   ("reload") from a first load ("navigate"), which is the only way to satisfy
-   "no transition on initial home, but yes on refreshing it". */
+   Every load gets it now, home and first visits included, so there is no
+   navigation-type check left — an earlier version read
+   performance.getEntriesByType("navigation")[0].type to tell a refresh from a
+   first load, purely to exempt home.
+
+   The flag's VALUE carries the one distinction still needed: "home" vs "1".
+   Home's entry reveal runs slower (see ENTRY_HOME_DURATION_MS), and the
+   decision has to be made here rather than in React because the pathname is
+   read before hydration, in the same breath as the cover itself. */
 export const ENTRY_SCRIPT = `(function(){try{
-var n=performance.getEntriesByType("navigation")[0];
-var t=n?n.type:"navigate";
 if(matchMedia("(prefers-reduced-motion: reduce)").matches)return;
-if(t==="navigate"&&location.pathname==="/")return;
-document.documentElement.setAttribute("${ENTRY_ATTR}","1");
+document.documentElement.setAttribute("${ENTRY_ATTR}",location.pathname==="/"?"home":"1");
 // Safety net: if the bundle never executes, don't strand the page behind an
 // opaque panel with no way out.
 setTimeout(function(){document.documentElement.removeAttribute("${ENTRY_ATTR}")},3000);
@@ -67,6 +83,8 @@ export default function PageTransition({
   const pathname = usePathname();
   const router = useRouter();
   const [phase, setPhase] = useState<"idle" | "cover" | "reveal">("idle");
+  // True only while home's entry reveal is playing; see the useLayoutEffect below.
+  const [slowEntry, setSlowEntry] = useState(false);
   const pendingHref = useRef<string | null>(null);
   // True once a "cover" we triggered has finished landing, so the pathname
   // effect below knows a route change is one we should reveal for (vs. a
@@ -80,15 +98,36 @@ export default function PageTransition({
      same frame and the covered panel never flickers. */
   useLayoutEffect(() => {
     const root = document.documentElement;
-    if (!root.hasAttribute(ENTRY_ATTR)) return;
-    root.removeAttribute(ENTRY_ATTR);
-    setPhase("reveal");
+    const flag = root.getAttribute(ENTRY_ATTR);
+    if (flag === null) return;
+    /* The attribute is what pins the ball centre, so it stays put for the
+       duration of the hold and is cleared by the effect below instead — in the
+       same commit as the phase flip, so there is no frame where the cover has
+       been released but the reveal has not started. */
+    const id = window.setTimeout(() => {
+      /* Only home's entry leg is slowed, and only that one leg — cleared again
+         in advance() so a later click transition on the same page load runs at
+         the normal speed. */
+      if (flag === "home") setSlowEntry(true);
+      setPhase("reveal");
+    }, HOLD_MS);
+    return () => window.clearTimeout(id);
   }, []);
+
+  /* Hands the ball off from the entry attribute to the reveal animation. Runs
+     in the same commit that sets the phase (layout effect, before paint), and
+     the animation's forwards fill outranks the attribute rule from there on. */
+  useLayoutEffect(() => {
+    if (phase !== "idle") document.documentElement.removeAttribute(ENTRY_ATTR);
+  }, [phase]);
 
   useEffect(() => {
     if (!awaitingRouteChange.current) return;
     awaitingRouteChange.current = false;
-    setPhase("reveal");
+    // Same hold as an entry load: the route has already swapped underneath the
+    // parked ball, so this is dwell time on a fully covered screen.
+    const id = window.setTimeout(() => setPhase("reveal"), HOLD_MS);
+    return () => window.clearTimeout(id);
   }, [pathname]);
 
   useEffect(() => {
@@ -161,6 +200,7 @@ export default function PageTransition({
         if (href) router.push(href);
       } else {
         setPhase("idle");
+        setSlowEntry(false);
       }
     },
     [router],
@@ -178,9 +218,14 @@ export default function PageTransition({
       advancedFor.current = null;
       return;
     }
-    const id = window.setTimeout(() => advance(phase), DURATION_MS + 150);
+    /* Home's entry reveal is the longer leg — sizing this off the 400ms figure
+       would fire the watchdog at 550ms and tear the animation down before it
+       finished. */
+    const legMs =
+      slowEntry && phase === "reveal" ? ENTRY_HOME_DURATION_MS : DURATION_MS;
+    const id = window.setTimeout(() => advance(phase), legMs + 150);
     return () => window.clearTimeout(id);
-  }, [phase, advance]);
+  }, [phase, advance, slowEntry]);
 
   return (
     <>
@@ -194,6 +239,7 @@ export default function PageTransition({
       <div
         className="page-transition"
         data-phase={phase}
+        data-slow-entry={slowEntry ? "" : undefined}
         aria-hidden="true"
         onAnimationEnd={() => {
           if (phase !== "idle") advance(phase);
