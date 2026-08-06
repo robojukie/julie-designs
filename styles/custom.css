@@ -243,17 +243,17 @@
    presentational hints. So wherever the ported CSS constrains only one axis,
    the attribute silently supplies the other and the aspect ratio breaks:
 
-     .image-1257 (case-study banner) sets height:100% and no width, so the
+     .banner-image-contain (case-study banner) sets height:100% and no width, so the
      width attribute (1840px, clamped by max-width:100%) filled the wrapper —
      1057x370 instead of 851x370. With the export's global
      `img { object-fit: cover }` the extra width then CROPPED the banner.
-     .image-1262 (about hero) sets max-height:280px and no width: 228x280
+     .about-portrait (about hero) sets max-height:280px and no width: 228x280
      instead of 176x208, cropped the same way.
 
    Resetting both axes to auto restores the export's behaviour exactly: where
    the CSS sets a dimension it wins, and where it doesn't the intrinsic ratio
    fills in. :where() keeps specificity at 0 so every ported rule — including
-   the breakpoint overrides that DO set width, like .image-1257's
+   the breakpoint overrides that DO set width, like .banner-image-contain's
    `width:100%` at <=991px — still beats it, while it stays ahead of the
    presentational hints, which sort below all author styles.
 --------------------------------------------------------------------------- */
@@ -464,17 +464,16 @@ select:focus-visible,
    caret. Applied to the home hero wordmark, and to the page and section
    headers on the three top-level pages.
 
-   austlee.com does the same thing to "austin lee", and — worth recording,
-   because it is the opposite of what the effect suggests — WITHOUT an image.
-   That wordmark is a real <h1> with four stacked stroke layers behind it; the
-   graphic feel comes entirely from user-select:none plus a data-cursor="none"
-   attribute his cursor script reads. Keeping ours as text likewise costs
-   nothing semantically: the heading still carries its own text for search and
-   for screen readers, and HeroTitle.tsx's per-letter stagger still has letters
-   to stagger. An <img> would have given up all three.
+   Worth recording, because it is the opposite of what the effect suggests:
+   this is done WITHOUT an image. The wordmark stays a real <h1> with stacked
+   stroke layers behind it, and the graphic feel comes entirely from
+   user-select:none plus the attribute the cursor script reads. Keeping it as
+   text costs nothing semantically: the heading still carries its own text for
+   search and for screen readers, and HeroTitle.tsx's per-letter stagger still
+   has letters to stagger. An <img> would have given up all three.
 
-   One attribute rather than his two (a class for selection, an attribute for
-   the cursor), since both behaviours answer the same question — is this thing
+   One attribute rather than two (a class for selection, an attribute for the
+   cursor), since both behaviours answer the same question — is this thing
    prose, or is it a picture of words?
 
    user-select inherits, so the attribute belongs on the outermost wrapper of

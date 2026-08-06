@@ -20,7 +20,7 @@ export default function VACRedesign() {
         imageAlt=""
         width={1322}
         height={818}
-        imageClassName="image-1257"
+        imageClassName="banner-image-contain"
         sizes="(max-width: 1322px) 100vw, 1322px"
         lightboxWrapper
       />
@@ -204,7 +204,7 @@ export default function VACRedesign() {
               <h2>Impact</h2>
             </div>
           </div>
-          <div className="horizontal-middle-container-copy">
+          <div className="horizontal-middle-container">
             <div className="_2-x-1-grid">
               <div className="card">
                 <div className="card-media">
@@ -717,7 +717,7 @@ export default function VACRedesign() {
                       anchor gets no href — but it must stay an <a>: the
                       stylesheet's bare `a { max-width: 100%; max-height: 100% }`
                       is what .image-max300h's `height: 100%` resolves against. */}
-                  <a className="lightbox-link-5 w-inline-block">
+                  <a className="zoom-link-rounded w-inline-block">
                     <ZoomableImage
                       src="/images/vac-dashboard-06.png"
                       alt="A computer screen displaying sub requests for a teacher."

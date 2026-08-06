@@ -27,7 +27,7 @@ import {
    WHY THE INTERACTION SITS ON THE <img> AND NOT ON A WRAPPER. The obvious
    shape — wrap the image in a <button> — cannot be used. These images sit
    inside ported Webflow containers whose sizing is load-bearing and fragile:
-   .lightbox-link-5 must stay an <a> so the stylesheet's bare
+   .zoom-link-rounded must stay an <a> so the stylesheet's bare
    `a { max-width: 100% }` is what .image-max300h's `height: 100%` resolves
    against, and next/image's no-upscale rule already collapses shrink-wrapping
    containers here. Any new box in that chain is a layout risk for no gain. So

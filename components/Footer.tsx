@@ -17,7 +17,7 @@ export default function Footer() {
               alt=""
               width={64}
               height={64}
-              className="image-1260"
+              className="footer-image"
             />
           </div>
         </div>

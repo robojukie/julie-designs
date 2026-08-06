@@ -2,9 +2,13 @@
    reasoning behind the DOM shape live in components/ZoomableImage.tsx; this
    file is only what the overlay looks like.
 
-   The backdrop is --translucent-black (#000000a8) from styles/tokens.css —
+   The backdrop is --translucent-white (#ffffffde) from styles/tokens.css —
    the token the export already used for scrims — rather than a new literal, so
-   the zoom sits on the same value as the rest of the site's dark overlays. */
+   the zoom sits on the same value as the close button below it.
+
+   It is a LIGHT scrim, deliberately: at 87% white over a blur the case study
+   stays readable behind the zoomed image, which keeps the zoom feeling like a
+   magnifier held over the page rather than a navigation away from it. */
 
 .lightbox {
   position: fixed;
@@ -25,7 +29,7 @@
      construction rather than resting it on document order. */
   z-index: 1000000;
 
-  background: var(--translucent-black);
+  background: var(--translucent-white);
   /* Blur rather than a heavier scrim: the page stays legible as context behind
      the image, which is what keeps the zoom feeling like a magnifier held over
      the case study rather than a navigation away from it.

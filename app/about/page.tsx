@@ -26,14 +26,14 @@ export default function About() {
                     344x407, and was declared 400x280: a landscape box for a
                     portrait drawing. The width/height *attributes* are then
                     neutralised by the :where(img[data-nimg]) reset in
-                    custom.css, so .image-1262's max-height:280px sizes it the
+                    custom.css, so .about-portrait's max-height:280px sizes it the
                     way it sizes the export's plain <img>. Renders 176x208. */}
                 <Image
                   src="/images/Me-on-laptop.svg"
                   alt="Girl with dark hair sitting on beanbag chair with laptop next to small side table with steaming green cup. Image adapted from catalyststuff on Freepik"
                   width={344}
                   height={407}
-                  className="image-1262"
+                  className="about-portrait"
                   priority
                 />
               </div>
@@ -168,9 +168,9 @@ export default function About() {
           </div>
           <div className="container-680">
             <div className="display-icon-wrapper">
-              <Image src="/images/Nature.svg" alt="" width={40} height={40} className="image-127" />
-              <Image src="/images/Food.svg" alt="" width={40} height={40} className="image-129" />
-              <Image src="/images/Plus.svg" alt="" width={40} height={40} className="image-128" />
+              <Image src="/images/Nature.svg" alt="" width={40} height={40} className="display-icon" />
+              <Image src="/images/Food.svg" alt="" width={40} height={40} className="display-icon" />
+              <Image src="/images/Plus.svg" alt="" width={40} height={40} className="display-icon" />
             </div>
             <div className="main-text">
               <p>
@@ -183,8 +183,8 @@ export default function About() {
           <div id="hobbies" className="container-680">
             <div className="display-icon-wrapper">
               <Image src="/images/Sports.svg" alt="" width={40} height={40} className="image" />
-              <Image src="/images/Microphone.svg" alt="" width={40} height={40} className="image-131" />
-              <Image src="/images/GlobeAsia.svg" alt="" width={40} height={40} className="image-132" />
+              <Image src="/images/Microphone.svg" alt="" width={40} height={40} className="display-icon-podcast" />
+              <Image src="/images/GlobeAsia.svg" alt="" width={40} height={40} className="display-icon" />
             </div>
             <div className="main-text">
               <p>

@@ -63,7 +63,7 @@ export default function Home() {
               </div>
             </FadeIn>
           </div>
-          <div className="captioned-image-copy">
+          <div className="captioned-image-home">
             <div className="image-credit">Image adapted from catalyststuff on Freepik</div>
           </div>
         </div>

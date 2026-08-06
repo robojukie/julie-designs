@@ -23,7 +23,7 @@ export default function BrainSproutAccessibility() {
         imageAlt="Screen of website with reading content and illustration of a cute girl"
         width={3040}
         height={1980}
-        imageClassName="image-122"
+        imageClassName="banner-image-fixed-height"
         sizes="(max-width: 3040px) 100vw, 3040px"
       />
 

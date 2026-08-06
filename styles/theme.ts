@@ -259,8 +259,8 @@ export const widths = {
   widthContainer1224: "var(--width--container-1224)",
   /** Webflow: --width--video-width */
   widthVideoWidth: "var(--width--video-width)",
-  /** Webflow: --width--main-content-width */
-  widthMainContentWidth: "var(--width--main-content-width)",
+  /** Webflow: --width--main-content-width — removed, it was a second name for
+      the same 800px as --width--container-800. Use widthContainer800. */
 } as const;
 
 export const radii = {
