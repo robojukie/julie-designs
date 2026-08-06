@@ -28,7 +28,7 @@ export default function BankGreen() {
         imageAlt=""
         width={1840}
         height={800}
-        imageClassName="image-1257"
+        imageClassName="banner-image-contain"
         sizes="(max-width: 1840px) 100vw, 1840px"
         zoomable={false}
       />
@@ -92,7 +92,7 @@ export default function BankGreen() {
           alt="Image of grid of screenshots on light green background"
           width={1440}
           height={982}
-          className="image-1239"
+          className="sticky-image"
           style={{ width: "100%", height: "auto" }}
         />
       </div>
@@ -552,7 +552,7 @@ export default function BankGreen() {
           alt="background image of a grid of flow charts"
           width={2880}
           height={1620}
-          className="image-1239"
+          className="sticky-image"
           style={{ width: "100%", height: "auto" }}
         />
         <div className="full-overlay" />

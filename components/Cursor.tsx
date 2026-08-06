@@ -7,10 +7,10 @@ import { useEffect, useRef } from "react";
    the pointer, decides which state it is in, and measures the one value the
    stylesheet can't work out for itself (the height of the text caret).
 
-   Ported from the technique austlee.com uses (a fixed element written to with
-   translate3d on pointermove) rather than from any of the things it is easy to
-   reach for instead: a `cursor: url(...)` image can't animate between states,
-   and an SVG buys nothing for a circle and a rectangle. */
+   A fixed element written to with translate3d on pointermove, rather than any
+   of the things it is easy to reach for instead: a `cursor: url(...)` image
+   can't animate between states, and an SVG buys nothing for a circle and a
+   rectangle. */
 
 // Mirrors the @media guard in styles/cursor.css. Both have to agree: this one
 // decides whether the listeners and the `cursor: none` class are installed,
@@ -34,10 +34,7 @@ const ACTIVE_CLASS = "has-custom-cursor";
 
    KEEP IN SYNC with styles/custom.css section 14, which makes the same
    attribute unselectable. Both halves of "this is a picture of words" answer
-   the same question, so they read from the same selector.
-
-   Matches austlee.com's data-cursor="none", which sits on his "austin lee"
-   wrapper and is the only such attribute on his page. */
+   the same question, so they read from the same selector. */
 const GRAPHIC_TEXT = "[data-graphic-text]";
 
 /* Images that open the zoom, tagged by components/ZoomableImage.tsx. They are

@@ -139,7 +139,7 @@ export default function BrainSprout() {
                     Image source:{" "}
                     <a
                       href="https://www.nytimes.com/2016/08/28/opinion/sunday/the-good-news-about-educational-inequality.html"
-                      className="link-3"
+                      className="link-accent-bold"
                     >
                       NYT
                     </a>
@@ -522,7 +522,7 @@ export default function BrainSprout() {
             </div>
             <div className="grid-2-col-last">
               <div className="column column-media">
-                <div className="image-wrapper-grid-3">
+                <div className="image-wrapper-grid-stack">
                   <ZoomableImage
                     src="/images/02-iteration-1-screen-of-audio-player-and-reading-indicator.png"
                     alt="Screen of first iteration of  reading lesson features"
@@ -565,7 +565,7 @@ export default function BrainSprout() {
               </div>
               <div className="grid-2-col-first">
                 <div className="column column-media">
-                  <div className="image-wrapper-grid-3">
+                  <div className="image-wrapper-grid-stack">
                     <ZoomableImage
                       src="/images/04-_before_-screen-of-reading-indicator-high-fidelity.png"
                       alt="High fidelity screen of reading lesson with vertical reading progress indicator aligned close to page margin"
@@ -610,7 +610,7 @@ export default function BrainSprout() {
               </div>
               <div className="grid-2-col-last">
                 <div className="column column-media">
-                  <div className="image-wrapper-grid-3">
+                  <div className="image-wrapper-grid-stack">
                     <ZoomableImage
                       src="/images/03-_after_-screen-of-reading-indicator-high-fidelity.png"
                       alt="High fidelity screen of reading lesson with vertical reading progress indicator aligned close to right margin of reading lesson"
@@ -671,7 +671,7 @@ export default function BrainSprout() {
               </div>
               <div className="grid-2-col-first">
                 <div className="column column-media">
-                  <div className="image-wrapper-grid-3">
+                  <div className="image-wrapper-grid-stack">
                     <ZoomableImage
                       src="/images/05-before-screen-of-search-feature.png"
                       alt='Screen of "dog earing" idea attempt'
@@ -712,7 +712,7 @@ export default function BrainSprout() {
               </div>
               <div className="grid-long-text grid-2-col-last">
                 <div className="column column-media">
-                  <div className="image-wrapper-grid-3">
+                  <div className="image-wrapper-grid-stack">
                     <ZoomableImage
                       src="/images/06-after-screen-of-search-feature.png"
                       alt="Screen of updated search flow"
@@ -758,7 +758,7 @@ export default function BrainSprout() {
               </div>
               <div className="grid-2-col-first">
                 <div className="column column-media">
-                  <div className="image-wrapper-grid-3">
+                  <div className="image-wrapper-grid-stack">
                     <ZoomableImage
                       src="/images/07-screen-of-video-lesson-using-external-discussion-feature.png"
                       alt="Screen of external discussion feature exploration"
@@ -786,7 +786,7 @@ export default function BrainSprout() {
               </div>
               <div className="grid-long-text grid-2-col-last">
                 <div className="column column-media">
-                  <div className="image-wrapper-grid-3">
+                  <div className="image-wrapper-grid-stack">
                     <ZoomableImage
                       src="/images/08-screen-of-video-lesson-using-internal-discussion-feature.png"
                       alt="Screen of updated discussion feature to internal"
@@ -819,7 +819,7 @@ export default function BrainSprout() {
               </div>
               <div className="grid-long-text grid-2-col-first">
                 <div className="column column-media">
-                  <div className="image-wrapper-grid-3">
+                  <div className="image-wrapper-grid-stack">
                     <ZoomableImage
                       src="/images/09-before-screen-of-assignments.png"
                       alt="Screen of assignments page before"
@@ -849,7 +849,7 @@ export default function BrainSprout() {
               </div>
               <div className="grid-long-text grid-2-col-last">
                 <div className="column column-media">
-                  <div className="image-wrapper-grid-3">
+                  <div className="image-wrapper-grid-stack">
                     <ZoomableImage
                       src="/images/10-after-screen-of-assignments.png"
                       alt="Screen of assignments page after"
@@ -1144,7 +1144,7 @@ export default function BrainSprout() {
                     In addition to these solutions, I worked on including
                     inclusive features for lessons (bionic text, audio only
                     options, etc). Check out{" "}
-                    <Link href="/brainsprout-accessibility-features" className="link-5">
+                    <Link href="/brainsprout-accessibility-features" className="link-accent">
                       <strong>this case study</strong>
                     </Link>{" "}
                     to learn more.

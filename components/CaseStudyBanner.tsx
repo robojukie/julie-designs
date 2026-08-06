@@ -12,10 +12,10 @@ type CaseStudyBannerProps = {
   imageAlt: string;
   width: number;
   height: number;
-  /* The export gives each banner image its own class — image-1257 on bank-green
-     and vac, image-122 on the accessibility page, none on the rest. These are
-     load-bearing, not cosmetic: .image-1257 is height:100% at desktop and
-     max-height:180px at the narrowest breakpoint, and .image-122 differs again.
+  /* The export gives each banner image its own class — banner-image-contain on bank-green
+     and vac, banner-image-fixed-height on the accessibility page, none on the rest. These are
+     load-bearing, not cosmetic: .banner-image-contain is height:100% at desktop and
+     max-height:180px at the narrowest breakpoint, and .banner-image-fixed-height differs again.
      An earlier version of this component applied a blanket inline
      `width:100%; height:auto`, which — being inline — beat every one of those
      rules and made all six banners size identically. */

@@ -23,7 +23,7 @@ export default function About() {
                 alt="Girl with dark hair sitting on beanbag chair with laptop next to small side table with steaming green cup. Image adapted from catalyststuff on Freepik"
                 width={344}
                 height={407}
-                className="image-1262"
+                className="about-portrait"
                 priority
               />
             </div>
@@ -179,21 +179,21 @@ export default function About() {
                 alt=""
                 width={40}
                 height={40}
-                className="image-127"
+                className="display-icon"
               />
               <Image
                 src="/images/Food.svg"
                 alt=""
                 width={40}
                 height={40}
-                className="image-129"
+                className="display-icon"
               />
               <Image
                 src="/images/Plus.svg"
                 alt=""
                 width={40}
                 height={40}
-                className="image-128"
+                className="display-icon"
               />
             </div>
             <div className="main-text">
@@ -218,14 +218,14 @@ export default function About() {
                 alt=""
                 width={40}
                 height={40}
-                className="image-131"
+                className="display-icon-podcast"
               />
               <Image
                 src="/images/GlobeAsia.svg"
                 alt=""
                 width={40}
                 height={40}
-                className="image-132"
+                className="display-icon"
               />
             </div>
             <div className="main-text">
