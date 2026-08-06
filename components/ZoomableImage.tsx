@@ -139,11 +139,21 @@ type OverlayProps = {
   naturalH: number;
   from: Rect;
   onClose: () => void;
-  /* Sampled from the source image's computed background-color at open time,
-     so an image with its own card treatment (e.g. .image-flow-diagram)
-     carries that background into the zoom instead of flashing to the frame's
-     default. Null when the source has no background of its own. */
+  /* Two independent overrides for the overlay frame's chrome.
+
+     frameBackground — sampled from the source's computed background-color
+     at open time, so an image with its own card treatment (e.g.
+     .image-flow-diagram) carries that colour into the zoom. Null falls
+     back to the CSS default in styles/lightbox.css.
+
+     stripChrome — set when the source has .image-transparent-bg. The image
+     already contains its own visual framing (border, background) baked
+     into the source pixels, so any frame chrome around it reads as a
+     frame-inside-a-frame. Nukes bg + box-shadow + border-radius so the
+     overlay renders just the image — and, importantly, so the frame's
+     shadow doesn't bleed through the source's transparent regions. */
   frameBackground: string | null;
+  stripChrome: boolean;
 };
 
 function Overlay({
@@ -154,6 +164,7 @@ function Overlay({
   from,
   onClose,
   frameBackground,
+  stripChrome,
 }: OverlayProps) {
   const [sized, setSized] = useState<Rect>(() => fitRect(naturalW, naturalH));
   const closeRef = useRef<HTMLButtonElement>(null);
@@ -298,7 +309,11 @@ function Overlay({
            can't see the edges of anyway. It cross-fades instead. */
         style={{
           ...(mode === "pan" ? { width: sized.width, height: sized.height } : {}),
-          ...(frameBackground ? { background: frameBackground } : {}),
+          ...(stripChrome
+            ? { background: "transparent", boxShadow: "none", borderRadius: 0 }
+            : frameBackground
+              ? { background: frameBackground }
+              : {}),
         }}
         initial={
           mode === "pan"
@@ -356,6 +371,7 @@ export default function ZoomableImage({
   const [from, setFrom] = useState<Rect | null>(null);
   const [natural, setNatural] = useState<{ w: number; h: number } | null>(null);
   const [frameBackground, setFrameBackground] = useState<string | null>(null);
+  const [stripChrome, setStripChrome] = useState(false);
   /* Client-only gate for the portal. The alternative — a conditional-on-`from`
      portal — was tried and is what kept the exit animation from ever running:
      with the portal inside `{from ? ... : null}`, closing unmounted the whole
@@ -381,15 +397,27 @@ export default function ZoomableImage({
       w: Number(props.width) || el.naturalWidth || 0,
       h: Number(props.height) || el.naturalHeight || 0,
     });
-    /* Sample the source image's own background so the overlay frame carries
-       it through. Any image styled with a card treatment (a background on the
-       <img>, e.g. .image-flow-diagram) gets that color in the zoom instead of
-       the frame's default near-white. Skipped when transparent, which is what
-       browsers report for images with no background set. */
-    const bg = window.getComputedStyle(el).backgroundColor;
-    setFrameBackground(
-      bg && bg !== "rgba(0, 0, 0, 0)" && bg !== "transparent" ? bg : null,
-    );
+    /* Decide the overlay frame's chrome. Three cases:
+         1. Source has .image-transparent-bg → strip the frame's bg, shadow,
+            and radius. The image already contains its own visual framing
+            baked into the source pixels; any frame chrome around it reads
+            as a frame-inside-a-frame, and — critically — the shadow bleeds
+            through the source's transparent regions as a visible fill.
+         2. Source has its own background (e.g. .image-flow-diagram's card
+            treatment) → sample and mirror it. Keeps the card visually
+            continuous through the zoom.
+         3. Otherwise → null, and the frame uses its CSS defaults in
+            styles/lightbox.css. */
+    if (el.classList.contains("image-transparent-bg")) {
+      setStripChrome(true);
+      setFrameBackground(null);
+    } else {
+      setStripChrome(false);
+      const bg = window.getComputedStyle(el).backgroundColor;
+      setFrameBackground(
+        bg && bg !== "rgba(0, 0, 0, 0)" && bg !== "transparent" ? bg : null,
+      );
+    }
   }, [props.width, props.height]);
 
   const close = useCallback(() => setFrom(null), []);
@@ -433,6 +461,7 @@ export default function ZoomableImage({
                 from={from}
                 onClose={close}
                 frameBackground={frameBackground}
+                stripChrome={stripChrome}
               />
             ) : null}
           </AnimatePresence>,
