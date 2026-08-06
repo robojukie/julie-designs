@@ -567,7 +567,121 @@ select:focus-visible,
 }
 
 /* ---------------------------------------------------------------------------
-   About hero — modifier + two-column layout, used only on /about.
+   15. Dotted inline-link underline  — NEW BEHAVIOUR, NOT IN THE EXPORT
+
+   A row of ~2px dots (5px tile, radial-gradient masked over a solid colour)
+   sits just below the text baseline. On hover the dots slide one tile-width
+   to the left in a continuous 0.3s loop and the
+   colour transitions from --nav-link-color (#9c9c9c, same grey the nav uses)
+   to --accents--bold--accent-hover (#ff988a, the existing link-hover peach).
+
+   Uses mask-image + background-color rather than background-image, because
+   background-image can't tween between colours — masking a solid fill lets
+   background-color transition smoothly for the 0.3s hover.
+
+   Scope is inline text links in body prose only. The current-page nav
+   indicator in section 5 is untouched: its selectors are .nav-link.w--current,
+   which none of the selectors below reach. Card-style links
+   (.container-project-link, .article-card, .project-hero, lightbox tiles,
+   about-page podcast tiles) all carry .w-inline-block and none of the prose
+   containers below, so they are also unaffected. Footer social anchors opt in
+   via a.social-link:not(.brand); the sibling <div class="social-link social-divider">
+   dividers don't match because of the `a.` prefix.
+--------------------------------------------------------------------------- */
+.tagline-text a,
+.main-text a,
+.body-text-container a,
+.w-richtext a,
+.image-caption-wrapper a,
+.inline-link,
+.link,
+.link-3,
+.link-5,
+a.social-link:not(.brand) {
+  position: relative;
+  padding-bottom: 0;
+  text-decoration: none;
+}
+
+.tagline-text a::after,
+.main-text a::after,
+.body-text-container a::after,
+.w-richtext a::after,
+.image-caption-wrapper a::after,
+.inline-link::after,
+.link::after,
+.link-3::after,
+.link-5::after,
+a.social-link:not(.brand)::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 2px;
+  border-radius: 1px;
+  background-color: var(--nav-link-color);
+  -webkit-mask-image: radial-gradient(circle, #000 30%, transparent 30%);
+          mask-image: radial-gradient(circle, #000 30%, transparent 30%);
+  -webkit-mask-size: 5px 5px;
+          mask-size: 5px 5px;
+  -webkit-mask-repeat: repeat-x;
+          mask-repeat: repeat-x;
+  -webkit-mask-position: 0 center;
+          mask-position: 0 center;
+  transition: background-color 0.3s;
+  animation: 0.3s linear 0.2s infinite paused hyperlink-dots-in;
+}
+
+.tagline-text a:hover::after,
+.main-text a:hover::after,
+.body-text-container a:hover::after,
+.w-richtext a:hover::after,
+.image-caption-wrapper a:hover::after,
+.inline-link:hover::after,
+.link:hover::after,
+.link-3:hover::after,
+.link-5:hover::after,
+a.social-link:not(.brand):hover::after {
+  background-color: var(--accents--bold--accent-hover);
+  animation-play-state: running;
+}
+
+@keyframes hyperlink-dots-in {
+  0%   { -webkit-mask-position:  0   center; mask-position:  0   center; }
+  100% { -webkit-mask-position: -5px center; mask-position: -5px center; }
+}
+
+/* Footer social anchors carry a 16px horizontal padding (juliepaik.css
+   `.social-link.nav-link`) so the shared block's `left:0; right:0` positions
+   the dots against the padding edges — 16px past the visible text on each
+   side, enough to touch the neighbouring anchor and read as one continuous
+   underline. Pull the dots back inside the padding to align with the text. */
+a.social-link:not(.brand)::after {
+  left: 16px;
+  right: 17px;
+}
+
+/* "say hello!" carries .email, which zeroes out padding-right (juliepaik.css
+   `.social-link.email.nav-link`). Without this the shared 16px right offset
+   above would sit 16px inside the text and the underline would be off-centre. */
+a.social-link.email:not(.brand)::after {
+  right: 0;
+}
+
+/* Fade the text to the same peach as the dots on hover, so both animate
+   together instead of the dots warming up alone. Transition on the base so
+   hover-out fades back symmetrically. */
+a.social-link:not(.brand) {
+  transition: color 0.3s;
+}
+
+a.social-link:not(.brand):hover {
+  color: var(--accents--bold--accent-hover);
+}
+
+/* ---------------------------------------------------------------------------
+   16. About hero — two-column layout, used only on /about.
    `.compact` is a size-only override on .hero-title-text.main-page: 0,3,0
    specificity beats the base + main-page rules (and their responsive
    overrides in juliepaik.css at 767/479), so the original .main-page usage
