@@ -194,7 +194,18 @@ export default function Cursor() {
       rig.dataset.visible = "false";
     };
 
+    // A click often changes what is under the pointer without the pointer
+    // moving — opening or closing the zoom overlay is the case this exists for.
+    // Without this, the rig would stay in its old state until the next
+    // pointermove and the cursor would visibly lag the interaction it triggered.
+    // Scheduled on the same coalescing frame so it just re-runs the hit-test
+    // once, after React has committed the click's state changes.
+    const repaint = () => {
+      if (!frame) frame = requestAnimationFrame(paint);
+    };
+
     window.addEventListener("pointermove", show, { passive: true });
+    window.addEventListener("click", repaint, { passive: true });
     // On <document>, not <window>: pointerleave/-enter on window don't fire
     // reliably for the pointer exiting the viewport in every browser.
     document.addEventListener("pointerleave", hide);
@@ -204,6 +215,7 @@ export default function Cursor() {
 
     return () => {
       window.removeEventListener("pointermove", show);
+      window.removeEventListener("click", repaint);
       document.removeEventListener("pointerleave", hide);
       window.removeEventListener("blur", hide);
       if (frame) cancelAnimationFrame(frame);
