@@ -149,6 +149,11 @@ export const widths = {
 export const radii = {
   largeRadius: "var(--large-radius)",
   smallRadius: "var(--small-radius)",
+  radiusXs: "var(--radius-xs)",
+  radiusSm: "var(--radius-sm)",
+  radiusMd: "var(--radius-md)",
+  radiusLg: "var(--radius-lg)",
+  radiusBanner: "var(--radius-banner)",
 } as const;
 
 export const shadows = {

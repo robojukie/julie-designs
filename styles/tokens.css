@@ -105,6 +105,13 @@
   --text-height--caption-mobile-height: 1.3rem;
   --surface: #0d09090d;
   --small-radius: 4px;
+  /* Image radius scale — 4/8 progression. --small-radius and --large-radius
+     above are legacy and being phased out class-by-class. */
+  --radius-xs: 4px;
+  --radius-sm: 8px;
+  --radius-md: 16px;
+  --radius-lg: 24px;
+  --radius-banner: 0 80px;
   --color--neutral--warm--400: #e8e5e5;
   --color--beige--600: #b6afa9;
   --beige: #eee5de;
