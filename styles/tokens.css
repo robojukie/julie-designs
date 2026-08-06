@@ -3,16 +3,27 @@
    was deleted in the Designer but is still referenced by some elements; the suffix
    is stripped here and the original raw name is preserved.
 
-   This file used to say "auto-generated, do not hand-edit". That was never true:
-   port-custom-css.js STRIPS the :root block out of juliepaik.css but does not
-   write this file, and no other script does either — so there is nothing to
-   regenerate from and the warning only discouraged maintaining it. Edit freely,
-   but keep two rules:
+   This file used to say "auto-generated, do not hand-edit". That was never
+   true — nothing has ever written it — and the warning only discouraged
+   maintaining it. Edit freely, but keep two rules:
 
-     1. Every name here is still referenced by styles/juliepaik.css, which IS
-        generated. Renaming a token means editing that generated file, so rename
-        only alongside a change to the porting script.
+     1. Every name here is referenced by styles/juliepaik.css. Renaming a token
+        means editing that file too, in the same commit. Nothing will error if
+        you forget: a var() with no declaration resolves to nothing and the
+        property is silently dropped, so the page just quietly loses a rule.
      2. styles/theme.ts mirrors this file for JS/TS consumers. Keep them in sync.
+
+   DO NOT re-add --translucent-black (#000000a8). The image-zoom backdrop in
+   styles/lightbox.css is --translucent-white ON PURPOSE — a light scrim, so
+   the case study stays readable behind the zoomed image and the zoom reads as
+   a magnifier over the page rather than a navigation away from it.
+
+   This has been undone more than once, because the history is misleading in
+   every direction: black is a genuine token from the original export, older
+   revisions of lightbox.css did reference it, and at one point pruning it left
+   a bare var() resolving to nothing — which makes "restore the black token"
+   look like the obvious fix. It is not. White is the design decision; black is
+   the thing that keeps creeping back.
 
    2026-08-04: pruned 56 tokens that no stylesheet referenced, directly or
    through another token — the whole --surface--*, --color--*-primitive and

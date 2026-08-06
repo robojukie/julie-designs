@@ -1,21 +1,20 @@
-/* Load order mirrors the <link> order in the Webflow export:
-   normalize.css -> webflow.css -> juliepaik.webflow.css.
+/* LOAD ORDER IS LOAD-BEARING, and mirrors the original site's <link> order:
+   normalize -> webflow -> tokens -> juliepaik -> custom. Reordering these
+   imports silently breaks the cascade; nothing will error.
 
-   All three are now ported in FULL and generated, not hand-curated — the
+   All three ported sheets were taken in FULL rather than hand-curated. The
    per-concern split this replaced (base/nav/hero/home/about/case-study/…) was
-   missing 252 rules across 122 selector groups, and had lost the source's rule
-   order. Regenerate the custom stylesheet with:
-     node scripts/port-custom-css.js
-   Check coverage with:
-     node scripts/audit-css-coverage.js */
+   missing 252 rules across 122 selector groups and had lost the source's rule
+   order, which matters for equal-specificity rules. */
 @import "../styles/normalize.css";
 @import "../styles/webflow.css";
 
-/* :root variables, extracted from the source's :root block (which
-   port-custom-css.js strips, so this stays the single source of truth). */
+/* :root variables, lifted out of the ported sheet so this is the one place
+   tokens are declared. */
 @import "../styles/tokens.css";
 
-/* The full custom stylesheet, verbatim and in source order. */
+/* The reference stylesheet — see its header. Frozen 2026-08-06: no longer
+   generated, edited by deletion only, and never added to. */
 @import "../styles/juliepaik.css";
 
 /* Ours: rebuild-specific rules plus the Webflow page-level custom code that
