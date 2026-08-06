@@ -743,6 +743,14 @@ a.social-link:not(.brand):hover {
       "image"
       "para";
     gap: 32px;
+  }
+
+  /* Apply side padding on the section (outside .container-680) so the hero
+     paragraph is constrained to the same width as the sub-680 paragraphs,
+     which get their padding from .section.about (also outside container-680).
+     Padding on .about-hero-grid would narrow the paragraph by 32px because
+     .container-680 has already capped width at 680. */
+  .hero-section.page-header-section.about {
     padding-left: 16px;
     padding-right: 16px;
   }
@@ -756,7 +764,7 @@ a.social-link:not(.brand):hover {
    (juliepaik.css:7317), so paragraphs below the hero shift to 24px. Match
    that here — the hero has no .subsection wrapper to inherit from. */
 @media screen and (max-width: 767px) {
-  .about-hero-grid {
+  .hero-section.page-header-section.about {
     padding-left: 24px;
     padding-right: 24px;
   }
