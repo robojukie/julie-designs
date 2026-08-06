@@ -61,8 +61,21 @@
   --pt-ease-fall: cubic-bezier(0.11, 0, 0.5, 0);
   --pt-ease-rise: cubic-bezier(0.5, 1, 0.89, 1);
 
+  /* Keep the ball out of the very top and bottom of the viewport. Safari
+     (both desktop Website Tinting and iOS 26+ chrome tinting) samples the
+     background-color of fixed-position elements near the viewport edges to
+     tint its own chrome — theme-color meta is ignored in favour of live
+     sampling. A full-viewport pink overlay would otherwise tint the address
+     bar / tab bar pink for the duration of the wipe AND linger after, because
+     iOS doesn't reliably re-sample when content changes without a scroll.
+     A 2px inset is enough to move .page-transition out of Safari's edge
+     sample zone; the algorithm treats elements per-element rather than
+     averaging pixels, so this reads as "not at the edge" and Safari falls
+     through to the body's cream background. Applied via container inset
+     (rather than masking the ball) so overflow: hidden clips the ball at
+     the strips, nothing paints in them, and the page shows straight through. */
   position: fixed;
-  inset: 0;
+  inset: 2px 0;
   z-index: 9999;
   pointer-events: none;
   overflow: hidden;
