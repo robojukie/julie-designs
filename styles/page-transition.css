@@ -61,8 +61,26 @@
   --pt-ease-fall: cubic-bezier(0.11, 0, 0.5, 0);
   --pt-ease-rise: cubic-bezier(0.5, 1, 0.89, 1);
 
-  position: fixed;
-  inset: 0;
+  /* Absolute, not fixed. Safari's Website Tinting (desktop) and iOS 26+ chrome
+     tinting sample the background-color of FIXED and STICKY elements near the
+     viewport edges to tint their own chrome — theme-color meta is ignored in
+     favour of live sampling. A fixed pink overlay tints the address / tab bar
+     pink for the duration of the wipe AND lingers after (iOS doesn't reliably
+     re-sample when content changes without a scroll).
+
+     Absolute elements are excluded from the sampler, so this element can cover
+     the whole viewport in pink and Safari's chrome falls through to the body's
+     cream. To behave visually the same as fixed, --pt-scroll-top is updated to
+     window.scrollY by PageTransition.tsx (and set before first paint by the
+     inline entry script in app/layout.tsx), so the element always sits at the
+     top of the current viewport. 100dvh matches the visible area rather than
+     the largest-possible viewport, so overflow: hidden clips the ball to what
+     the user actually sees. */
+  position: absolute;
+  top: var(--pt-scroll-top, 0px);
+  left: 0;
+  right: 0;
+  height: 100dvh;
   z-index: 9999;
   pointer-events: none;
   overflow: hidden;
