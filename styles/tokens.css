@@ -1,7 +1,7 @@
 /* Seeded from the original Webflow export's :root block, now hand-maintained.
    Webflow variable names with a "<deleted|variable-...>" suffix mean the variable
    was deleted in the Designer but is still referenced by some elements; the suffix
-   is stripped here and the original raw name is noted inline for cross-reference.
+   is stripped here and the original raw name is preserved.
 
    This file used to say "auto-generated, do not hand-edit". That was never true:
    port-custom-css.js STRIPS the :root block out of juliepaik.css but does not
@@ -36,13 +36,10 @@
   --text-height--heading-h3-desktop-height: 2.3rem;
   --text-size--heading-h3-mobile: 1.4rem;
   --text-height--heading-h3-mobile-height: 2rem;
-  /* Webflow: --text-size--title-desktop-1-5\<deleted\|variable-68d9024b-7d06-09f8-b0c9-247bcd547a67\> (deleted-variable export artifact) */
   --text-size--title-desktop-1-5: 1.5rem;
   --text-height--title-desktop-height: 2rem;
-  /* Webflow: --text-size--title-mobile\<deleted\|variable-d3cdc563-c459-61a4-41ac-5b00f61d3b76\> (deleted-variable export artifact) */
   --text-size--title-mobile: 1.3rem;
   --text-height--title-mobile-height: 1.625rem;
-  /* Webflow: --text--body-text-sm\<deleted\|variable-d41035c7-4718-1eae-c3a4-6fa104b3736a\> (deleted-variable export artifact) */
   --text--body-text-sm: 1.125rem;
   --text-height--body-mobile-height: 1.5rem;
   --text-weightt--body-300: 300;
@@ -51,7 +48,6 @@
   --accents--bold--accent-hover: var(--color--peach--600);
   --width--container-680: 680px;
   --width--container-800: 800px;
-  /* Webflow: --light\<deleted\|variable-acdcbe1f-539b-5263-e1d0-6c36272c18fd\> (deleted-variable export artifact) */
   --light: var(--accents--bold--secondary-brand-color);
   --nav-link-color: #9c9c9c;
   --text-size--nav-link-p-text: .9rem;
@@ -60,28 +56,20 @@
   --accents--bold--secondary-brand-color: #ab91b4;
   --width--container-1232: 1232px;
   --width--container-1224: 1224px;
-  /* Webflow: --text--farewell\<deleted\|variable-2dc89ba5-7c5f-b3c7-1704-aedafb018e3a\> (deleted-variable export artifact) */
   --text--farewell: 2rem;
   --translucent-white: #ffffffde;
-  /* --translucent-black (#000000a8) */
   --divider: var(--shadow-color);
   --og-colors--black-1000: #0c0d0d;
-  /* Webflow: --dark-dark-dark-gray-blue\<deleted\|variable-714e5efc\> (deleted-variable export artifact) */
   --dark-dark-dark-gray-blue: #171718;
   --background-color--background-case-study: var(--color--neutral--warm--200);
-  /* Webflow: --text--image-caption\<deleted\|variable-0d1f0440-0d59-f665-28b8-fe05cca98f8c\> (deleted-variable export artifact) */
   --text--image-caption: 1rem;
-  /* Webflow: --text-height--image-caption-height\<deleted\|variable-3d7c2b17-1bd4-dbfd-223b-0424b9ff1236\> (deleted-variable export artifact) */
   --text-height--image-caption-height: 1.4rem;
-  /* Webflow: --text--page-title-small-size\<deleted\|variable-53e336d2-d16e-810a-0565-49d15a9140ac\> (deleted-variable export artifact) */
   --text--page-title-small-size: 48px;
-  /* Webflow: --text--page-title-small-height\<deleted\|variable-6f5b9f66-2e52-e9f9-b445-75c4373079e3\> (deleted-variable export artifact) */
   --text--page-title-small-height: 4rem;
   --background-color--background-main: #fdfdfd;
   --large-radius: 10px;
   --width--video-width: 1064px;
   --accents--bold--main-brand-dark: #59685a;
-  /* Webflow: --text--display-med\<deleted\|variable-c644e563-97b5-6970-e43b-aca83c2c7ee1\> (deleted-variable export artifact) */
   --text--display-med: 64px;
   --text-height--display-tablet-height: 2.8rem;
   --text-size--hero-large: 103px;
@@ -92,16 +80,12 @@
   --text-height--display-desktop-regular-height: 4.375rem;
   --text-size--hero-xsmall: 56px;
   --text-size--display-mobile: 2.3rem;
-  /* Webflow: --text--page-subtitle-sm\<deleted\|variable-210c7c5a-5d27-5ff3-c5bc-563872051800\> (deleted-variable export artifact) */
   --text--page-subtitle-sm: 1.3rem;
-  /* Webflow: --text--page-subtitle-sm-height\<deleted\|variable-41c23a71-a778-8da8-d924-5c0e9dbdc692\> (deleted-variable export artifact) */
   --text--page-subtitle-sm-height: 1.8rem;
   --accents--bold--accent: var(--accents--bold--pink);
   --background-color--background-brain-sprout: #e2ebdd;
   --background-color--background-light-purple: #eae4f7;
-  /* Webflow: --h4-small\<deleted\|variable-eda73832-5f67-6b07-66a5-7886214a34e5\> (deleted-variable export artifact) */
   --h4-small: 24px;
-  /* Webflow: --h4-small-height\<deleted\|variable-9242b7f2-ada1-536f-6b20-66c4f62be276\> (deleted-variable export artifact) */
   --h4-small-height: 32px;
   --accents--bold--brainsprout-lightest-green: #eff4f2;
   --background-color--background-accent-bankgreen: #e8f0c7;
@@ -112,7 +96,6 @@
   --text-weightt--eyebrow-500: 500;
   --text-size--eyebrow-mobile: 1rem;
   --text-height--eyebrow-mobile-height: 1.2rem;
-  /* Webflow: --text-size--label-mobile\<deleted\|variable-60a4b4ed-5de8-cdf2-7ecd-7da18921c848\> (deleted-variable export artifact) */
   --text-size--label-mobile: 1.125rem;
   --text-height--label-mobile-height: 1.5rem;
   --text-size--caption-desktop-1-125: 1.125rem;
@@ -128,7 +111,6 @@
   --background-color--background-light-blue: #ebeced;
   --text-colors--text-light: var(--color--neutral--100);
   --background-color--background-dark-blue: #182230;
-  /* Webflow: --text--h3\<deleted\|variable-d4a58d79-e3f0-6d50-0612-110ce966c20f\> (deleted-variable export artifact) */
   --text--h3: 2rem;
   --text-size--highlight-desktop: 72px;
   --text-size--highlight-desktop-80-height: 80px;
@@ -139,7 +121,6 @@
   --og-colors--black-og: #545454;
   --color--beige--300: #f4ede7;
   --text-weightt--title-500: 500;
-  /* Webflow: --text--light\<deleted\|variable-bfdf30ce-bada-add2-e679-ff53deaf29d0\> (deleted-variable export artifact) */
   /* Was a second literal #fcfcfc alongside --color--neutral--100. Pointed at
      that primitive instead so the value has one definition site; the name is
      kept because juliepaik.css still references it. */
