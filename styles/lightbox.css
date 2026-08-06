@@ -84,13 +84,17 @@
 }
 
 /* Positioned by motion, which writes top/left/width/height per frame — so this
-   rule sets everything EXCEPT those four. */
+   rule sets everything EXCEPT those four. Background is set inline by
+   ZoomableImage — it samples the source image's computed background-color
+   on open and applies it here, so an image that has its own card treatment
+   (e.g. .image-flow-diagram) carries that background into the zoom instead
+   of flashing to the default. Falls back to --background-color--background-main
+   when the source has no background. Without SOMETHING opaque here, the
+   image's own corners square off the rounded frame corner. */
 .lightbox-frame {
   position: fixed;
   overflow: hidden;
   border-radius: var(--large-radius);
-  /* The frame is the same size as the image inside it, so without this the
-     image's own corners square off the radius above. */
   background: var(--background-color--background-main);
   box-shadow: 0 24px 60px #00000059;
   will-change: top, left, width, height;

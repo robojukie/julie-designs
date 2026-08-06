@@ -139,6 +139,21 @@ type OverlayProps = {
   naturalH: number;
   from: Rect;
   onClose: () => void;
+  /* Two independent overrides for the overlay frame's chrome.
+
+     frameBackground — sampled from the source's computed background-color
+     at open time, so an image with its own card treatment (e.g.
+     .image-flow-diagram) carries that colour into the zoom. Null falls
+     back to the CSS default in styles/lightbox.css.
+
+     stripChrome — set when the source has .image-transparent-bg. The image
+     already contains its own visual framing (border, background) baked
+     into the source pixels, so any frame chrome around it reads as a
+     frame-inside-a-frame. Nukes bg + box-shadow + border-radius so the
+     overlay renders just the image — and, importantly, so the frame's
+     shadow doesn't bleed through the source's transparent regions. */
+  frameBackground: string | null;
+  stripChrome: boolean;
 };
 
 function Overlay({
@@ -148,6 +163,8 @@ function Overlay({
   naturalH,
   from,
   onClose,
+  frameBackground,
+  stripChrome,
 }: OverlayProps) {
   const [sized, setSized] = useState<Rect>(() => fitRect(naturalW, naturalH));
   const closeRef = useRef<HTMLButtonElement>(null);
@@ -290,11 +307,14 @@ function Overlay({
            target overflows the screen, so there is no destination rect to fly
            to and the geometry animation would be animating to a box the user
            can't see the edges of anyway. It cross-fades instead. */
-        style={
-          mode === "pan"
-            ? { width: sized.width, height: sized.height }
-            : undefined
-        }
+        style={{
+          ...(mode === "pan" ? { width: sized.width, height: sized.height } : {}),
+          ...(stripChrome
+            ? { background: "transparent", boxShadow: "none", borderRadius: 0 }
+            : frameBackground
+              ? { background: frameBackground }
+              : {}),
+        }}
         initial={
           mode === "pan"
             ? { opacity: 0 }
@@ -350,6 +370,8 @@ export default function ZoomableImage({
   const imgRef = useRef<HTMLImageElement>(null);
   const [from, setFrom] = useState<Rect | null>(null);
   const [natural, setNatural] = useState<{ w: number; h: number } | null>(null);
+  const [frameBackground, setFrameBackground] = useState<string | null>(null);
+  const [stripChrome, setStripChrome] = useState(false);
   /* Client-only gate for the portal. The alternative — a conditional-on-`from`
      portal — was tried and is what kept the exit animation from ever running:
      with the portal inside `{from ? ... : null}`, closing unmounted the whole
@@ -375,6 +397,27 @@ export default function ZoomableImage({
       w: Number(props.width) || el.naturalWidth || 0,
       h: Number(props.height) || el.naturalHeight || 0,
     });
+    /* Decide the overlay frame's chrome. Three cases:
+         1. Source has .image-transparent-bg → strip the frame's bg, shadow,
+            and radius. The image already contains its own visual framing
+            baked into the source pixels; any frame chrome around it reads
+            as a frame-inside-a-frame, and — critically — the shadow bleeds
+            through the source's transparent regions as a visible fill.
+         2. Source has its own background (e.g. .image-flow-diagram's card
+            treatment) → sample and mirror it. Keeps the card visually
+            continuous through the zoom.
+         3. Otherwise → null, and the frame uses its CSS defaults in
+            styles/lightbox.css. */
+    if (el.classList.contains("image-transparent-bg")) {
+      setStripChrome(true);
+      setFrameBackground(null);
+    } else {
+      setStripChrome(false);
+      const bg = window.getComputedStyle(el).backgroundColor;
+      setFrameBackground(
+        bg && bg !== "rgba(0, 0, 0, 0)" && bg !== "transparent" ? bg : null,
+      );
+    }
   }, [props.width, props.height]);
 
   const close = useCallback(() => setFrom(null), []);
@@ -417,6 +460,8 @@ export default function ZoomableImage({
                 naturalH={natural.h}
                 from={from}
                 onClose={close}
+                frameBackground={frameBackground}
+                stripChrome={stripChrome}
               />
             ) : null}
           </AnimatePresence>,

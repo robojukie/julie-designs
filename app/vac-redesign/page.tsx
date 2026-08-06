@@ -476,7 +476,7 @@ export default function VACRedesign() {
                     width={680}
                     height={641}
                     sizes="100vw"
-                    className="image-pc"
+                    className="image-pc image-transparent-bg"
                     style={{ height: "auto" }}
                   />
                 </div>
@@ -502,7 +502,7 @@ export default function VACRedesign() {
                 width={1301}
                 height={791}
                 sizes="100vw"
-                className="image-single"
+                className="image-flow-diagram"
                 style={{ height: "auto" }}
               />
               <div className="card-info-centered">
@@ -652,7 +652,7 @@ export default function VACRedesign() {
                         height={746}
                         sizes="440px"
                         unoptimized
-                        className="process-image"
+                        className="process-image image-transparent-bg"
                         style={{ height: "auto" }}
                       />
                     </div>
@@ -667,7 +667,7 @@ export default function VACRedesign() {
                         width={772}
                         height={416}
                         sizes="100vw"
-                        className="process-image"
+                        className="process-image image-transparent-bg"
                         style={{ height: "auto" }}
                       />
                     </div>
@@ -709,7 +709,7 @@ export default function VACRedesign() {
                   <p className="caption-title">Before</p>
                   <p className="caption">
                     The original page used text that was too small to read, had
-                    inconsistent use of font for links and text, an inefficient
+                    inconsistent us of font for links and text, an inefficient
                     layout, and unclear actions.
                   </p>
                 </div>

@@ -1582,7 +1582,7 @@ figure {
 }
 
 .hifi-half.border {
-  border-radius: var(--small-radius);
+  border-radius: var(--radius-md);
   border-style: none;
 }
 
@@ -1621,6 +1621,7 @@ figure {
 
 .image-pc {
   width: 100%;
+  border-radius: var(--radius-md);
 }
 
 .screenshot-shadow {
@@ -1633,7 +1634,7 @@ figure {
   box-shadow: none;
   outline-color: var(--color--beige--600);
   outline-offset: 0px;
-  border-radius: 2px;
+  border-radius: var(--radius-sm);
   outline-width: 1px;
   outline-style: solid;
 }
@@ -1722,7 +1723,7 @@ figure {
 }
 
 .cover-screenshot-wrapper {
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   flex-direction: column;
   justify-content: center;
   align-items: center;
@@ -1739,12 +1740,27 @@ figure {
 .image-single {
   border: 1px none var(--beige);
   object-fit: contain;
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   width: auto;
   height: auto;
   min-height: 378px;
   display: block;
   overflow: clip;
+}
+
+/* Composite diagram (e.g. a flow of screenshots + arrows). Padded card
+   treatment so the rounded corner shows the card background, not a
+   clipped corner of the diagram content. Not for regular screenshots —
+   their UI chrome is meant to feel clipped at the corner. */
+.image-flow-diagram {
+  background: var(--color--neutral--warm--200);
+  padding: 16px;
+  border-radius: var(--radius-md);
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+  box-sizing: border-box;
+  display: block;
 }
 
 .image-single.border {
@@ -1878,7 +1894,7 @@ figure {
   grid-column-gap: 32px;
   grid-row-gap: 32px;
   border: 1px none var(--beige);
-  border-radius: var(--small-radius);
+  border-radius: var(--radius-sm);
   text-align: center;
   justify-content: center;
   align-items: center;
@@ -3042,6 +3058,7 @@ figure {
   max-width: 800px;
   height: 100%;
   max-height: 300px;
+  border-radius: var(--radius-sm);
 }
 
 .center-middle-aligner {
@@ -3058,6 +3075,7 @@ figure {
   max-width: none;
   height: 100%;
   min-height: 0;
+  border-radius: var(--radius-sm);
 }
 
 .drawing-frame {
@@ -3074,7 +3092,7 @@ figure {
 .vac-illustration {
   border: 1px solid var(--color--neutral--warm--400);
   object-fit: contain;
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   width: 100%;
   max-height: none;
 }
@@ -3162,6 +3180,7 @@ figure {
 
 .process-image {
   max-width: 480px;
+  border-radius: var(--radius-sm);
 }
 
 .caption-wrapper {
@@ -3228,7 +3247,7 @@ figure {
   grid-column-gap: 0px;
   grid-row-gap: 0px;
   border: 1px solid var(--color--neutral--cool--400);
-  border-radius: var(--large-radius);
+  border-radius: var(--radius-md);
   text-align: center;
   object-fit: scale-down;
   flex-flow: column;
@@ -3538,7 +3557,7 @@ figure {
   }
 
   .image-max300h {
-      border-radius: var(--small-radius);
+      border-radius: var(--radius-sm);
       width: auto;
   }
 
@@ -4627,7 +4646,7 @@ figure {
   }
 
   .cover-screenshot-wrapper {
-      border-radius: 4px;
+      border-radius: var(--radius-md);
       justify-content: flex-end;
       align-items: center;
       width: 100%;
@@ -5708,7 +5727,7 @@ figure {
   }
 
   .cover-screenshot-wrapper {
-      border-radius: 8px;
+      border-radius: var(--radius-md);
       justify-content: flex-end;
       align-items: center;
       width: auto;
@@ -6501,7 +6520,7 @@ figure {
   }
 
   .cover-screenshot-wrapper {
-      border-radius: 4px;
+      border-radius: var(--radius-md);
   }
 
   .image-single {

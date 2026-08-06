@@ -516,20 +516,23 @@ select:focus-visible,
 /* ---------------------------------------------------------------------------
    .image-wrapper-800 figures: pin the image to the wrapper's width.
 
-   In the export these three (all on vac-redesign) render at the wrapper's full
-   800px. None of them gets that from a width rule — .image-single is
-   `width: auto`, so the image sizes to its INTRINSIC width, and Webflow's
-   srcset is what makes that 800: the browser picks a candidate, divides the
-   delivered pixels by the candidate's density, and lands on 800. For
-   old-dashboard-v2.png that is an upscale — the file itself is only 580 wide.
+   In the export the .image-single.border pair (old-dashboard-v2 + vac-dashboard-03,
+   both on vac-redesign) render at the wrapper's full 800px. Neither gets that
+   from a width rule — .image-single is `width: auto`, so the image sizes to
+   its INTRINSIC width, and Webflow's srcset is what makes that 800: the browser
+   picks a candidate, divides the delivered pixels by the candidate's density,
+   and lands on 800. For old-dashboard-v2.png that is an upscale — the file
+   itself is only 580 wide.
 
    next/image can't reproduce it: it never emits a rendition wider than the
    source, so the same density maths yields the file's own width and the figure
    sits at 580 beside its 800px before/after twin. Stating the width directly
    is what the export was expressing in a roundabout way.
 
-   Scoped to `.image-wrapper-800 > .image-single`, which matches only these
-   three images in the whole export — verified, not assumed.
+   Scoped to `.image-wrapper-800 > .image-single`, which matches only those
+   two images now — verified, not assumed. (The third original member of this
+   set, the blurred attendance flow at line 503, moved to .image-flow-diagram
+   which owns its own width.)
 --------------------------------------------------------------------------- */
 .image-wrapper-800 > .image-single {
   width: 100%;
