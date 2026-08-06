@@ -63,10 +63,7 @@
   /* Webflow: --text--farewell\<deleted\|variable-2dc89ba5-7c5f-b3c7-1704-aedafb018e3a\> (deleted-variable export artifact) */
   --text--farewell: 2rem;
   --translucent-white: #ffffffde;
-  /* --translucent-black (#000000a8) intentionally absent. It was pruned on
-     2026-08-04, briefly restored when styles/lightbox.css turned out to
-     reference it for the zoom backdrop, and dropped again once that backdrop
-     moved to --translucent-white. Nothing references it now. */
+  /* --translucent-black (#000000a8) */
   --divider: var(--shadow-color);
   --og-colors--black-1000: #0c0d0d;
   /* Webflow: --dark-dark-dark-gray-blue\<deleted\|variable-714e5efc\> (deleted-variable export artifact) */
@@ -84,10 +81,6 @@
   --large-radius: 10px;
   --width--video-width: 1064px;
   --accents--bold--main-brand-dark: #59685a;
-  /* --width--main-content-width was a second name for the same 800px as
-     --width--container-800. Removed; scripts/cleanup.config.js repoints the
-     var() references in the generated stylesheet. Note --width--container-1224
-     and --width--container-1232 are NOT duplicates — 8px apart, both live. */
   /* Webflow: --text--display-med\<deleted\|variable-c644e563-97b5-6970-e43b-aca83c2c7ee1\> (deleted-variable export artifact) */
   --text--display-med: 64px;
   --text-height--display-tablet-height: 2.8rem;

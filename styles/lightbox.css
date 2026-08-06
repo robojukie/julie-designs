@@ -3,12 +3,8 @@
    file is only what the overlay looks like.
 
    The backdrop is --translucent-white (#ffffffde) from styles/tokens.css —
-   the token the export already used for scrims — rather than a new literal, so
-   the zoom sits on the same value as the close button below it.
-
-   It is a LIGHT scrim, deliberately: at 87% white over a blur the case study
-   stays readable behind the zoomed image, which keeps the zoom feeling like a
-   magnifier held over the page rather than a navigation away from it. */
+   a mostly-opaque cream over the page rather than a dark scrim, so the zoom
+   reads as a light modal held above the case study rather than a dim-out. */
 
 .lightbox {
   position: fixed;

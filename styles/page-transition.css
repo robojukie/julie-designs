@@ -43,7 +43,10 @@
   --pt-color: #ed6b6b;
   /* One leg. Every leg on every route runs at this — cover, reveal, entry or
      click. Mirrored as DURATION_MS in PageTransition.tsx, which sizes the
-     watchdog off it. */
+     watchdog off it. Entry loads (all devices) and mobile click transitions
+     override this to 400ms via :root[data-pt-slow] below, since only the
+     reveal leg runs in those flows and it reads more gracefully at that
+     tempo without a cover to pair against. */
   --pt-duration: 300ms;
 
   --pt-r: 72vmax;
@@ -61,8 +64,26 @@
   --pt-ease-fall: cubic-bezier(0.11, 0, 0.5, 0);
   --pt-ease-rise: cubic-bezier(0.5, 1, 0.89, 1);
 
-  position: fixed;
-  inset: 0;
+  /* Absolute, not fixed. Safari's Website Tinting (desktop) and iOS 26+ chrome
+     tinting sample the background-color of FIXED and STICKY elements near the
+     viewport edges to tint their own chrome — theme-color meta is ignored in
+     favour of live sampling. A fixed pink overlay tints the address / tab bar
+     pink for the duration of the wipe AND lingers after (iOS doesn't reliably
+     re-sample when content changes without a scroll).
+
+     Absolute elements are excluded from the sampler, so this element can cover
+     the whole viewport in pink and Safari's chrome falls through to the body's
+     cream. To behave visually the same as fixed, --pt-scroll-top is updated to
+     window.scrollY by PageTransition.tsx (and set before first paint by the
+     inline entry script in app/layout.tsx), so the element always sits at the
+     top of the current viewport. 100dvh matches the visible area rather than
+     the largest-possible viewport, so overflow: hidden clips the ball to what
+     the user actually sees. */
+  position: absolute;
+  top: var(--pt-scroll-top, 0px);
+  left: 0;
+  right: 0;
+  height: 100dvh;
   z-index: 9999;
   pointer-events: none;
   overflow: hidden;
@@ -171,6 +192,40 @@
 
 @media (prefers-reduced-motion: reduce) {
   .page-transition {
+    display: none;
+  }
+}
+
+/* Every entry load and every mobile click transition sets data-pt-slow — the
+   ENTRY_SCRIPT in PageTransition.tsx puts it there before first paint, the
+   mobile click handler adds it before router.push, and advance("reveal")
+   clears it when the reveal completes. In those flows only the reveal leg
+   runs, so bumping the whole duration is equivalent to bumping just the
+   reveal; desktop clicks (which pair a cover with a reveal) don't get the
+   attribute and stay at 300ms per leg. */
+:root[data-pt-slow] .page-transition {
+  --pt-duration: 400ms;
+}
+
+@media (max-width: 640px) {
+  /* Block user input from causing scroll or overscroll while the panel is
+     interactable (cover / reveal / entry hold, i.e. pointer-events: auto). On
+     iOS Safari a touch during the hold or reveal can retract the URL bar
+     mid-transition, which shifts window.scrollY out from under the passive
+     scroll listener and leaves --pt-scroll-top stale for a frame — enough to
+     offset the ball from viewport centre and reveal the underlying page. */
+  .page-transition {
+    touch-action: none;
+    overscroll-behavior: none;
+  }
+
+  /* Drop the panel out of the render tree entirely between transitions on
+     mobile. iOS Safari's compositor has been carrying stale layer state
+     across route changes, plausibly the source of the "second bounce" — a
+     rebuild-from-scratch on every phase change avoids it. Entry loads keep
+     the panel because [data-pt-entry] holds it as the covered-on-first-paint
+     state; the :not() excludes them from the hide rule. */
+  :root:not([data-pt-entry]) .page-transition[data-phase="idle"] {
     display: none;
   }
 }

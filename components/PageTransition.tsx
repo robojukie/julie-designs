@@ -61,10 +61,21 @@ const HOLD_MS = 300;
    the same speed now, so its presence is the whole signal. */
 export const ENTRY_SCRIPT = `(function(){try{
 if(matchMedia("(prefers-reduced-motion: reduce)").matches)return;
+// See the header of styles/page-transition.css. The panel is absolute rather
+// than fixed to keep it out of Safari's chrome-tint sampler, and rides
+// window.scrollY via this variable to visually match a fixed element.
+// Setting it here (before hydration, before first paint) covers a browser
+// that restores a non-zero scrollY on refresh.
+document.documentElement.style.setProperty("--pt-scroll-top", window.scrollY + "px");
 document.documentElement.setAttribute("${ENTRY_ATTR}","1");
+// data-pt-slow bumps the reveal-leg duration up by 100ms — see the override
+// in styles/page-transition.css. Applied to every entry load (all devices)
+// and every mobile click transition, so the reveal-only handoff reads more
+// gracefully than the fast one paired with a cover.
+document.documentElement.setAttribute("data-pt-slow","1");
 // Safety net: if the bundle never executes, don't strand the page behind an
 // opaque panel with no way out.
-setTimeout(function(){document.documentElement.removeAttribute("${ENTRY_ATTR}")},3000);
+setTimeout(function(){document.documentElement.removeAttribute("${ENTRY_ATTR}");document.documentElement.removeAttribute("data-pt-slow");},3000);
 }catch(e){}})();`;
 
 function isModifiedClick(e: ReactMouseEvent) {
@@ -84,6 +95,23 @@ export default function PageTransition({
   // effect below knows a route change is one we should reveal for (vs. a
   // back/forward nav that bypassed the click handler entirely).
   const awaitingRouteChange = useRef(false);
+
+  /* Keep --pt-scroll-top synced with window.scrollY so the absolute-positioned
+     panel rides the viewport like a fixed element would. Absolute (rather than
+     fixed) so Safari's Website Tinting / iOS chrome sampler ignores it — see
+     the header of styles/page-transition.css. Passive listener; setProperty on
+     documentElement is cheap and doesn't force layout. */
+  useEffect(() => {
+    function sync() {
+      document.documentElement.style.setProperty(
+        "--pt-scroll-top",
+        window.scrollY + "px",
+      );
+    }
+    sync();
+    window.addEventListener("scroll", sync, { passive: true });
+    return () => window.removeEventListener("scroll", sync);
+  }, []);
 
   /* Entry loads. Starts at "idle" so the server-rendered markup matches and
      hydration stays clean — the panel is held in its covered position by CSS
@@ -157,6 +185,22 @@ export default function PageTransition({
       if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
       e.preventDefault();
+
+      // Mobile: skip the cover leg entirely and use the same reveal-only path
+      // an entry load takes. The parabolic cover animation on iOS Safari has
+      // an intermittent flash we haven't been able to close; the reveal-only
+      // path (home load) is smooth. Set the entry attribute so CSS pins the
+      // panel at centre, mark data-pt-slow so the reveal runs at the 100ms-
+      // slower entry duration, then navigate. The pathname useEffect above
+      // schedules setPhase("reveal") once the route swaps.
+      if (window.matchMedia("(max-width: 640px)").matches) {
+        document.documentElement.setAttribute(ENTRY_ATTR, "1");
+        document.documentElement.setAttribute("data-pt-slow", "1");
+        awaitingRouteChange.current = true;
+        router.push(destination);
+        return;
+      }
+
       pendingHref.current = destination;
       setPhase("cover");
     }
@@ -168,7 +212,7 @@ export default function PageTransition({
     // ourselves instead.
     document.addEventListener("click", onClick, true);
     return () => document.removeEventListener("click", onClick, true);
-  }, [pathname]);
+  }, [pathname, router]);
 
   /* Guarded so the animationend listener and the watchdog below can't both
      run a leg's follow-up. Reset when the phase returns to idle. */
@@ -186,6 +230,10 @@ export default function PageTransition({
         if (href) router.push(href);
       } else {
         setPhase("idle");
+        // The slow-reveal flag lives from entry-load setup or mobile click
+        // through the end of the reveal. Cleared here so a subsequent
+        // desktop-click transition (cover + reveal) uses the fast duration.
+        document.documentElement.removeAttribute("data-pt-slow");
       }
     },
     [router],

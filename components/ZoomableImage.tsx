@@ -51,19 +51,26 @@ import {
 const MAX_W = 1200;
 const MAX_H = 760;
 
-/* ONE SIZING RULE FOR EVERY SCREEN. The image is grown into the cap box above
-   and that is the end of it — the viewport is not consulted. What the viewport
-   decides is only what happens NEXT: if the result fits, it sits centred; if
-   it doesn't, the overlay scrolls and the image is panned.
+/* SIZING HAS TWO CAPS. The MAX_W / MAX_H pair above, plus the current viewport
+   minus a small breathing inset. The smaller of the two binds, which means:
 
-   That is what makes a phone work without a second model for it. The reason
-   the earlier viewport-relative sizing failed there was structural: on a
-   portrait screen the case-study column already runs nearly edge to edge, so
-   fitting the image to the viewport returned it at 1.03x — measured — and the
-   zoom was a full-screen interruption that changed nothing. Sizing to a cap
-   instead means a phone gets the same 1170px-wide screenshot a desktop gets;
-   it just arrives as something to pan rather than something to take in at
-   once. */
+     - On a desktop wider than MAX_W, the fixed caps are what matter and the
+       zoom lands at its familiar large-screen size.
+     - On a phone or a narrow window, the viewport binds instead and the image
+       is sized to fit inside the current window rather than bleeding off it.
+
+   An earlier version used only the fixed caps and let the overlay scroll when
+   the sized image ran past the viewport — which on a phone opened the zoom
+   as an off-screen crop the user had to pan to see rather than a picture they
+   could take in at once. Adding the viewport constraint restores the
+   "fit and centre" resting state for every screen size. The pan-mode code
+   below is retained as a safety net for extreme aspect ratios, but the
+   viewport cap here means the modeFor check consistently lands on "fit". */
+
+/* Breathing room around the frame at the viewport cap — 16px on each side —
+   so the shadow and rounded corners have space to read instead of touching
+   the viewport edges. */
+const FIT_INSET = 32;
 
 /* Mirrors the transition below, and used only to hold the scroll lock until
    the close animation has actually finished. Restoring the page's scroll while
@@ -96,7 +103,9 @@ function rectOf(el: HTMLElement): Rect {
    left/top centre the box in the viewport, which is the resting position when
    it fits. In pan mode they are ignored — the scroll container places it. */
 function fitRect(naturalW: number, naturalH: number): Rect {
-  const scale = Math.min(MAX_W / naturalW, MAX_H / naturalH);
+  const capW = Math.min(MAX_W, window.innerWidth - FIT_INSET);
+  const capH = Math.min(MAX_H, window.innerHeight - FIT_INSET);
+  const scale = Math.min(capW / naturalW, capH / naturalH);
   const width = naturalW * scale;
   const height = naturalH * scale;
   return {
