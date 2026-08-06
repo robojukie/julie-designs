@@ -43,7 +43,10 @@
   --pt-color: #ed6b6b;
   /* One leg. Every leg on every route runs at this — cover, reveal, entry or
      click. Mirrored as DURATION_MS in PageTransition.tsx, which sizes the
-     watchdog off it. */
+     watchdog off it. Entry loads (all devices) and mobile click transitions
+     override this to 400ms via :root[data-pt-slow] below, since only the
+     reveal leg runs in those flows and it reads more gracefully at that
+     tempo without a cover to pair against. */
   --pt-duration: 300ms;
 
   --pt-r: 72vmax;
@@ -191,6 +194,17 @@
   .page-transition {
     display: none;
   }
+}
+
+/* Every entry load and every mobile click transition sets data-pt-slow — the
+   ENTRY_SCRIPT in PageTransition.tsx puts it there before first paint, the
+   mobile click handler adds it before router.push, and advance("reveal")
+   clears it when the reveal completes. In those flows only the reveal leg
+   runs, so bumping the whole duration is equivalent to bumping just the
+   reveal; desktop clicks (which pair a cover with a reveal) don't get the
+   attribute and stay at 300ms per leg. */
+:root[data-pt-slow] .page-transition {
+  --pt-duration: 400ms;
 }
 
 @media (max-width: 640px) {
