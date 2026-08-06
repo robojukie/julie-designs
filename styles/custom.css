@@ -565,3 +565,78 @@ select:focus-visible,
   aspect-ratio: 1.903;
   object-fit: cover;
 }
+
+/* ---------------------------------------------------------------------------
+   About hero — modifier + two-column layout, used only on /about.
+   `.compact` is a size-only override on .hero-title-text.main-page: 0,3,0
+   specificity beats the base + main-page rules (and their responsive
+   overrides in juliepaik.css at 767/479), so the original .main-page usage
+   on Home and other pages is untouched.
+--------------------------------------------------------------------------- */
+.hero-title-text.main-page.compact {
+  font-size: 64px;
+  line-height: 1.05;
+  letter-spacing: normal;
+}
+
+.about-hero-grid {
+  display: grid;
+  grid-template-columns: 3fr 2fr;
+  grid-template-areas:
+    "heading image"
+    "para    image";
+  gap: 32px;
+  align-items: start;
+  width: 100%;
+}
+
+.about-hero-grid > h1 {
+  grid-area: heading;
+}
+
+.about-hero-grid > .about-hero-image {
+  grid-area: image;
+}
+
+.about-hero-grid > .main-text {
+  grid-area: para;
+}
+
+.about-hero-image {
+  display: flex;
+  justify-content: center;
+}
+
+.about-hero-image img {
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: 280px;
+}
+
+@media screen and (max-width: 991px) {
+  .about-hero-grid {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "heading"
+      "image"
+      "para";
+    gap: 32px;
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  .about-hero-image img {
+    max-height: 200px;
+  }
+}
+
+/* Below 767, .section.about drops to 0 but .subsection picks up 24px sides
+   (juliepaik.css:7317), so paragraphs below the hero shift to 24px. Match
+   that here — the hero has no .subsection wrapper to inherit from. */
+@media screen and (max-width: 767px) {
+  .about-hero-grid {
+    padding-left: 24px;
+    padding-right: 24px;
+  }
+}
