@@ -154,6 +154,26 @@
   pointer-events: auto;
 }
 
+/* Lock document scroll for the whole covered/animating window — cover leg,
+   entry hold, and reveal leg. pointer-events: auto on the panel stops clicks
+   but not wheel / keyboard / touch scroll, so without this the page can scroll
+   under the ball mid-bounce. Mobile already has touch-action: none on the
+   panel below; this rule is what stops wheel and arrow-key scroll on desktop
+   and belt-and-braces on mobile. The panel covers the viewport for this whole
+   window, so any scrollbar-gone layout shift is hidden behind it.
+
+   Both html and body have to carry overflow: hidden — html alone isn't enough
+   in Chrome (body inherits scrollability from the viewport propagation rule
+   and keeps letting wheel through). */
+:root[data-pt-entry],
+:root[data-pt-entry] body,
+:root:has(.page-transition[data-phase="cover"]),
+:root:has(.page-transition[data-phase="cover"]) body,
+:root:has(.page-transition[data-phase="reveal"]),
+:root:has(.page-transition[data-phase="reveal"]) body {
+  overflow: hidden;
+}
+
 @keyframes pt-x-in {
   from {
     transform: translateX(var(--pt-x-off));
