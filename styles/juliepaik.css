@@ -10,7 +10,7 @@
    Stripped 1 :root block(s); normalised 50 mangled
    variable reference(s); rewrote 11 image URL(s) to /images/.
 
-   Pruned 246 rule(s) and 252 selector(s) for markup the
+   Pruned 248 rule(s) and 254 selector(s) for markup the
    rebuild no longer has — see scripts/cleanup.config.js for the list and
    scripts/audit-dead-css.js for the check that keeps it honest.
 
@@ -993,10 +993,6 @@ figure {
   padding: 60px 0 40px;
   text-decoration: none;
   display: flex;
-}
-
-.page-title-container.no-botttom-padding {
-  padding-bottom: 0;
 }
 
 .page-title-container.home {
@@ -6116,13 +6112,6 @@ figure {
 
   .about-portrait {
       max-height: 200px;
-  }
-
-  .title-image {
-      justify-content: flex-start;
-      align-items: center;
-      width: 100%;
-      display: flex;
   }
 
   .thumbnail-title {

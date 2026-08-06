@@ -1,6 +1,8 @@
 /* The banner screenshot opens the zoom, on every case study. In the export
    only vac-redesign's banner was a lightbox (hence lightboxWrapper below);
-   the others are the same kind of image and now behave the same way. */
+   the others are the same kind of image and now behave the same way. The
+   exception is a transparent-PNG mockup (see zoomable below). */
+import Image from "next/image";
 import ZoomableImage from "@/components/ZoomableImage";
 
 type CaseStudyBannerProps = {
@@ -30,6 +32,12 @@ type CaseStudyBannerProps = {
      for the image's `height: 100%` to resolve against. Rendered as a <div> it
      collapsed to the image's intrinsic size — 441x273 instead of 598x370. */
   lightboxWrapper?: boolean;
+  /* Opt out of the zoom. The zoom's frame paints a near-white backing behind
+     the image (styles/lightbox.css) so opaque screenshots sit on a card; a
+     transparent-PNG mockup like vac-redesign's laptop+phone shows that card
+     through its empty regions, and there is nothing to gain from zooming a
+     decorative hero anyway. */
+  zoomable?: boolean;
 };
 
 export default function CaseStudyBanner({
@@ -42,9 +50,20 @@ export default function CaseStudyBanner({
   sizes,
   eagerLoad,
   lightboxWrapper,
+  zoomable = true,
 }: CaseStudyBannerProps) {
-  const image = (
+  const image = zoomable ? (
     <ZoomableImage
+      src={imageSrc}
+      alt={imageAlt}
+      width={width}
+      height={height}
+      sizes={sizes}
+      loading={eagerLoad ? "eager" : "lazy"}
+      className={imageClassName}
+    />
+  ) : (
+    <Image
       src={imageSrc}
       alt={imageAlt}
       width={width}

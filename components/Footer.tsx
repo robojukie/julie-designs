@@ -29,7 +29,6 @@ export default function Footer() {
               rel="noreferrer"
               className="social-link nav-link"
             >
-              {" "}
               LinkedIn
             </a>
             <div className="social-link social-divider">|</div>

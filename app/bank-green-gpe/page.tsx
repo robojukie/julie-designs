@@ -1,6 +1,9 @@
 /* Every screenshot on this page opens the zoom — the component renders the
    same <img> next/image did, plus the attributes that make it operable.
-   See components/ZoomableImage.tsx. */
+   See components/ZoomableImage.tsx. The hero banner is the one exception:
+   it's a transparent-PNG mockup, and the zoom's frame paints a near-white
+   backing that would show through the empty regions around the devices.
+   It's opted out via zoomable={false} on CaseStudyBanner below. */
 import ZoomableImage from "@/components/ZoomableImage";
 import type { Metadata } from "next";
 import CaseStudyBanner from "@/components/CaseStudyBanner";
@@ -27,6 +30,7 @@ export default function BankGreen() {
         height={800}
         imageClassName="banner-image-contain"
         sizes="(max-width: 1840px) 100vw, 1840px"
+        zoomable={false}
       />
       <CaseStudyHero
         title="Bank Green"
