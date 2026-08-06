@@ -1,15 +1,14 @@
 /* Custom pointer: a pink rig that stands in for the native cursor in two
    states — a dot at rest, a caret bar over text.
 
-   MODELLED ON austlee.com. His is not an SVG and not a CSS `cursor: url(...)`
-   image — it is plain DOM: fixed-position <div>s rounded with
-   border-radius: 9999px, moved by JS writing transform: translate3d() on every
-   pointer move. Geometry copied from his.
+   BUILT FROM PLAIN DOM — not an SVG, and not a CSS `cursor: url(...)` image:
+   fixed-position <div>s rounded with border-radius: 9999px, moved by JS
+   writing transform: translate3d() on every pointer move. A url() image can't
+   animate between states, and an SVG buys nothing for a circle and a
+   rectangle.
 
-   HOW THIS DIFFERS FROM HIS RIG. He builds every state out of a two-eye
-   assembly (.cursor-eye.left / .cursor-eye.right, each holding a .cursor-iris)
-   so that the button state can blink. With the eyes dropped, the states here
-   need a ring and a single bar, so that is the whole rig.
+   The rig is deliberately minimal: the states here need a ring and a single
+   bar, so that is all it holds.
 
    THE STATES, set as data-state by components/Cursor.tsx:
 
@@ -90,8 +89,8 @@
        somehow detected before the measurement lands. */
     --cursor-text-h: 18px;
 
-    /* Matches austlee.com's shape-morph timing. Long enough to read as the
-       parts growing into each other rather than snapping. */
+    /* Shape-morph timing. Long enough to read as the parts growing into each
+       other rather than snapping. */
     --cursor-morph: 0.28s cubic-bezier(0.2, 0.8, 0.2, 1);
 
     position: fixed;
@@ -120,9 +119,8 @@
 
     /* Only the fade is animated here. The rig's POSITION is deliberately not
        transitioned: it tracks the pointer 1:1, so any easing would show up as
-       the cursor lagging behind the hand. Same choice austlee.com makes. The
-       fade is what smooths the handoff to and from the native cursor at the
-       edge of a link. */
+       the cursor lagging behind the hand. The fade is what smooths the handoff
+       to and from the native cursor at the edge of a link. */
     opacity: 0;
     transition: opacity 0.16s ease-out;
     /* Promotes the rig to its own layer up front, so the first pointer move
