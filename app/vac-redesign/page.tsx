@@ -58,8 +58,8 @@ export default function VACRedesign() {
                 </p>
                 <p>
                   This is a responsive web application, therefore the bulk of
-                  this case study will focus on web with some adjacent
-                  examples of the mobile experience.
+                  this case study will focus on web with some adjacent examples
+                  of the mobile experience.
                 </p>
               </div>
               <div className="column-role">
@@ -83,8 +83,7 @@ export default function VACRedesign() {
                         1 product designer (me)
                         <br />
                         1 Non-technical co-founder
-                        <br />
-                        1 Engineering co-founder
+                        <br />1 Engineering co-founder
                       </p>
                     </div>
                   </div>
@@ -118,8 +117,8 @@ export default function VACRedesign() {
           <div className="center-middle-aligner">
             <div className="container-content-center">
               <p className="paragraph-display-thin">
-                Employees were growing increasingly frustrated with the
-                tooling required for their job. They wasted time looking for
+                Employees were growing increasingly frustrated with the tooling
+                required for their job. They wasted time looking for
                 information, struggled to guess what visual elements
                 represented, and <strong>lost out on potential hires</strong>.
                 <br />
@@ -266,9 +265,9 @@ export default function VACRedesign() {
                 <div className="card-info text-card">
                   <p className="body-title">Wasted time</p>
                   <p className="card-quote">
-                    &ldquo;takes a minute to two minutes [to load], which
-                    might not seem like a lot of time, but when you&apos;re on
-                    a call with another Director{" "}
+                    &ldquo;takes a minute to two minutes [to load], which might
+                    not seem like a lot of time, but when you&apos;re on a call
+                    with another Director{" "}
                     <strong>it can be so cumbersome</strong>&rdquo;
                   </p>
                 </div>
@@ -281,8 +280,8 @@ export default function VACRedesign() {
                     nonprofessional&rdquo;
                   </p>
                   <p className="card-quote">
-                    &rdquo;a lot of what we do is making sure we don&apos;t
-                    seem like a scam&rdquo;
+                    &rdquo;a lot of what we do is making sure we don&apos;t seem
+                    like a scam&rdquo;
                   </p>
                 </div>
               </div>
@@ -308,9 +307,9 @@ export default function VACRedesign() {
             </div>
             <p>
               Employees are constantly dealing with a bug-riddled app that has
-              no system feedback when things don&rsquo;t go according to
-              plan. In addition, they have to work extra hard to appear
-              legitimate when reaching out to schools and potential teachers.
+              no system feedback when things don&rsquo;t go according to plan.
+              In addition, they have to work extra hard to appear legitimate
+              when reaching out to schools and potential teachers.
             </p>
           </div>
           <div className="horizontal-middle-container">
@@ -395,8 +394,7 @@ export default function VACRedesign() {
                   <p className="list-card-title">Increase trust in actions</p>
                   <p>
                     Present appropriate feedback immediately when there are
-                    system errors and provide suggestions to recover from
-                    errors
+                    system errors and provide suggestions to recover from errors
                   </p>
                 </div>
               </div>
@@ -414,17 +412,15 @@ export default function VACRedesign() {
             <div className="right-middle-half-width-container">
               <div className="list-card">
                 <div className="card-info text-card">
-                  <p className="list-card-title">
-                    Goal 1: Simplify workflows
-                  </p>
+                  <p className="list-card-title">Goal 1: Simplify workflows</p>
                   <p>
                     Directors struggled to efficiently complete tasks due to a
                     convoluted user flows and inconsistent app behavior.
                     Different users used different flows to complete similar
                     tasks, creating confusion in communication and training.
                     <br />
-                    My goal was to simplify user flows to speed up training
-                    and improve efficiency.
+                    My goal was to simplify user flows to speed up training and
+                    improve efficiency.
                   </p>
                 </div>
               </div>
@@ -439,8 +435,8 @@ export default function VACRedesign() {
                     <br />
                     My goal was to organize and improve the information
                     architecture related to their main tasks, so that they
-                    weren&apos;t wasting time clicking on multiple items
-                    before finding what they were looking for.
+                    weren&apos;t wasting time clicking on multiple items before
+                    finding what they were looking for.
                   </p>
                 </div>
               </div>
@@ -466,9 +462,9 @@ export default function VACRedesign() {
             <div className="left-middle-half-width-container">
               <h2>Simplify workflows</h2>
               <p>
-                <strong>I identified 3 primary workflows</strong> every
-                Director had in common that would make the biggest impact,
-                consulting with stakeholders through my decision making.
+                <strong>I identified 3 primary workflows</strong> every Director
+                had in common that would make the biggest impact, consulting
+                with stakeholders through my decision making.
               </p>
             </div>
             <div className="right-middle-half-width-container">
@@ -541,8 +537,8 @@ export default function VACRedesign() {
             </div>
             <div className="rich-text-block">
               <p>
-                My changes allow users to find information and take action
-                they expect and need without confusing navigation
+                My changes allow users to find information and take action they
+                expect and need without confusing navigation
               </p>
             </div>
           </div>
@@ -631,7 +627,9 @@ export default function VACRedesign() {
               <h2 className="eyebrow">Goal 1: Simplify workflows</h2>
               <h2>Flow 2: Assign substitutes</h2>
             </div>
-            <p>Requesting and assigning subs are broken into disjointed flows</p>
+            <p>
+              Requesting and assigning subs are broken into disjointed flows
+            </p>
           </div>
           <div className="vertical-container">
             <div className="top-content">
@@ -687,7 +685,9 @@ export default function VACRedesign() {
             <div className="eyebrow-header">
               <h3>A more readable sub requests page</h3>
             </div>
-            <p>Requesting and assigning subs are broken into disjointed flows</p>
+            <p>
+              Requesting and assigning subs are broken into disjointed flows
+            </p>
           </div>
           <div className="horizontal-container">
             <div className="_2-x-1-grid">
@@ -708,9 +708,9 @@ export default function VACRedesign() {
                 <div className="caption-wrapper">
                   <p className="caption-title">Before</p>
                   <p className="caption">
-                    The original page used text that was too small to read,
-                    had inconsistent us of font for links and text, an
-                    inefficient layout, and unclear actions.
+                    The original page used text that was too small to read, had
+                    inconsistent use of font for links and text, an inefficient
+                    layout, and unclear actions.
                   </p>
                 </div>
               </div>
@@ -814,9 +814,8 @@ export default function VACRedesign() {
                 <div className="caption-wrapper">
                   <p className="caption-title">Before</p>
                   <p className="caption">
-                    The original page used text that was too small to read,
-                    had inconsistent us of font for links and text, an
-                    inefficient layout, and unclear actions.
+                    Directors struggled to find where they needed to go on the
+                    app to make teacher assignments
                   </p>
                 </div>
               </div>
@@ -836,6 +835,10 @@ export default function VACRedesign() {
                 </div>
                 <div className="caption-wrapper">
                   <p className="caption-title">After</p>
+                  <p className="caption">
+                    Reducing steps and clear elements allowed Directors to
+                    easily navigate to teacher assignments.
+                  </p>
                 </div>
               </div>
             </div>
@@ -906,8 +909,8 @@ export default function VACRedesign() {
                       Room for future features
                     </p>
                     <p className="card-description">
-                      The new format allows for additional features to be
-                      added in an organized and intuitive way
+                      The new format allows for additional features to be added
+                      in an organized and intuitive way
                     </p>
                   </div>
                 </div>
@@ -1004,8 +1007,8 @@ export default function VACRedesign() {
                       Details that matter reduces cognitive load
                     </p>
                     <p className="card-description">
-                      Information is organized into sections and tabs,
-                      allowing users to easily find what they need
+                      Information is organized into sections and tabs, allowing
+                      users to easily find what they need
                     </p>
                   </div>
                 </div>
@@ -1015,8 +1018,8 @@ export default function VACRedesign() {
                       Two-pane view and tabs reduces cognitive load
                     </p>
                     <p className="card-description">
-                      Allows Directors to browse with ease and reduces
-                      cognitive load when looking for data
+                      Allows Directors to browse with ease and reduces cognitive
+                      load when looking for data
                     </p>
                   </div>
                 </div>
@@ -1118,8 +1121,8 @@ export default function VACRedesign() {
                     Concept testing teacher assignment flows
                   </p>
                   <p className="card-description light">
-                    Will the simplified flows cover everything employees need
-                    to accomplish their tasks?
+                    Will the simplified flows cover everything employees need to
+                    accomplish their tasks?
                   </p>
                 </div>
               </div>
@@ -1141,8 +1144,8 @@ export default function VACRedesign() {
                     Adding nearby teachers section
                   </p>
                   <p className="card-description light">
-                    Half of the users mentioned distance as a primary factor
-                    in assigning permanent and substitute teachers
+                    Half of the users mentioned distance as a primary factor in
+                    assigning permanent and substitute teachers
                   </p>
                 </div>
               </div>
@@ -1203,8 +1206,8 @@ export default function VACRedesign() {
                     Table view of attendance checks
                   </p>
                   <p className="card-description light">
-                    Table rows allow data to be more easily scannable and
-                    leaves space for other sections like overview and tasks
+                    Table rows allow data to be more easily scannable and leaves
+                    space for other sections like overview and tasks
                   </p>
                 </div>
               </div>
@@ -1231,9 +1234,9 @@ export default function VACRedesign() {
                   <p className="body-title">Time saving</p>
                   <p className="card-quote">
                     &ldquo;
-                    <strong>[the new design] has interview notes</strong>,
-                    which right now I can&rsquo;t access unless I open in a
-                    separate window, which again just takes more time&rdquo;
+                    <strong>[the new design] has interview notes</strong>, which
+                    right now I can&rsquo;t access unless I open in a separate
+                    window, which again just takes more time&rdquo;
                   </p>
                 </div>
               </div>
@@ -1243,8 +1246,8 @@ export default function VACRedesign() {
                   <p className="card-quote">
                     &ldquo;this is super clean looking and nice and{" "}
                     <strong>
-                      if I have to share my screen to show a school schedule,
-                      to my eyes it looks much more appealing
+                      if I have to share my screen to show a school schedule, to
+                      my eyes it looks much more appealing
                     </strong>
                     &rdquo;
                   </p>
