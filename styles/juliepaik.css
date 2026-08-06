@@ -1740,7 +1740,7 @@ figure {
 .image-single {
   border: 1px none var(--beige);
   object-fit: contain;
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   width: auto;
   height: auto;
   min-height: 378px;
@@ -1748,10 +1748,24 @@ figure {
   overflow: clip;
 }
 
+/* Composite diagram (e.g. a flow of screenshots + arrows). Padded card
+   treatment so the rounded corner shows the card background, not a
+   clipped corner of the diagram content. Not for regular screenshots —
+   their UI chrome is meant to feel clipped at the corner. */
+.image-flow-diagram {
+  background: var(--color--neutral--warm--200);
+  padding: 16px;
+  border-radius: var(--radius-md);
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+  box-sizing: border-box;
+  display: block;
+}
+
 .image-single.border {
   border-style: solid;
   border-color: var(--color--neutral--warm--400);
-  border-radius: var(--radius-md);
   box-shadow: none;
 }
 

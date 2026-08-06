@@ -139,6 +139,11 @@ type OverlayProps = {
   naturalH: number;
   from: Rect;
   onClose: () => void;
+  /* Sampled from the source image's computed background-color at open time,
+     so an image with its own card treatment (e.g. .image-flow-diagram)
+     carries that background into the zoom instead of flashing to the frame's
+     default. Null when the source has no background of its own. */
+  frameBackground: string | null;
 };
 
 function Overlay({
@@ -148,6 +153,7 @@ function Overlay({
   naturalH,
   from,
   onClose,
+  frameBackground,
 }: OverlayProps) {
   const [sized, setSized] = useState<Rect>(() => fitRect(naturalW, naturalH));
   const closeRef = useRef<HTMLButtonElement>(null);
@@ -290,11 +296,10 @@ function Overlay({
            target overflows the screen, so there is no destination rect to fly
            to and the geometry animation would be animating to a box the user
            can't see the edges of anyway. It cross-fades instead. */
-        style={
-          mode === "pan"
-            ? { width: sized.width, height: sized.height }
-            : undefined
-        }
+        style={{
+          ...(mode === "pan" ? { width: sized.width, height: sized.height } : {}),
+          ...(frameBackground ? { background: frameBackground } : {}),
+        }}
         initial={
           mode === "pan"
             ? { opacity: 0 }
@@ -350,6 +355,7 @@ export default function ZoomableImage({
   const imgRef = useRef<HTMLImageElement>(null);
   const [from, setFrom] = useState<Rect | null>(null);
   const [natural, setNatural] = useState<{ w: number; h: number } | null>(null);
+  const [frameBackground, setFrameBackground] = useState<string | null>(null);
   /* Client-only gate for the portal. The alternative — a conditional-on-`from`
      portal — was tried and is what kept the exit animation from ever running:
      with the portal inside `{from ? ... : null}`, closing unmounted the whole
@@ -375,6 +381,15 @@ export default function ZoomableImage({
       w: Number(props.width) || el.naturalWidth || 0,
       h: Number(props.height) || el.naturalHeight || 0,
     });
+    /* Sample the source image's own background so the overlay frame carries
+       it through. Any image styled with a card treatment (a background on the
+       <img>, e.g. .image-flow-diagram) gets that color in the zoom instead of
+       the frame's default near-white. Skipped when transparent, which is what
+       browsers report for images with no background set. */
+    const bg = window.getComputedStyle(el).backgroundColor;
+    setFrameBackground(
+      bg && bg !== "rgba(0, 0, 0, 0)" && bg !== "transparent" ? bg : null,
+    );
   }, [props.width, props.height]);
 
   const close = useCallback(() => setFrom(null), []);
@@ -417,6 +432,7 @@ export default function ZoomableImage({
                 naturalH={natural.h}
                 from={from}
                 onClose={close}
+                frameBackground={frameBackground}
               />
             ) : null}
           </AnimatePresence>,

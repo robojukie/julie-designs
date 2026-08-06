@@ -506,7 +506,7 @@ export default function VACRedesign() {
                 width={1301}
                 height={791}
                 sizes="100vw"
-                className="image-single"
+                className="image-flow-diagram"
                 style={{ height: "auto" }}
               />
               <div className="card-info-centered">
