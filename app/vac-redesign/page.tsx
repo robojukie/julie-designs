@@ -814,9 +814,8 @@ export default function VACRedesign() {
                 <div className="caption-wrapper">
                   <p className="caption-title">Before</p>
                   <p className="caption">
-                    The original page used text that was too small to read, had
-                    inconsistent us of font for links and text, an inefficient
-                    layout, and unclear actions.
+                    Directors struggled to find where they needed to go on the
+                    app to make teacher assignments
                   </p>
                 </div>
               </div>
@@ -836,6 +835,10 @@ export default function VACRedesign() {
                 </div>
                 <div className="caption-wrapper">
                   <p className="caption-title">After</p>
+                  <p className="caption">
+                    Reducing steps and clear elements allowed Directors to
+                    easily navigate to teacher assignments.
+                  </p>
                 </div>
               </div>
             </div>
