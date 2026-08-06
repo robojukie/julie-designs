@@ -1881,7 +1881,6 @@ figure {
 .display-icon-wrapper {
   grid-column-gap: 48px;
   grid-row-gap: 48px;
-  border-radius: var(--large-radius);
   text-align: center;
   justify-content: center;
   align-items: center;
@@ -3286,10 +3285,6 @@ figure {
   width: auto;
   margin-bottom: 8px;
   padding: 4px 10px;
-}
-
-.about-portrait {
-  max-height: 280px;
 }
 
 .thumbnail-container-left-align {
@@ -6127,10 +6122,6 @@ figure {
 
   .image-800w {
       max-width: 100%;
-  }
-
-  .about-portrait {
-      max-height: 200px;
   }
 
   .thumbnail-title {

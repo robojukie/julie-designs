@@ -731,7 +731,7 @@ a.social-link:not(.brand):hover {
   justify-content: center;
 }
 
-.about-hero-image img {
+.about-portrait {
   width: auto;
   height: auto;
   max-width: 100%;
@@ -758,7 +758,7 @@ a.social-link:not(.brand):hover {
     padding-right: 16px;
   }
 
-  .about-hero-image img {
+  .about-portrait {
     max-height: 200px;
   }
 }
