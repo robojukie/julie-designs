@@ -72,10 +72,12 @@ const MAX_H = 760;
    the viewport edges. */
 const FIT_INSET = 32;
 
-/* Mirrors the transition below, and used only to hold the scroll lock until
-   the close animation has actually finished. Restoring the page's scroll while
-   the image is still flying back to its slot makes it fly to the wrong place. */
-const EXIT_MS = 260;
+/* Enter is quick and eager; exit is deliberately slower. Shrinking reads
+   faster than growing at the same duration — a symmetric 260/260 made the
+   close feel abrupt next to the open — so the exit is stretched to give the
+   image time to settle back into the page. */
+const OPEN_MS = 260;
+const CLOSE_MS = 400;
 
 type Rect = { top: number; left: number; width: number; height: number };
 
@@ -193,16 +195,38 @@ function Overlay({
       body.style.overflow = prevOverflow;
       body.style.paddingRight = prevPad;
       /* Focus goes back to the image that opened this, so a keyboard user
-         lands where they left rather than at the top of the document. */
-      (restoreTo.current as HTMLElement | null)?.focus?.();
+         lands where they left rather than at the top of the document.
+         preventScroll matters here: without it, focus() nudges the source
+         image into view and the page settles a few pixels UP right after the
+         exit tween finishes. That was invisible before the exit tween played
+         (unmount was instant, the nudge got lost in the click), but with the
+         tween running for its full duration the settle-scroll lands on its
+         own and reads as a bug. */
+      (restoreTo.current as HTMLElement | null)?.focus?.({ preventScroll: true });
     };
   }, []);
+
+  /* pointer-events: none is written to the ref rather than driven by React
+     state on purpose. The state path was tried and doesn't take effect:
+     setClosing(true) here would batch with the parent's setFrom(null), the
+     parent re-renders WITHOUT this Overlay in its output, and AnimatePresence
+     keeps the last committed render alive for the exit — which is the render
+     from BEFORE this handler ran. Writing the style directly sidesteps that,
+     and framer-motion doesn't animate pointer-events so nothing overwrites it
+     during the exit. The rig then hit-tests through the exiting overlay to the
+     source image and morphs "−" back to "+" in step with the zoom collapsing. */
+  const doClose = useCallback(() => {
+    if (scrollerRef.current) {
+      scrollerRef.current.style.pointerEvents = "none";
+    }
+    onClose();
+  }, [onClose]);
 
   useEffect(() => {
     const onKey = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
         event.stopPropagation();
-        onClose();
+        doClose();
         return;
       }
       /* The overlay is modal, and the only thing in it that takes focus is the
@@ -215,17 +239,23 @@ function Overlay({
     };
     document.addEventListener("keydown", onKey, true);
     return () => document.removeEventListener("keydown", onKey, true);
-  }, [onClose]);
+  }, [doClose]);
 
   const reduced =
     typeof window !== "undefined" &&
     window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   /* Reduced motion keeps the overlay and drops only the flight: the zoom still
-     has to happen, it just cross-fades in place instead of travelling. */
-  const transition = reduced
+     has to happen, it just cross-fades in place instead of travelling. Reduced
+     motion also stays symmetric — the whole point of that mode is to be brief,
+     so the enter/exit asymmetry above doesn't apply. */
+  const EASE = [0.2, 0.8, 0.2, 1] as const;
+  const openTransition = reduced
     ? { duration: 0.12 }
-    : { duration: EXIT_MS / 1000, ease: [0.2, 0.8, 0.2, 1] as const };
+    : { duration: OPEN_MS / 1000, ease: EASE };
+  const closeTransition = reduced
+    ? { duration: 0.12 }
+    : { duration: CLOSE_MS / 1000, ease: EASE };
 
   return (
     <motion.div
@@ -243,11 +273,12 @@ function Overlay({
          don't collide: a drag scrolls and never becomes a click, so panning
          can't close the overlay by accident. That is the whole reason panning
          lives on native overflow here rather than on a drag handler. */
-      onClick={onClose}
+      onClick={doClose}
       initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      transition={{ duration: 0.18 }}
+      animate={{ opacity: 1, transition: { duration: 0.18 } }}
+      /* Backdrop fade tracks the frame's exit duration so the scrim doesn't
+         vanish out from under the still-shrinking image. */
+      exit={{ opacity: 0, transition: { duration: CLOSE_MS / 1000 } }}
       role="dialog"
       aria-modal="true"
       aria-label={alt || "Zoomed image"}
@@ -271,15 +302,18 @@ function Overlay({
               ? { ...sized, opacity: 0 }
               : from
         }
-        animate={mode === "pan" ? { opacity: 1 } : { ...sized, opacity: 1 }}
+        animate={
+          mode === "pan"
+            ? { opacity: 1, transition: { duration: 0.18 } }
+            : { ...sized, opacity: 1, transition: openTransition }
+        }
         exit={
           mode === "pan"
-            ? { opacity: 0 }
+            ? { opacity: 0, transition: { duration: 0.18 } }
             : reduced
-              ? { opacity: 0 }
-              : { ...from, opacity: 0 }
+              ? { opacity: 0, transition: closeTransition }
+              : { ...from, opacity: 0, transition: closeTransition }
         }
-        transition={mode === "pan" ? { duration: 0.18 } : transition}
       >
         <Image
           src={src}
@@ -299,7 +333,7 @@ function Overlay({
         ref={closeRef}
         type="button"
         className="lightbox-close"
-        onClick={onClose}
+        onClick={doClose}
         aria-label="Close zoomed image"
       >
         <span aria-hidden="true">&times;</span>
@@ -316,6 +350,14 @@ export default function ZoomableImage({
   const imgRef = useRef<HTMLImageElement>(null);
   const [from, setFrom] = useState<Rect | null>(null);
   const [natural, setNatural] = useState<{ w: number; h: number } | null>(null);
+  /* Client-only gate for the portal. The alternative — a conditional-on-`from`
+     portal — was tried and is what kept the exit animation from ever running:
+     with the portal inside `{from ? ... : null}`, closing unmounted the whole
+     subtree including AnimatePresence, which then had no lifecycle in which to
+     play the exit. Guarding on a mount flag lets AnimatePresence stay put
+     across the child coming and going, which is what it's for. */
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
 
   const open = useCallback(() => {
     const el = imgRef.current;
@@ -363,14 +405,10 @@ export default function ZoomableImage({
         }}
       />
 
-      {/* No mounted/isClient guard, deliberately: `from` is set only by the
-          click handler, so document.body is guaranteed to exist by the time
-          this branch can ever be taken. The usual guard would be a render
-          pass and an effect spent proving something the control flow already
-          guarantees. */}
-      {from && natural
-        ? createPortal(
-            <AnimatePresence>
+      {mounted &&
+        createPortal(
+          <AnimatePresence>
+            {from && natural ? (
               <Overlay
                 key="lightbox"
                 src={props.src}
@@ -380,10 +418,10 @@ export default function ZoomableImage({
                 from={from}
                 onClose={close}
               />
-            </AnimatePresence>,
-            document.body,
-          )
-        : null}
+            ) : null}
+          </AnimatePresence>,
+          document.body,
+        )}
     </>
   );
 }
