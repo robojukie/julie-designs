@@ -662,11 +662,19 @@ a.social-link:not(.brand)::after {
   right: 17px;
 }
 
-/* "say hello!" carries .email, which zeroes out padding-right (juliepaik.css
-   `.social-link.email.nav-link`). Without this the shared 16px right offset
-   above would sit 16px inside the text and the underline would be off-centre. */
-a.social-link.email:not(.brand)::after {
-  right: 0;
+/* "say hello!" carries .email, which zeroes out padding-right on desktop
+   (juliepaik.css `.social-link.email.nav-link`, base rule). Without this
+   override the shared 16px right offset above would sit 16px inside the text
+   and the underline would be off-centre.
+
+   Scoped to (min-width: 992px) because at ≤991px the mobile menu re-applies
+   padding-right: 16px to .social-link.email.nav-link (juliepaik.css:5270), so
+   the shared 17px offset above is already correct — without this scope the
+   underline would run 16px past the visible text on mobile. */
+@media (min-width: 992px) {
+  a.social-link.email:not(.brand)::after {
+    right: 0;
+  }
 }
 
 /* Fade the text to the same peach as the dots on hover, so both animate
