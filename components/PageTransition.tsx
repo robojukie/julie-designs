@@ -24,8 +24,8 @@ const DURATION_MS = 400;
 
    The motion itself is two CSS animations in styles/page-transition.css; this
    component only drives the phase state machine and the router.push between
-   the two legs. Timing/easing/curve are matched to austlee.com — see that
-   stylesheet's header for the specifics.
+   the two legs. See that stylesheet's header for the timing, easing, and
+   curve specifics.
 
    It runs in two cases:
      1. Page-to-page clicks — both legs, cover then reveal.
@@ -39,12 +39,11 @@ const ENTRY_ATTR = "data-pt-entry";
    moving — before the reveal leg runs. The cover animation's forwards fill is
    what holds it there, so this is purely a delay before the phase flips.
 
-   Deliberately a FLAT timer, not a readiness gate. austlee.com holds its panel
-   until document.fonts.ready plus above-fold images resolve (capped at 2s),
-   which on a warm load lands around 0.4-0.6s but stretches on image-heavy
-   routes. That variability is fine there because nothing is sequenced behind
-   it; here the hero intro plays immediately after the reveal, so the hold has
-   to be the same length every time or the two fall out of step. */
+   Deliberately a FLAT timer, not a readiness gate. Gating on
+   document.fonts.ready plus above-fold images was considered and dropped: it
+   lands around 0.4-0.6s on a warm load but stretches on image-heavy routes,
+   and the hero intro plays immediately after the reveal, so the hold has to be
+   the same length every time or the two fall out of step. */
 const HOLD_MS = 300;
 
 /* Runs before first paint, inlined into the document — see app/layout.tsx.
@@ -62,6 +61,12 @@ const HOLD_MS = 300;
    the same speed now, so its presence is the whole signal. */
 export const ENTRY_SCRIPT = `(function(){try{
 if(matchMedia("(prefers-reduced-motion: reduce)").matches)return;
+// See the header of styles/page-transition.css. The panel is absolute rather
+// than fixed to keep it out of Safari's chrome-tint sampler, and rides
+// window.scrollY via this variable to visually match a fixed element.
+// Setting it here (before hydration, before first paint) covers a browser
+// that restores a non-zero scrollY on refresh.
+document.documentElement.style.setProperty("--pt-scroll-top", window.scrollY + "px");
 document.documentElement.setAttribute("${ENTRY_ATTR}","1");
 // Safety net: if the bundle never executes, don't strand the page behind an
 // opaque panel with no way out.
@@ -85,6 +90,23 @@ export default function PageTransition({
   // effect below knows a route change is one we should reveal for (vs. a
   // back/forward nav that bypassed the click handler entirely).
   const awaitingRouteChange = useRef(false);
+
+  /* Keep --pt-scroll-top synced with window.scrollY so the absolute-positioned
+     panel rides the viewport like a fixed element would. Absolute (rather than
+     fixed) so Safari's Website Tinting / iOS chrome sampler ignores it — see
+     the header of styles/page-transition.css. Passive listener; setProperty on
+     documentElement is cheap and doesn't force layout. */
+  useEffect(() => {
+    function sync() {
+      document.documentElement.style.setProperty(
+        "--pt-scroll-top",
+        window.scrollY + "px",
+      );
+    }
+    sync();
+    window.addEventListener("scroll", sync, { passive: true });
+    return () => window.removeEventListener("scroll", sync);
+  }, []);
 
   /* Entry loads. Starts at "idle" so the server-rendered markup matches and
      hydration stays clean — the panel is held in its covered position by CSS
@@ -195,10 +217,9 @@ export default function PageTransition({
   /* Watchdog. A backgrounded tab stops compositing, and a CSS animation that
      never renders never fires animationend — so a click followed by a tab
      switch would otherwise strand the panel mid-cover with router.push never
-     called, i.e. an opaque screen with no way forward. austlee.com drives its
-     own transition off a setTimeout for the same reason rather than trusting
-     the event. Slack on top of the duration so this only ever fires when the
-     event genuinely didn't. */
+     called, i.e. an opaque screen with no way forward. A setTimeout is the
+     only thing that still fires in that situation. Slack on top of the
+     duration so this only ever fires when the event genuinely didn't. */
   useEffect(() => {
     if (phase === "idle") {
       advancedFor.current = null;
