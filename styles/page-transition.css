@@ -192,3 +192,26 @@
     display: none;
   }
 }
+
+@media (max-width: 640px) {
+  /* Block user input from causing scroll or overscroll while the panel is
+     interactable (cover / reveal / entry hold, i.e. pointer-events: auto). On
+     iOS Safari a touch during the hold or reveal can retract the URL bar
+     mid-transition, which shifts window.scrollY out from under the passive
+     scroll listener and leaves --pt-scroll-top stale for a frame — enough to
+     offset the ball from viewport centre and reveal the underlying page. */
+  .page-transition {
+    touch-action: none;
+    overscroll-behavior: none;
+  }
+
+  /* Drop the panel out of the render tree entirely between transitions on
+     mobile. iOS Safari's compositor has been carrying stale layer state
+     across route changes, plausibly the source of the "second bounce" — a
+     rebuild-from-scratch on every phase change avoids it. Entry loads keep
+     the panel because [data-pt-entry] holds it as the covered-on-first-paint
+     state; the :not() excludes them from the hide rule. */
+  :root:not([data-pt-entry]) .page-transition[data-phase="idle"] {
+    display: none;
+  }
+}
