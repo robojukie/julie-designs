@@ -78,7 +78,7 @@ export default function Home() {
                   disabled
                   thumbnailSrc="/images/NovinoPath-thumbnail-02.png"
                   thumbnailAlt=""
-                  thumbnailClassName="novinopath-thumbnail"
+                  thumbnailId="novinopath-thumbnail"
                   width={768}
                   height={768}
                   sizes="(max-width: 767px) 100vw, 768px"
@@ -91,7 +91,7 @@ export default function Home() {
                   href="/vac-redesign"
                   thumbnailSrc="/images/VAC-thumbnail.png"
                   thumbnailAlt=""
-                  thumbnailClassName="vac-thumbnail"
+                  thumbnailId="vac-thumbnail"
                   width={768}
                   height={768}
                   sizes="(max-width: 767px) 100vw, 768px"
@@ -105,7 +105,7 @@ export default function Home() {
                   href="/bank-green-gpe"
                   thumbnailSrc="/images/bank-green-thumbnail.png"
                   thumbnailAlt="Screenshot of Bank Green upload document site"
-                  thumbnailClassName="bank-green-thumbnail"
+                  thumbnailId="bank-green-thumbnail"
                   width={768}
                   height={768}
                   sizes="(max-width: 767px) 100vw, 768px"
@@ -117,7 +117,7 @@ export default function Home() {
                   href="/brainsprout"
                   thumbnailSrc="/images/brainsprout-thumbnail.png"
                   thumbnailAlt="Screenshot of two cartoon robot characters holding a box with a heart on it."
-                  thumbnailClassName="brainsprout-1-thumbnail"
+                  thumbnailId="brainsprout-1-thumbnail"
                   width={512}
                   height={512}
                   sizes="(max-width: 512px) 100vw, 512px"

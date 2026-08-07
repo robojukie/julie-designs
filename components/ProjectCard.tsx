@@ -6,7 +6,10 @@ type ProjectCardProps = {
   disabled?: boolean;
   thumbnailSrc: string;
   thumbnailAlt: string;
-  thumbnailClassName: string;
+  /* Unique per card (novinopath-thumbnail, vac-thumbnail, etc.). Rendered as
+     the img's id since each thumbnail appears once per page — matches how CSS
+     scopes per-card overrides. */
+  thumbnailId: string;
   width: number;
   height: number;
   /* Mirrors the `sizes` attribute on the corresponding <img> in the export.
@@ -28,7 +31,7 @@ type ProjectCardProps = {
 
 // The hover scale (1 -> 1.05) from the "Scale/Reset X on hover" IX2 action
 // lists lives in CSS (styles/home.css) rather than here. Two reasons: the img
-// must stay a *direct* flex child of .image-wrapper-cover — an extra wrapper
+// must stay a *direct* flex child of .home-card-image-wrapper — an extra wrapper
 // element un-blockifies it and leaves an inline-baseline gap under the image —
 // and a CSS transition can't freeze the way a rAF-driven one can.
 export default function ProjectCard({
@@ -36,7 +39,7 @@ export default function ProjectCard({
   disabled,
   thumbnailSrc,
   thumbnailAlt,
-  thumbnailClassName,
+  thumbnailId,
   width,
   height,
   sizes,
@@ -49,7 +52,7 @@ export default function ProjectCard({
 }: ProjectCardProps) {
   const thumbnail = (
     <div className="home-thumbnail">
-      <div className="image-wrapper-cover">
+      <div className="home-card-image-wrapper">
         <Image
           src={thumbnailSrc}
           alt={thumbnailAlt}
@@ -57,7 +60,7 @@ export default function ProjectCard({
           height={height}
           sizes={sizes}
           loading={eagerLoad ? "eager" : "lazy"}
-          className={thumbnailClassName}
+          id={thumbnailId}
           /* The export sizes these from the image's intrinsic width (`width:auto`
              + `max-width:100%`), which always lands on the wrapper width since
              every source is wider than the 384px card. That doesn't survive

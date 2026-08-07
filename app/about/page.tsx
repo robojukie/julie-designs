@@ -211,7 +211,7 @@ export default function About() {
                 alt=""
                 width={40}
                 height={40}
-                className="image"
+                className="display-icon"
               />
               <Image
                 src="/images/Microphone.svg"
