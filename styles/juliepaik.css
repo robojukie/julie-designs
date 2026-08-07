@@ -41,10 +41,18 @@
    By DELETION ONLY. Remove rules as their markup stops existing; that is how
    this file eventually reaches zero and the port is finally over.
 
-   Never add to it and never change a declaration in it. New and changed
-   styling goes in styles/custom.css, which loads after this file and wins.
-   The moment this file starts carrying edits, it stops being a faithful record
-   of the original, and the reason to trust it is gone.
+   Never add to it. New and changed styling goes in styles/custom.css, which
+   loads after this file and wins. The moment this file starts carrying edits,
+   it stops being a faithful record of the original, and the reason to trust it
+   is gone.
+
+   THIS IS ENFORCED, because saying it here was not enough — a rule was added
+   within days of the freeze, not carelessly but by someone editing the file
+   nearest the thing they were changing, which is the normal way to work.
+   scripts/check-frozen-stylesheet.mjs fails any pull request that adds a rule
+   here, and tells you to use custom.css instead. Run it locally any time:
+
+     node scripts/check-frozen-stylesheet.mjs
 
    When you delete rules, add the class to the ledger. That keeps the coverage
    audit meaningful: it can still prove that everything absent from this file
@@ -1791,17 +1799,6 @@ figure {
    treatment so the rounded corner shows the card background, not a
    clipped corner of the diagram content. Not for regular screenshots —
    their UI chrome is meant to feel clipped at the corner. */
-.image-flow-diagram {
-  background: var(--color--neutral--warm--200);
-  padding: 16px;
-  border-radius: var(--radius-md);
-  width: 100%;
-  height: auto;
-  object-fit: contain;
-  box-sizing: border-box;
-  display: block;
-}
-
 .image-single.border {
   border-style: solid;
   border-color: var(--color--neutral--warm--400);

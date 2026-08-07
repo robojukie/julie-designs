@@ -539,6 +539,33 @@ select:focus-visible,
 }
 
 /* ---------------------------------------------------------------------------
+   Flow-diagram card treatment  — NOT IN THE EXPORT
+
+   The blurred attendance-flow screenshot on vac-redesign, given a padded card
+   so the pale screenshot reads as an object rather than bleeding into the page.
+
+   Lives here rather than in juliepaik.css because that file is the frozen
+   record of what the original site's CSS did, and this rule was never part of
+   it — see that file's header. It briefly landed there by mistake and was
+   moved; nothing about it changed. Nothing else targets .image-flow-diagram,
+   so loading later costs it nothing.
+
+   ZoomableImage reads this background and carries it into the zoom, so the
+   card treatment survives the transition — see its comment on source
+   backgrounds, and styles/lightbox.css.
+--------------------------------------------------------------------------- */
+.image-flow-diagram {
+  background: var(--color--neutral--warm--200);
+  padding: 16px;
+  border-radius: var(--radius-md);
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+  box-sizing: border-box;
+  display: block;
+}
+
+/* ---------------------------------------------------------------------------
    "Screenshots of original app": one row height  — NOT IN THE EXPORT
 
    The three figures in that section are the only users of .screenshot-shadow
