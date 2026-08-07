@@ -1,0 +1,29 @@
+name: Frozen stylesheet
+
+# styles/juliepaik.css is the frozen record of the original site's CSS and is
+# edited by deletion only. Its header says so; a rule was added within days
+# anyway. Prose does not enforce anything, so this does.
+#
+# Runs on pull requests only. It compares against the PR's base branch, which
+# is the one comparison that answers "did THIS change add a rule".
+
+on:
+  pull_request:
+    paths:
+      - "styles/juliepaik.css"
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # Need the base branch present locally to diff against it.
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: No rules added to the frozen stylesheet
+        run: node scripts/check-frozen-stylesheet.mjs "origin/${{ github.base_ref }}"

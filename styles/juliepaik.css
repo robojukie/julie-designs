@@ -1,22 +1,68 @@
-/* Ported IN FULL from juliepaik.webflow/css/juliepaik.webflow.css by
-   scripts/port-custom-css.js — do not hand-edit, regenerate instead.
+/* THE REFERENCE STYLESHEET. This file is the authoritative record of what the
+   original site's CSS did. It is no longer generated, and the export is no
+   longer consulted for day-to-day work — when something looks wrong, the
+   answer is in here.
 
-   Rule order matches the source exactly, which matters for equal-specificity
-   rules. The :root block lives in tokens.css; Webflow's mangled
-   "<deleted|variable-…>" suffixes are stripped to the clean names tokens.css
-   declares. Anything we wrote ourselves lives in styles/custom.css, which
-   loads after this file.
+   ---------------------------------------------------------------------------
+   PROVENANCE
 
-   Stripped 1 :root block(s); normalised 50 mangled
-   variable reference(s); rewrote 11 image URL(s) to /images/.
+   Ported in full from the original export's stylesheet, which has exactly one
+   commit and has never changed since. Rule order matches that source exactly,
+   which matters for equal-specificity rules.
 
-   Pruned 248 rule(s) and 254 selector(s) for markup the
-   rebuild no longer has — see scripts/cleanup.config.js for the list and
-   scripts/audit-dead-css.js for the check that keeps it honest.
+   Four mechanical transforms were applied, all reversible by inspection:
+     1. The :root block was lifted out to styles/tokens.css.
+     2. Mangled "<deleted|variable-…>" suffixes on deleted-but-referenced
+        variables were stripped to the clean names tokens.css declares (50).
+     3. Relative image URLs were rewritten to the /images/ paths Next serves
+        from public/ (11).
+     4. Rules for markup the rebuild no longer has were dropped, and Designer
+        artifact class names were renamed to say what they are for.
 
-   Renamed 30 selector reference(s) off Webflow's artifact names and
-   collapsed 7 rule(s) the renames made exactly duplicate. The same
-   map rewrites the JSX via scripts/rename-classes-in-code.js. */
+   VERIFIED COMPLETE on 2026-08-06, before generation was retired:
+
+     source rules   1256
+     ported rules   1149
+     pruned rules    254   deliberate, every one attributable to a listed class
+     MISSING rules     0   <- nothing was lost in translation
+
+   That zero is the whole basis for trusting this file over the export. It was
+   produced by an automated rule-level diff, not by reading.
+
+   The ledger of what was pruned and renamed — 125 classes, 16 renames, 1 token
+   merge, each with a reason — lives in the private migration repo at
+   scripts/cleanup.config.js. Consult it when a class seems to have no rules:
+   the question "was this deleted on purpose?" is answered there, and the
+   answer is yes more often than you would guess.
+
+   ---------------------------------------------------------------------------
+   HOW TO EDIT THIS FILE
+
+   By DELETION ONLY. Remove rules as their markup stops existing; that is how
+   this file eventually reaches zero and the port is finally over.
+
+   Never add to it. New and changed styling goes in styles/custom.css, which
+   loads after this file and wins. The moment this file starts carrying edits,
+   it stops being a faithful record of the original, and the reason to trust it
+   is gone.
+
+   THIS IS ENFORCED, because saying it here was not enough — a rule was added
+   within days of the freeze, not carelessly but by someone editing the file
+   nearest the thing they were changing, which is the normal way to work.
+   scripts/check-frozen-stylesheet.mjs fails any pull request that adds a rule
+   here, and tells you to use custom.css instead. Run it locally any time:
+
+     node scripts/check-frozen-stylesheet.mjs
+
+   When you delete rules, add the class to the ledger. That keeps the coverage
+   audit meaningful: it can still prove that everything absent from this file
+   is absent on purpose rather than by accident.
+
+   ---------------------------------------------------------------------------
+   LOAD ORDER IS LOAD-BEARING
+
+   normalize -> webflow -> tokens -> juliepaik (this file) -> custom.
+   See app/globals.css. Reordering silently breaks the cascade. */
 
 .w-layout-grid {
   grid-row-gap: 16px;
@@ -1753,17 +1799,6 @@ figure {
    treatment so the rounded corner shows the card background, not a
    clipped corner of the diagram content. Not for regular screenshots —
    their UI chrome is meant to feel clipped at the corner. */
-.image-flow-diagram {
-  background: var(--color--neutral--warm--200);
-  padding: 16px;
-  border-radius: var(--radius-md);
-  width: 100%;
-  height: auto;
-  object-fit: contain;
-  box-sizing: border-box;
-  display: block;
-}
-
 .image-single.border {
   border-style: solid;
   border-color: var(--color--neutral--warm--400);
