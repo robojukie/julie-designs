@@ -153,6 +153,7 @@ export const radii = {
   radiusSm: "var(--radius-sm)",
   radiusMd: "var(--radius-md)",
   radiusLg: "var(--radius-lg)",
+  radiusFull: "var(--radius-full)",
   radiusBanner: "var(--radius-banner)",
 } as const;
 

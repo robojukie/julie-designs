@@ -752,8 +752,8 @@ figure {
   padding-left: 20px;
 }
 
-.image-wrapper-cover {
-  border-radius: 20px;
+.home-card-image-wrapper {
+  border-radius: var(--radius-lg);
   flex-direction: column;
   justify-content: center;
   align-items: center;
@@ -768,6 +768,9 @@ figure {
   position: relative;
   overflow: hidden;
 }
+
+
+
 
 .container-title {
   grid-row-gap: 0px;
@@ -2038,7 +2041,7 @@ figure {
   display: flex;
 }
 
-.brainsprout-1-thumbnail {
+#brainsprout-1-thumbnail {
   width: auto;
 }
 
@@ -2452,8 +2455,8 @@ figure {
   overflow: hidden;
 }
 
-.bank-green-thumbnail,
-.vac-thumbnail {
+#bank-green-thumbnail,
+#vac-thumbnail {
   width: auto;
 }
 
@@ -2653,7 +2656,7 @@ figure {
   color: var(--text-colors--text-light);
 }
 
-.novinopath-thumbnail {
+#novinopath-thumbnail {
   width: auto;
   display: block;
 }
@@ -3301,7 +3304,7 @@ figure {
 
 .badge {
   background-color: #efebfe;
-  border-radius: 130px;
+  border-radius: var(--radius-full);
   padding: 0 8px;
   display: block;
   position: absolute;
@@ -4255,8 +4258,7 @@ figure {
       margin-top: 0;
   }
 
-  .image-wrapper-cover {
-      border-radius: 10px;
+  .home-card-image-wrapper {
       justify-content: flex-end;
       align-items: center;
       padding-top: 0;
@@ -4758,7 +4760,7 @@ figure {
       position: relative;
   }
 
-  .brainsprout-1-thumbnail {
+  #brainsprout-1-thumbnail {
       max-height: 120%;
   }
 
@@ -4876,8 +4878,8 @@ figure {
       max-width: 348px;
   }
 
-  .bank-green-thumbnail,
-  .vac-thumbnail {
+  #bank-green-thumbnail,
+  #vac-thumbnail {
       max-height: 120%;
   }
 
@@ -4987,7 +4989,7 @@ figure {
       line-height: var(--text-height--title-mobile-height);
   }
 
-  .novinopath-thumbnail {
+  #novinopath-thumbnail {
       max-height: 120%;
   }
 
@@ -5461,7 +5463,7 @@ figure {
       width: 100%;
   }
 
-  .image-wrapper-cover {
+  .home-card-image-wrapper {
       justify-content: flex-end;
       align-items: center;
       max-height: 512px;
@@ -5809,7 +5811,7 @@ figure {
       max-width: 100%;
   }
 
-  .brainsprout-1-thumbnail {
+  #brainsprout-1-thumbnail {
       max-height: 512%;
   }
 
@@ -5886,8 +5888,8 @@ figure {
       line-height: var(--text-height--body-mobile-height);
   }
 
-  .bank-green-thumbnail,
-  .vac-thumbnail {
+  #bank-green-thumbnail,
+  #vac-thumbnail {
       max-height: 512%;
   }
 
@@ -5939,7 +5941,7 @@ figure {
       height: auto;
   }
 
-  .novinopath-thumbnail {
+  #novinopath-thumbnail {
       max-height: 512%;
   }
 
