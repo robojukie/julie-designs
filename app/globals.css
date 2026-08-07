@@ -61,7 +61,17 @@ body {
    one viewport tall and tiles down the page instead of spanning it once.
 
    The export overrides this to `height: auto` in an inline <style> present on
-   17 of the 19 pages. */
+   17 of the 19 pages.
+
+   scrollbar-gutter: stable reserves the vertical-scrollbar space even when
+   the page isn't tall enough to need one. Without it, Chromium browsers
+   toggle the scrollbar as content becomes / stops being scrollable, and
+   worse — the page-transition rule sets overflow: hidden on html/body while
+   the panel is up, then releases it, so every route change on desktop Chrome
+   flashes a scrollbar-width horizontal shift when the reveal ends. Reserving
+   the gutter fixes both. Safari uses overlay scrollbars (no reflow) so this
+   is a no-op there. */
 html {
   height: auto;
+  scrollbar-gutter: stable;
 }

@@ -14,9 +14,10 @@ import {
    lives. Used only to size the watchdog below, but it must not be LOWER than
    the CSS value: the watchdog force-advances the phase, which tears down a
    still-running animation. A too-small number here silently cancels the leg
-   mid-flight. Erring high is harmless — the animationend event beats the
+   mid-flight. Sized to the longest leg (home entry reveal, 600ms via
+   data-pt-slow); erring high is harmless — the animationend event beats the
    watchdog in every case except the one it exists for. */
-const DURATION_MS = 400;
+const DURATION_MS = 600;
 
 /* Full-viewport wipe played on navigation: a "V" sweep — enters top-right,
    dives down-left to a bottom vertex ("cover", where the route swaps
@@ -29,9 +30,9 @@ const DURATION_MS = 400;
 
    It runs in two cases:
      1. Page-to-page clicks — both legs, cover then reveal.
-     2. Every entry load, home included — reveal only (the second leg), played
-        out of the pre-painted covered state that ENTRY_SCRIPT in
-        app/layout.tsx sets up. */
+     2. Every entry load (home, refresh, deep link, first visit) — reveal only
+        (the second leg), played out of the pre-painted covered state that
+        ENTRY_SCRIPT in app/layout.tsx sets up. */
 
 const ENTRY_ATTR = "data-pt-entry";
 
@@ -53,12 +54,9 @@ const HOLD_MS = 300;
    before the ball could cover it. Deliberately not a React concern for that
    reason; PageTransition just picks the flag up on mount.
 
-   Every load gets it now, home and first visits included, so there is no
-   navigation-type check left — an earlier version read
-   performance.getEntriesByType("navigation")[0].type to tell a refresh from a
-   first load, purely to exempt home. The flag carried a "home" vs "1" value
-   for a while too, back when home's entry reveal ran slower; every route is
-   the same speed now, so its presence is the whole signal. */
+   Every entry load gets ENTRY_ATTR — home, refreshes, deep links, first
+   visits. Home additionally gets data-pt-slow, which bumps the reveal to
+   600ms; every other route stays at the standard 300ms. */
 export const ENTRY_SCRIPT = `(function(){try{
 if(matchMedia("(prefers-reduced-motion: reduce)").matches)return;
 // See the header of styles/page-transition.css. The panel is absolute rather
@@ -68,11 +66,12 @@ if(matchMedia("(prefers-reduced-motion: reduce)").matches)return;
 // that restores a non-zero scrollY on refresh.
 document.documentElement.style.setProperty("--pt-scroll-top", window.scrollY + "px");
 document.documentElement.setAttribute("${ENTRY_ATTR}","1");
-// data-pt-slow bumps the reveal-leg duration up by 100ms — see the override
-// in styles/page-transition.css. Applied to every entry load (all devices)
-// and every mobile click transition, so the reveal-only handoff reads more
-// gracefully than the fast one paired with a cover.
-document.documentElement.setAttribute("data-pt-slow","1");
+// data-pt-slow doubles the reveal-leg duration (600ms) — see the override in
+// styles/page-transition.css. Applied only to the home entry load, where the
+// reveal is the first thing a visitor sees and reads more gracefully at the
+// slower tempo. Every other route (refresh, deep link, click) plays the
+// standard 300ms reveal.
+if(window.location.pathname==="/")document.documentElement.setAttribute("data-pt-slow","1");
 // Safety net: if the bundle never executes, don't strand the page behind an
 // opaque panel with no way out.
 setTimeout(function(){document.documentElement.removeAttribute("${ENTRY_ATTR}");document.documentElement.removeAttribute("data-pt-slow");},3000);
@@ -186,21 +185,6 @@ export default function PageTransition({
 
       e.preventDefault();
 
-      // Mobile: skip the cover leg entirely and use the same reveal-only path
-      // an entry load takes. The parabolic cover animation on iOS Safari has
-      // an intermittent flash we haven't been able to close; the reveal-only
-      // path (home load) is smooth. Set the entry attribute so CSS pins the
-      // panel at centre, mark data-pt-slow so the reveal runs at the 100ms-
-      // slower entry duration, then navigate. The pathname useEffect above
-      // schedules setPhase("reveal") once the route swaps.
-      if (window.matchMedia("(max-width: 640px)").matches) {
-        document.documentElement.setAttribute(ENTRY_ATTR, "1");
-        document.documentElement.setAttribute("data-pt-slow", "1");
-        awaitingRouteChange.current = true;
-        router.push(destination);
-        return;
-      }
-
       pendingHref.current = destination;
       setPhase("cover");
     }
@@ -230,9 +214,9 @@ export default function PageTransition({
         if (href) router.push(href);
       } else {
         setPhase("idle");
-        // The slow-reveal flag lives from entry-load setup or mobile click
-        // through the end of the reveal. Cleared here so a subsequent
-        // desktop-click transition (cover + reveal) uses the fast duration.
+        // Home entry sets data-pt-slow before first paint; clear it here so any
+        // subsequent click transition on the same session uses the standard
+        // 300ms duration.
         document.documentElement.removeAttribute("data-pt-slow");
       }
     },
