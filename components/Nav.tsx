@@ -10,21 +10,6 @@ import { scrollToSection } from "@/lib/scroll-to-section";
 // Matches CSS "ease", used by the Webflow IX2 "Nav enter/exit only" actions.
 const EASE: [number, number, number, number] = [0.25, 0.1, 0.25, 1];
 
-/* THE KNOB. How far you have to scroll in a new direction before the navbar
-   changes its mind, in pixels.
-
-   It used to be effectively 1: the handler compared each scroll position to
-   the previous one, so any upward movement at all brought the bar back. Nobody
-   scrolls a long page in one direction — trackpads overshoot and rubber-band,
-   phones bounce at the end of a flick, and people nudge back to re-read a
-   line. Each of those was a full 60px round trip, and on /novinopath-lis the
-   project bar travels with it, so two bars moved on the noise.
-
-   Raise it if the bars still change their mind too readily; lower it toward 0
-   to get the old behaviour back. Around 8-14 is the range where deliberate
-   direction changes still register immediately but a wobble does not. */
-const SCROLL_FLIP = 10;
-
 // The menu icon is a Lottie (documents/menu-lottie.json in the export), not a
 // CSS hamburger: frames 0-30 are the two diagonal slashes, frame ~37 is the X.
 // IX2 "mobile menu open" (a-110) runs the clip to 25% then 30.9%; "mobile menu
@@ -64,10 +49,6 @@ export default function Nav() {
   const [hidden, setHidden] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const lastScrollY = useRef(0);
-  /* Where the current direction of travel began, and which direction that is.
-     Together they are what SCROLL_FLIP px is measured against. */
-  const directionAnchor = useRef(0);
-  const goingDownRef = useRef(true);
   const menuLottieRef = useRef<LottieRefCurrentProps>(null);
   const [menuAnimation, setMenuAnimation] = useState<object | null>(null);
   const menuIconPrimed = useRef(false);
@@ -103,35 +84,16 @@ export default function Nav() {
 
   useEffect(() => {
     lastScrollY.current = window.scrollY;
-    directionAnchor.current = window.scrollY;
-
     function onScroll() {
       const y = window.scrollY;
-      const delta = y - lastScrollY.current;
-      if (delta === 0) return;
-
-      const goingDown = delta > 0;
-      /* A reversal doesn't flip the navbar, it only restarts the measurement.
-         The nav then moves once travel in the new direction reaches
-         SCROLL_FLIP. */
-      if (goingDown !== goingDownRef.current) {
-        goingDownRef.current = goingDown;
-        directionAnchor.current = lastScrollY.current;
-      }
-
+      const goingDown = y > lastScrollY.current;
       if (y < 60) {
-        /* Near the top the bar always returns, regardless of travel — there is
-           nothing above to scroll back to, and arriving at the top of a page
-           with the nav still hidden reads as broken. */
         setHidden(false);
-        directionAnchor.current = y;
-      } else if (Math.abs(y - directionAnchor.current) >= SCROLL_FLIP) {
+      } else {
         setHidden(goingDown);
       }
-
       lastScrollY.current = y;
     }
-
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
