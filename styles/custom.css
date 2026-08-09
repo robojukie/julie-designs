@@ -1822,19 +1822,15 @@ a.social-link:not(.brand):hover {
   padding: 4px 10px;
 }
 
-/* -- Scope metadata ------------------------------------------------------ */
+/* -- Project context columns --------------------------------------------- */
 
-/* Audience and screen count, under the project heading. Text, not pills: the
-   count is a number (a pill implies a category) and audiences run to several
-   values that would overflow a badge row. Read once for context rather than
-   scanned for triage, which is what separates it from state above. */
-.project-meta {
-  color: var(--text-colors--muted-dark-blue);
-  font-family: var(--text-body-font);
-  font-size: var(--text--body-text-sm);
-  font-weight: var(--text-weightt--body-300);
-  line-height: var(--text-height--body-mobile-height);
-  margin: 0;
+/* User roles and screen count, below the description — the same shape the
+   opening block uses for Timeline / My Role / Team, one level down. The
+   .container-800 above already stacks its children on a 32px gap; this only
+   adds the small step that separates the facts from the prose they follow. */
+.project-context {
+  margin-top: 8px;
+  width: 100%;
 }
 
 /* Same pill idiom as the export's .badge on the home-page thumbnails, but
@@ -1958,31 +1954,61 @@ a.social-link:not(.brand):hover {
   position: relative;
 }
 
-/* top: 60px is the navbar's own height (juliepaik.css .navbar), so the two
-   stack rather than overlap. z-index sits under the navbar's 1000 and well
-   under the progress bar's 999999 — the bar should pass beneath both, not
-   compete with them. */
+/* PINNED TO THE BOTTOM, and that is what makes it simple.
+
+   The first version sat under the navbar at `top: 60px`, and it fought the
+   navbar for a living. The navbar hides on scroll-down by TRANSLATING up while
+   keeping its 60px slot in the sticky stack, so a bar offset by that 60px hung
+   below an empty band the moment the nav slid away. Closing that gap meant
+   publishing the nav's hidden state to the document, matching its easing and
+   its two durations, and keeping a shared 60px constant in step across three
+   rules and a JS observer band. All of it was bookkeeping to survive a
+   collision that only existed because both things wanted the same edge.
+
+   The bottom edge is uncontested. Nothing else on the site pins there, so the
+   bar needs no offset, no coupling, and no knowledge of the navbar at all —
+   and the deletion reaches further than this rule: scroll-margin-top drops
+   back to the navbar's 60px alone, which gives every anchor jump 45px more
+   content on screen.
+
+   It also stops working against the navbar's intent rather than around it.
+   Hiding the nav on scroll-down exists to give reading room; a second bar
+   pinned to the top took some of that room straight back.
+
+   `bottom: 0` sticky inside .project-run does the appearing and disappearing
+   on its own, exactly as `top` did: pinned to the viewport bottom while the
+   run is on screen, gone when the last project ends.
+
+   DARK, AND OPAQUE. The first version was a translucent blurred strip in the
+   page's own paper colour with grey text, and it disappeared — a light bar on
+   a light page reads as more page, not as a control. Nothing about it said it
+   was there to be used.
+
+   The dark ground is the same one the Outcomes section uses, so it is not a
+   new colour on the site, and it does the one thing the light version could
+   not: separate the bar from the content it floats over. The shadow above it
+   completes that, since without a cast shadow a full-width band still reads as
+   a section rather than as something on top. */
 .project-nav {
-  -webkit-backdrop-filter: blur(75px);
-  backdrop-filter: blur(75px);
-  background-color: #f8f4f1e6;
-  border-bottom: 1px solid var(--divider);
+  background-color: var(--background-color--background-dark-blue);
+  bottom: 0;
+  box-shadow: 0 -6px 24px #0000001f;
   padding: 0 var(--gutter);
   position: sticky;
-  top: 60px;
   z-index: 900;
 }
 
 .project-nav-list {
+  align-items: center;
   display: flex;
-  gap: 28px;
+  gap: 8px;
   list-style: none;
   margin: 0 auto;
   max-width: var(--width--container-1232);
   /* Scrolls rather than wraps: a second row would change the bar's height
      mid-scroll and shift every section under it. */
   overflow-x: auto;
-  padding: 0;
+  padding: 10px 0;
   scrollbar-width: none;
 }
 
@@ -1997,50 +2023,51 @@ a.social-link:not(.brand):hover {
   margin: 0;
 }
 
-/* line-height is stated, not inherited, and that is load-bearing. The
-   case-study body sets 28.8px, which made the bar 60px tall by accident — and
-   THREE other numbers are derived from that height: the sticky offset of any
-   bar below it, `.project-run .project-section`'s scroll-margin-top, and the
-   IntersectionObserver band in components/FeatureNav.tsx. An incidental height
-   is fine until one of the three drifts from it and anchor jumps start landing
-   under the bar.
+/* PILLS, not text links. Three underlined words on a strip look like a caption;
+   pills with hit areas look like something you press, which is what a reader
+   has to believe before they will try it. The bar can only do its job if it is
+   recognised as a control.
 
-   13 + 18 + 11 + 2px link border = 44, + the bar's own 1px bottom border = 45,
-   so navbar + indicator = 105px exactly. KEEP IN SYNC with
-   `.project-run .project-section`'s scroll-margin-top below and the
-   IntersectionObserver rootMargin in FeatureNav.tsx. */
+   line-height is stated rather than inherited — the case-study body sets
+   28.8px, which sized the bar by accident. Nothing derives the number by hand
+   any more (PrototypeJump measures the bar at runtime), so this only keeps the
+   height from moving for reasons nobody intended. */
 .project-nav-link {
   align-items: baseline;
-  border-bottom: 2px solid #0000;
-  color: var(--text-colors--muted-dark-blue);
+  border-radius: 130px;
+  color: #fcfcfcb8;
   display: flex;
   font-family: var(--text-body-font);
   font-size: var(--text-size--nav-link-p-text);
   gap: 8px;
   line-height: 18px;
-  padding: 13px 0 11px;
+  padding: 7px 14px;
   text-decoration: none;
-  transition: color 0.2s;
+  transition:
+    background-color 0.2s,
+    color 0.2s;
   white-space: nowrap;
 }
 
 .project-nav-link:hover {
-  color: var(--text-colors--text-primary);
+  background-color: #ffffff1f;
+  color: var(--text-colors--text-light);
 }
 
-/* The current entry is marked twice over — ink instead of grey, and a rule
-   under it. Colour alone would be the only signal for anyone who can't
-   distinguish these two greys, and this bar's entire job is telling you where
-   you are. */
+/* The current entry is marked three ways — filled, darkened, and heavier —
+   because this is the one piece of information the bar exists to carry.
+   #ed6b6b against the dark ground measures 5.28:1, and the dark ink on that
+   fill measures the same 5.28:1, so the pill is legible whichever way round
+   you read it. */
 .project-nav-link[aria-current] {
-  border-bottom-color: var(--accents--bold--accent-heading);
-  color: var(--text-colors--text-primary);
+  background-color: var(--accents--bold--accent-heading);
+  color: var(--background-color--background-dark-blue);
   font-weight: var(--text-weightt--eyebrow-500);
 }
 
 .project-nav-n {
   font-variant-numeric: tabular-nums;
-  opacity: 0.6;
+  opacity: 0.65;
 }
 
 /* Visible to a screen reader, not on screen: the list already shows three
@@ -2056,12 +2083,13 @@ a.social-link:not(.brand):hover {
   width: 1px;
 }
 
-/* Anchor jumps have to clear BOTH sticky bars — 60px navbar + 45px indicator —
-   or the feature's own label lands underneath them. Applied to the sections
-   themselves so it works for the in-page menu, the bar's own links, and any
-   external link carrying a #hash. */
+/* Anchor jumps clear the navbar and nothing else — the indicator is pinned to
+   the BOTTOM, so it never covers an arriving heading. This was 105px when the
+   bar sat under the nav. Applied to the sections themselves so it works for
+   the in-page menu, the bar's own links, and any external link carrying a
+   #hash. */
 .project-run .project-section {
-  scroll-margin-top: 105px;
+  scroll-margin-top: 60px;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -2076,7 +2104,11 @@ a.social-link:not(.brand):hover {
    them is losing the count, which is the thing this bar exists to show. */
 @media screen and (max-width: 767px) {
   .project-nav-list {
-    gap: 20px;
+    gap: 6px;
+  }
+
+  .project-nav-link {
+    padding: 7px 11px;
   }
 }
 

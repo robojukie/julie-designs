@@ -98,6 +98,7 @@ export default function Nav() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+
   /* Keep `#projects-list` in the URL only while the work section is actually
      the section being viewed.
 

@@ -19,7 +19,7 @@
 import type { Metadata } from "next";
 import CaseStudyBanner from "@/components/CaseStudyBanner";
 import CaseStudyHero from "@/components/CaseStudyHero";
-import ContextStrip from "@/components/ContextStrip";
+import ContextColumns from "@/components/ContextColumns";
 import FadeIn from "@/components/FadeIn";
 import ProjectNav from "@/components/ProjectNav";
 import ProjectSection, {
@@ -275,17 +275,25 @@ export default function NovinoPathLIS() {
 
                 <hr className="project-rule" />
 
-                <ContextStrip
-                  timeline="Placeholder timeline"
-                  role={[
-                    "Placeholder discipline",
-                    "Placeholder discipline",
-                    "Placeholder discipline",
-                  ]}
-                  team={[
-                    "Placeholder teammate",
-                    "Placeholder teammate",
-                    "Placeholder teammate",
+                <ContextColumns
+                  columns={[
+                    { label: "Timeline", value: "Placeholder timeline" },
+                    {
+                      label: "My Role",
+                      value: [
+                        "Placeholder discipline",
+                        "Placeholder discipline",
+                        "Placeholder discipline",
+                      ],
+                    },
+                    {
+                      label: "Team",
+                      value: [
+                        "Placeholder teammate",
+                        "Placeholder teammate",
+                        "Placeholder teammate",
+                      ],
+                    },
                   ]}
                 />
               </div>
@@ -334,10 +342,6 @@ export default function NovinoPathLIS() {
           with the last section's bottom edge, with no scroll listener deciding
           when to show it. */}
       <div className="project-run">
-        <ProjectNav
-          projects={PROJECTS.map((p) => ({ id: p.id, label: p.name }))}
-        />
-
         {PROJECTS.map((project, index) => (
           <ProjectSection
             key={project.id}
@@ -346,6 +350,23 @@ export default function NovinoPathLIS() {
             total={PROJECTS.length}
           />
         ))}
+
+        {/* LAST child, and that is a requirement rather than a preference.
+            `position: sticky; bottom: 0` clamps an element inside its parent's
+            box; as the FIRST child its static position is the top of the run,
+            which is already above the viewport bottom for the whole run, so it
+            never sticks and simply scrolls away with the opening. As the last
+            child its static position is below the viewport and it pins.
+            Verified both ways.
+
+            Keyboard order follows DOM order, so this is reached after the
+            three projects rather than before them. That is the right place for
+            it — it is a "go to another project" control, not a table of
+            contents; the menu in the opening block is that, and it comes
+            first. */}
+        <ProjectNav
+          projects={PROJECTS.map((p) => ({ id: p.id, label: p.name }))}
+        />
       </div>
 
       <FadeIn>

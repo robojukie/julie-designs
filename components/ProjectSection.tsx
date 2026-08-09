@@ -1,3 +1,4 @@
+import ContextColumns from "@/components/ContextColumns";
 import FadeIn from "@/components/FadeIn";
 import PrototypeJump from "@/components/PrototypeJump";
 
@@ -180,20 +181,6 @@ export default function ProjectSection({
                 <h2>{heading}</h2>
               </div>
 
-              {/* Scope, as text. Screens is a COUNT — a number reads badly as a
-                  pill, which implies a category — and audience is several
-                  values that would overflow one. Both are context you read
-                  once, not state you scan for. */}
-              <p className="project-meta">
-                {audiences.join(", ")}
-                {screenCount > 0 && (
-                  <>
-                    <span aria-hidden="true"> · </span>
-                    {screenCount} {screenCount === 1 ? "screen" : "screens"}
-                  </>
-                )}
-              </p>
-
               <p>{body}</p>
 
               {/* Scrolls DOWN to the prototype rather than linking out. The
@@ -205,6 +192,26 @@ export default function ProjectSection({
                   Interactive prototype below &#8595;
                 </PrototypeJump>
               </p>
+            </div>
+
+            {/* Below the description, mirroring the opening block: prose that
+                explains the thing, then labelled columns of facts about it.
+                The labels are what make the values legible — "Pathologists"
+                only reads as an audience once something says so. */}
+            <div className="project-context">
+              <ContextColumns
+                columns={[
+                  { label: "User roles", value: audiences },
+                  ...(screenCount > 0
+                    ? [
+                        {
+                          label: "Screens",
+                          value: String(screenCount),
+                        },
+                      ]
+                    : []),
+                ]}
+              />
             </div>
           </div>
 

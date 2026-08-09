@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 
 /* The persistent project indicator on the NovinoPath showcase.
 
@@ -12,13 +12,25 @@ import { useEffect, useRef, useState } from "react";
    the top of a long section cannot answer a question that is asked all the way
    down it.
 
-   WHY STICKY-IN-A-WRAPPER, NOT FIXED. The bar is a child of .project-run, which
-   spans exactly the three project sections. `position: sticky` then does the
-   appearing and disappearing on its own: it pins under the navbar while the run
-   is on screen and scrolls away with the wrapper's bottom edge. The alternative
-   — position: fixed plus a scroll listener toggling visibility — needs JS to
-   decide something CSS already knows, and gets it wrong at both boundaries
-   during momentum scrolling.
+   WHY STICKY-IN-A-WRAPPER, NOT FIXED. The bar is the LAST child of
+   .project-run, which spans exactly the three project sections.
+   `position: sticky; bottom: 0` then does the appearing and disappearing on its
+   own: it pins to the viewport bottom while the run is on screen and releases
+   when the last project ends. The alternative — position: fixed plus a scroll
+   listener toggling visibility — needs JS to decide something CSS already
+   knows, and gets it wrong at both boundaries during momentum scrolling.
+
+   LAST child specifically. Sticky clamps an element inside its parent's box, so
+   as the FIRST child its static position is the top of the run — already above
+   the viewport bottom for the entire run, so it never sticks and just scrolls
+   away with the opening. Verified both ways.
+
+   WHY THE BOTTOM. The top edge is contested: navbar, progress bar, and a navbar
+   that hides on scroll-down by translating up while keeping its 60px slot. A
+   bar pinned below it hung under an empty band the moment the nav slid away,
+   and closing that gap meant publishing the nav's hidden state to the document
+   and matching its easing. The bottom edge is uncontested, so none of that
+   exists — and it stops taking back the reading room the nav hides to give.
 
    WHY ALL THREE ITEMS ARE SHOWN. The brief was "clear at all times how many
    there are and which one is which". Showing only the current one answers half
@@ -30,16 +42,22 @@ import { useEffect, useRef, useState } from "react";
    no work on frames where nothing crossed, and it keeps working when rAF is
    suspended in a background tab. */
 
+/* The line a reader's eye sits on, measured from the top of the viewport. Just
+   under the 60px navbar, and five above where an anchor jump lands
+   (`.project-run .project-section` scroll-margin-top: 60px) so an arriving
+   section is unambiguously past it rather than exactly on it.
+
+   The indicator's own height is not in this number — it is pinned to the
+   BOTTOM of the viewport, so it obstructs nothing up here. That is the second
+   thing moving it down bought. */
+const READ_LINE = 55;
+
 type ProjectNavProps = {
   projects: { id: string; label: string }[];
 };
 
 export default function ProjectNav({ projects }: ProjectNavProps) {
   const [activeId, setActiveId] = useState(projects[0]?.id ?? "");
-  /* Which sections are currently in the band, in document order. Held in a ref
-     rather than state because it is bookkeeping between observer callbacks —
-     rendering never reads it, only the derived activeId. */
-  const visible = useRef<Set<string>>(new Set());
 
   useEffect(() => {
     const sections = projects
@@ -47,41 +65,40 @@ export default function ProjectNav({ projects }: ProjectNavProps) {
       .filter((el): el is HTMLElement => el !== null);
     if (sections.length === 0) return;
 
-    /* The band is a horizontal strip just under the navbar and the bar itself
-       (60 + 45 = 105px). A section counts as "current" while it crosses that
-       strip, which is the line a reader's eye is actually on — not the middle
-       of the viewport, and not the whole viewport, which on a 3.6-screen
-       section would mark two projects at once for a full screen of scrolling. */
-    const observer = new IntersectionObserver(
-      (entries) => {
-        for (const entry of entries) {
-          if (entry.isIntersecting) visible.current.add(entry.target.id);
-          else visible.current.delete(entry.target.id);
+    /* The last section whose top has passed the read line, computed from
+       geometry at the moment the observer fires.
+
+       An earlier version derived this from the observer's own entries — a Set
+       of ids currently intersecting a thin band, then the last of those in
+       document order. It was correct in principle and brittle in practice:
+       the Set is state accumulated across callbacks, so any entry that failed
+       to arrive (a large jump, a restored scroll position, a bfcache
+       restore) left a section marked long after it had left the screen, and
+       the error persisted until something crossed the band again.
+
+       Reading the rects is O(3) on a callback that only fires when something
+       crossed, and it cannot go stale because it holds nothing. */
+    const pick = () => {
+      for (let i = sections.length - 1; i >= 0; i--) {
+        if (sections[i].getBoundingClientRect().top <= READ_LINE) {
+          return sections[i].id;
         }
-        /* The LAST section in document order, not the first. Two are in the
-           band together at every boundary — the outgoing section's bottom edge
-           and the incoming section's top edge both sit at the same y — and the
-           one a reader would name is the one whose heading has just arrived
-           under the bars, which is the later of the two. Taking the first
-           marked the previous project and only corrected itself a screen
-           later. Document order, not observation order, because entries arrive
-           in whatever sequence they happened to change. */
-        for (let i = projects.length - 1; i >= 0; i--) {
-          if (visible.current.has(projects[i].id)) {
-            setActiveId(projects[i].id);
-            break;
-          }
-        }
-      },
-      /* Band top is 100px, five above where a jumped-to section lands
-         (scroll-margin-top: 105px). At exactly 105 the section's top edge only
-         TOUCHES the band — zero intersection area, which threshold 0 does not
-         count — so clicking a nav link left the previous project marked. The
-         5px of deliberate overlap is what makes the arrival register. */
-      { rootMargin: "-100px 0px -85% 0px", threshold: 0 },
-    );
+      }
+      return sections[0].id;
+    };
+
+    /* The observer is only a TRIGGER — "something crossed, look again" — and
+       its rootMargin no longer decides anything. A thin strip near the read
+       line means the callback fires around each boundary and not on every
+       pixel of a 3.6-screen section. */
+    const observer = new IntersectionObserver(() => setActiveId(pick()), {
+      rootMargin: "-55px 0px -85% 0px",
+      threshold: 0,
+    });
 
     sections.forEach((el) => observer.observe(el));
+    /* The first callback fires on observe, which also covers a page restored
+       mid-run by the browser's scroll restoration. */
     return () => observer.disconnect();
   }, [projects]);
 
