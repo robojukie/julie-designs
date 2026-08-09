@@ -230,14 +230,28 @@ export default function NovinoPathLIS() {
                   </p>
                 </div>
 
+                {/* An ORIENTATION DIAGRAM, not a product screenshot. Pathology
+                    lab workflow is a domain almost no reader arrives knowing,
+                    and this is what lets them follow the feature sections at
+                    all — how a case moves from accessioning to a signed-out
+                    report, and which surfaces sit where in that path. It is
+                    the most load-bearing element in the opening, not a
+                    decorative hero.
+
+                    Three consequences when the real asset lands:
+                      - Use ZoomableImage, not a plain <Image>. A diagram dense
+                        enough to explain a domain is dense enough to need
+                        reading at full size.
+                      - Let it keep its own aspect ratio. .placeholder-media's
+                        16:10 is a stand-in; diagrams usually run wider and
+                        shorter, and letterboxing one to fit a box would cost
+                        the legibility that is the entire point.
+                      - Give it a caption. It is the one image on the page
+                        doing explanatory rather than illustrative work. */}
                 <div className="project-shot">
-                  {/* aria-hidden rather than role="img" — a grey box is
-                      scaffolding, and announcing it as a picture that isn't
-                      there is worse than silence. Real alt goes on the real
-                      image. */}
                   <div
                     className="placeholder-media"
-                    data-placeholder-for="/images/placeholder-novinopath-hero.png"
+                    data-placeholder-for="/images/placeholder-novinopath-domain-diagram.png"
                     aria-hidden="true"
                   />
                 </div>
