@@ -17,6 +17,7 @@ import CaseStudyBanner from "@/components/CaseStudyBanner";
 import CaseStudyHero from "@/components/CaseStudyHero";
 import ContextStrip from "@/components/ContextStrip";
 import FadeIn from "@/components/FadeIn";
+import FeatureNav from "@/components/FeatureNav";
 import FeatureSection, {
   pad,
   type FeaturePart,
@@ -299,21 +300,31 @@ export default function NovinoPathLIS() {
         </section>
       </FadeIn>
 
-      {FEATURES.map((feature, index) => (
-        <FeatureSection
-          key={feature.id}
-          {...feature}
-          index={index + 1}
-          total={FEATURES.length}
-          /* Cross-link labels carry the number too, so "03 Dashboards" tells a
-             reader both where they are going and that it is the last one —
-             the same information the section's own label gives them. */
-          otherFeatures={FEATURES.map((f, i) => ({
-            id: f.id,
-            label: `${pad(i + 1)} ${f.eyebrow}`,
-          })).filter((_, i) => FEATURES[i].id !== feature.id)}
+      {/* .feature-run is what scopes the sticky nav: it spans exactly the three
+          feature sections, so the bar pins under the navbar on entry and leaves
+          with the last section's bottom edge, with no scroll listener deciding
+          when to show it.
+
+          The per-section cross-links that used to sit at the foot of each
+          feature are gone with it. They existed because a reader arriving by
+          anchor had no way to reach a sibling without scrolling back to the
+          top; the bar answers that continuously and one screen earlier, and
+          keeping both would have put two lists of the same three destinations
+          on screen at once. Restore by passing `otherFeatures` again. */}
+      <div className="feature-run">
+        <FeatureNav
+          features={FEATURES.map((f) => ({ id: f.id, label: f.eyebrow }))}
         />
-      ))}
+
+        {FEATURES.map((feature, index) => (
+          <FeatureSection
+            key={feature.id}
+            {...feature}
+            index={index + 1}
+            total={FEATURES.length}
+          />
+        ))}
+      </div>
 
       <FadeIn>
         <section className="project-section showcase-section dark">

@@ -1900,6 +1900,138 @@ a.social-link:not(.brand):hover {
   margin: 0;
 }
 
+/* -- Sticky feature-area indicator --------------------------------------- */
+
+/* The wrapper is the whole mechanism. It spans exactly the three feature
+   sections, so the bar inside it sticks under the navbar for the length of the
+   run and scrolls away with the last section — no fixed positioning, no scroll
+   listener toggling visibility, no boundary to get wrong. */
+.feature-run {
+  position: relative;
+}
+
+/* top: 60px is the navbar's own height (juliepaik.css .navbar), so the two
+   stack rather than overlap. z-index sits under the navbar's 1000 and well
+   under the progress bar's 999999 — the bar should pass beneath both, not
+   compete with them. */
+.feature-nav {
+  -webkit-backdrop-filter: blur(75px);
+  backdrop-filter: blur(75px);
+  background-color: #f8f4f1e6;
+  border-bottom: 1px solid var(--divider);
+  padding: 0 var(--gutter);
+  position: sticky;
+  top: 60px;
+  z-index: 900;
+}
+
+.feature-nav-list {
+  display: flex;
+  gap: 28px;
+  list-style: none;
+  margin: 0 auto;
+  max-width: var(--width--container-1232);
+  /* Scrolls rather than wraps: a second row would change the bar's height
+     mid-scroll and shift every section under it. */
+  overflow-x: auto;
+  padding: 0;
+  scrollbar-width: none;
+}
+
+.feature-nav-list::-webkit-scrollbar {
+  display: none;
+}
+
+/* The export puts `margin-bottom: 4px` on every li. Harmless in prose, but
+   here it sat under the flex line and made the bar 4px taller than the sum of
+   its parts — which is the number three other rules are derived from. */
+.feature-nav-list li {
+  margin: 0;
+}
+
+/* line-height is stated, not inherited, and that is load-bearing. The
+   case-study body sets 28.8px, which made the bar 60px tall by accident — and
+   THREE other numbers are derived from that height: the sticky offset of any
+   bar below it, `.feature-run .project-section`'s scroll-margin-top, and the
+   IntersectionObserver band in components/FeatureNav.tsx. An incidental height
+   is fine until one of the three drifts from it and anchor jumps start landing
+   under the bar.
+
+   13 + 18 + 11 + 2px link border = 44, + the bar's own 1px bottom border = 45,
+   so navbar + indicator = 105px exactly. KEEP IN SYNC with
+   `.feature-run .project-section`'s scroll-margin-top below and the
+   IntersectionObserver rootMargin in FeatureNav.tsx. */
+.feature-nav-link {
+  align-items: baseline;
+  border-bottom: 2px solid #0000;
+  color: var(--text-colors--muted-dark-blue);
+  display: flex;
+  font-family: var(--text-body-font);
+  font-size: var(--text-size--nav-link-p-text);
+  gap: 8px;
+  line-height: 18px;
+  padding: 13px 0 11px;
+  text-decoration: none;
+  transition: color 0.2s;
+  white-space: nowrap;
+}
+
+.feature-nav-link:hover {
+  color: var(--text-colors--text-primary);
+}
+
+/* The current entry is marked twice over — ink instead of grey, and a rule
+   under it. Colour alone would be the only signal for anyone who can't
+   distinguish these two greys, and this bar's entire job is telling you where
+   you are. */
+.feature-nav-link[aria-current] {
+  border-bottom-color: var(--accents--bold--accent-heading);
+  color: var(--text-colors--text-primary);
+  font-weight: var(--text-weightt--eyebrow-500);
+}
+
+.feature-nav-n {
+  font-variant-numeric: tabular-nums;
+  opacity: 0.6;
+}
+
+/* Visible to a screen reader, not on screen: the list already shows three
+   entries with one marked, so rendering "Feature 2 of 3" beside it would be
+   saying the same thing twice. role="status" announces the change on scroll. */
+.feature-nav-status {
+  clip-path: inset(50%);
+  height: 1px;
+  margin: 0;
+  overflow: hidden;
+  position: absolute;
+  white-space: nowrap;
+  width: 1px;
+}
+
+/* Anchor jumps have to clear BOTH sticky bars — 60px navbar + 45px indicator —
+   or the feature's own label lands underneath them. Applied to the sections
+   themselves so it works for the in-page menu, the bar's own links, and any
+   external link carrying a #hash. */
+.feature-run .project-section {
+  scroll-margin-top: 105px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .feature-nav-link {
+    transition: none;
+  }
+}
+
+/* Below 991 the navbar is still 60px tall, so the offset holds; only the
+   horizontal padding changes, and --gutter already handles that. The list
+   scrolls sideways at 375 rather than dropping the sibling entries — losing
+   them is losing the count, which is the thing this bar exists to show. */
+@media screen and (max-width: 767px) {
+  .feature-nav-list {
+    gap: 20px;
+  }
+}
+
 /* -- Cross-links to the other feature areas ------------------------------ */
 
 /* Sits at the foot of every feature section so a reader who arrived by anchor
