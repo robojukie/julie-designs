@@ -73,13 +73,6 @@ type ProjectSectionProps = {
      Review". The prefix is added below so one string can serve the section
      label, the sticky nav and the in-page menu. */
   name: string;
-  /* Position and count, rendered as "Project 01 of 03". Both are needed: the
-     index alone says which one you are on but not how many are left, and a
-     reader arriving by anchor has seen neither the menu nor the sections
-     above. Derived from the page's PROJECTS array, so adding a fourth
-     renumbers everything with no edit here. */
-  index: number;
-  total: number;
   state: ProjectState;
   /* Who the work serves. Text rather than a badge: these are several values per
      project and they'd overflow a pill row, and unlike state they are read once
@@ -142,8 +135,6 @@ function ShotPlaceholder({ src, alt }: { src: string; alt: string }) {
 export default function ProjectSection({
   id,
   name,
-  index,
-  total,
   state,
   audiences,
   heading,
@@ -170,12 +161,16 @@ export default function ProjectSection({
             <div className="heading-and-body-container">
               <div className="eyebrow-and-headline-container">
                 <div className="feature-label">
-                  {/* A <p>, not an <h2>. This is a kicker on the heading below
+                  {/* The NAME only. "Project 01 of 03: Consult Review" was
+                      here until the chip bar went in above it, and then the
+                      two said the same thing 88px apart at the moment a reader
+                      arrived — the bar carries position now, so this doesn't
+                      need to.
+
+                      A <p>, not an <h2>. This is a kicker on the heading below
                       it; as a heading it put two h2s in every section and
                       heading navigation heard them as siblings. */}
-                  <p className="eyebrow">
-                    Project {pad(index)} of {pad(total)}: {name}
-                  </p>
+                  <p className="eyebrow">{name}</p>
                   <StateTag state={state} />
                 </div>
                 <h2>{heading}</h2>
