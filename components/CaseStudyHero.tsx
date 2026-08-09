@@ -40,7 +40,7 @@ export default function CaseStudyHero({
                   <div className="project-role-details">
                     {roles.map((role) => (
                       <div className="project-role" key={role.label}>
-                        <div className="eyebrow">{role.label}</div>
+                        <p className="eyebrow">{role.label}</p>
                         <p>{role.value}</p>
                       </div>
                     ))}

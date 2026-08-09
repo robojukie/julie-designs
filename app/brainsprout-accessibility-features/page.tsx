@@ -64,11 +64,11 @@ export default function BrainSproutAccessibility() {
               <div className="column-role">
                 <div className="project-role-details">
                   <div className="project-role">
-                    <div className="eyebrow">My role</div>
+                    <p className="eyebrow">My role</p>
                     <p>UX/UI Research &amp; Design</p>
                   </div>
                   <div className="project-role">
-                    <div className="eyebrow">Tools</div>
+                    <p className="eyebrow">Tools</p>
                     <p>Figma, FigJam, Miro, Lookback, ChatGPT</p>
                   </div>
                 </div>

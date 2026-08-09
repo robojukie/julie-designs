@@ -64,24 +64,23 @@ export default function VACRedesign() {
               </div>
               <div className="column-role">
                 <div className="project-role-details">
-                  {/* Labels for the values beside them, not headings — the
-                      other case-study heroes already write them as divs. As
-                      h2s they put "My role" and "Tools" in the outline at the
-                      same level as the section headings below. */}
+                  {/* Labels for the values beside them, not headings. As h2s
+                      they put "My role" and "Tools" in the outline at the same
+                      level as the section headings below. */}
                   <div className="project-role">
-                    <div className="eyebrow">My role</div>
+                    <p className="eyebrow">My role</p>
                     <div className="body-text-container">
                       <p>Sole designer, UX research &amp; design</p>
                     </div>
                   </div>
                   <div className="project-role">
-                    <div className="eyebrow">Tools</div>
+                    <p className="eyebrow">Tools</p>
                     <div className="text">
                       <p>Figma, FigJam, Miro, Whimsical, ChatGPT</p>
                     </div>
                   </div>
                   <div className="project-role">
-                    <div className="eyebrow">Team</div>
+                    <p className="eyebrow">Team</p>
                     <div className="text">
                       <p>
                         1 product designer (me)
@@ -1053,8 +1052,9 @@ export default function VACRedesign() {
         <div className="container-1232">
           <div className="top-content">
             <div className="eyebrow-header">
-              {/* A sentence, not a label — see .section-lead-in. */}
-              <p className="section-lead-in light">
+              {/* Lowercase sentence, not an uppercase eyebrow — see
+                  .section-label. */}
+              <p className="section-label light">
                 A little more about my process...
               </p>
               <h2 className="light">Design iterations: home page</h2>

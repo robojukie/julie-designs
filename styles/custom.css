@@ -2187,7 +2187,7 @@ a.social-link:not(.brand):hover {
 }
 
 /* ---------------------------------------------------------------------------
-   26. Section lead-in  — NEW, NOT IN THE EXPORT
+   26. Section label  — NEW, NOT IN THE EXPORT
 
    "A little more about my process..." on the VAC page. This was written as
    `.eyebrow.light.phrase`, and every one of those three modifiers was spent
@@ -2200,7 +2200,7 @@ a.social-link:not(.brand):hover {
    wraps to two lines at tablet width — because it was inheriting a label's
    leading. Pair with .light on dark sections, the way .callout does.
 --------------------------------------------------------------------------- */
-.section-lead-in {
+.section-label {
   font-family: var(--text-body-font);
   font-size: var(--text-size--body-desktop-1-25);
   font-weight: var(--text-weightt--body-300);
@@ -2210,7 +2210,7 @@ a.social-link:not(.brand):hover {
 }
 
 @media screen and (max-width: 991px) {
-  .section-lead-in {
+  .section-label {
     font-size: var(--text-size--body-mobile);
     line-height: var(--text-height--body-mobile-height);
   }
