@@ -230,7 +230,7 @@ export default function NovinoPathLIS() {
                 separating rather than a change of container width. */}
             <div className="container-800">
               <div className="project-overview">
-                <p className="eyebrow project-overview-label">Overview</p>
+                <p className="eyebrow muted">Overview</p>
 
                 <div className="project-overview-body">
                   <p>

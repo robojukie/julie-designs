@@ -5,7 +5,7 @@
    Loads AFTER styles/juliepaik.css (the full verbatim port) so it can override.
    Nothing here should duplicate a rule that exists in the export; if a rule
    turns out to be in juliepaik.webflow.css, delete it here and let the port
-   own it. Verify with: node scripts/audit-css-coverage.js */
+   own it. Verify with: node scripts/check-frozen-stylesheet.mjs */
 
 /* ---------------------------------------------------------------------------
    1. Case-study background
@@ -1546,13 +1546,6 @@ a.social-link:not(.brand):hover {
   width: 100%;
 }
 
-/* Both references set this small label in a muted grey against the body text.
-   That is what keeps "Overview" reading as a label rather than as a heading
-   competing with the section headings further down the page. */
-.project-overview-label {
-  color: var(--text-colors--muted-dark-blue);
-}
-
 .project-overview-body {
   display: flex;
   flex-direction: column;
@@ -1763,10 +1756,9 @@ a.social-link:not(.brand):hover {
 /* -- Feature label and work-type tag ------------------------------------- */
 
 /* The label row: "FEATURE: CONSULT REVIEW" on the left, its pill flush right.
-   .eyebrow is display:flex and width:100%, so it would eat the whole row and
-   push the pill to a second line — `width: auto` on it is what lets
-   space-between do the aligning. Wraps rather than overflowing when the
-   feature name runs long on a narrow column. */
+   Wraps rather than overflowing when the feature name runs long on a narrow
+   column. The eyebrow shrinks to its text on its own now that the base rule
+   sets no width, so only the label's own bottom margin needs cancelling. */
 .feature-label {
   align-items: baseline;
   display: flex;
@@ -1778,7 +1770,6 @@ a.social-link:not(.brand):hover {
 
 .feature-label .eyebrow {
   margin-bottom: 0;
-  width: auto;
 }
 
 /* -- Project state ------------------------------------------------------- */
@@ -2046,12 +2037,13 @@ a.social-link:not(.brand):hover {
 /* Says what the row is. Without it three numbered names read as a breadcrumb
    or a step tracker — plausible readings that are both wrong. It also gives
    the left edge something to hold: the chips use about a third of the bar's
-   width, and starting on a bare pill left the rest looking unfinished. */
+   width, and starting on a bare pill left the rest looking unfinished.
+
+   Carries `.eyebrow .muted` in the markup; `flex: none` stops it shrinking when
+   the chips overflow, since it is the one item in the row that must stay whole. */
 .project-nav-label {
-  color: var(--text-colors--muted-dark-blue);
   flex: none;
   margin-bottom: 0;
-  width: auto;
 }
 
 .project-nav-list {
@@ -2167,4 +2159,59 @@ a.social-link:not(.brand):hover {
   min-height: 60vh;
   padding: 88px 24px;
   text-align: center;
+}
+
+/* ---------------------------------------------------------------------------
+   25. Eyebrow modifiers  — NEW, NOT IN THE EXPORT
+
+   The base .eyebrow lives in juliepaik.css because the export owns it. These
+   two are ours, and they exist to replace names that described where a label
+   first appeared rather than what it was:
+
+   .project-overview-label was one declaration applied to one element on the
+   NovinoPath page, and .project-nav-label repeated the same declaration for
+   the chip bar. Both meant "this label is subordinate to the text beside it",
+   so that is what the class is now called. .project-nav-label survives for the
+   parts that really are about the nav bar — not shrinking, and disappearing on
+   mobile.
+
+   The export's answer to the same question was .eyebrow.green, which set the
+   colour it was already inheriting. Muting is the distinction it never made.
+--------------------------------------------------------------------------- */
+
+/* Keeps "Overview" or "3 projects" reading as a label rather than as a heading
+   competing with the section headings below it. 7.06:1 on the case-study
+   ground, so it is quiet without dropping under AA. */
+.eyebrow.muted {
+  color: var(--text-colors--muted-dark-blue);
+}
+
+/* ---------------------------------------------------------------------------
+   26. Section lead-in  — NEW, NOT IN THE EXPORT
+
+   "A little more about my process..." on the VAC page. This was written as
+   `.eyebrow.light.phrase`, and every one of those three modifiers was spent
+   undoing the eyebrow: .phrase turned off the uppercasing, dropped the weight
+   to 300, and at >=1440 replaced the font-size and line-height outright. What
+   was left of .eyebrow was its position above a heading.
+
+   So it is a sentence, and it is set as one. The old rule left it at
+   `line-height: 1rem` on a 1rem font below 1440 — 1.0 leading on copy that
+   wraps to two lines at tablet width — because it was inheriting a label's
+   leading. Pair with .light on dark sections, the way .callout does.
+--------------------------------------------------------------------------- */
+.section-lead-in {
+  font-family: var(--text-body-font);
+  font-size: var(--text-size--body-desktop-1-25);
+  font-weight: var(--text-weightt--body-300);
+  letter-spacing: 1.2px;
+  line-height: var(--text-height--body-desktop-height-1-8);
+  margin: 0 0 8px;
+}
+
+@media screen and (max-width: 991px) {
+  .section-lead-in {
+    font-size: var(--text-size--body-mobile);
+    line-height: var(--text-height--body-mobile-height);
+  }
 }

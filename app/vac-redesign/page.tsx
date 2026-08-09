@@ -64,20 +64,24 @@ export default function VACRedesign() {
               </div>
               <div className="column-role">
                 <div className="project-role-details">
+                  {/* Labels for the values beside them, not headings — the
+                      other case-study heroes already write them as divs. As
+                      h2s they put "My role" and "Tools" in the outline at the
+                      same level as the section headings below. */}
                   <div className="project-role">
-                    <h2 className="eyebrow">My role</h2>
+                    <div className="eyebrow">My role</div>
                     <div className="body-text-container">
                       <p>Sole designer, UX research &amp; design</p>
                     </div>
                   </div>
                   <div className="project-role">
-                    <h2 className="eyebrow">Tools</h2>
+                    <div className="eyebrow">Tools</div>
                     <div className="text">
                       <p>Figma, FigJam, Miro, Whimsical, ChatGPT</p>
                     </div>
                   </div>
                   <div className="project-role">
-                    <div className="eyebrow">TEAM</div>
+                    <div className="eyebrow">Team</div>
                     <div className="text">
                       <p>
                         1 product designer (me)
@@ -449,7 +453,7 @@ export default function VACRedesign() {
         <div className="container-1232">
           <div className="horizontal-container">
             <div className="left-bottom-title">
-              <h2 className="eyebrow light">Goal 1</h2>
+              <p className="eyebrow light">Goal 1</p>
               <h2 className="callout light">Simplify workflows</h2>
             </div>
           </div>
@@ -490,7 +494,7 @@ export default function VACRedesign() {
         <div className="container-1232">
           <div className="top-content">
             <div className="eyebrow-header">
-              <h2 className="eyebrow">Goal 1: Simplify workflows</h2>
+              <p className="eyebrow">Goal 1: Simplify workflows</p>
               <h3>Flow 1: Attendance check</h3>
             </div>
           </div>
@@ -624,7 +628,7 @@ export default function VACRedesign() {
         <div className="container-1232">
           <div className="top-content">
             <div className="eyebrow-header">
-              <h2 className="eyebrow">Goal 1: Simplify workflows</h2>
+              <p className="eyebrow">Goal 1: Simplify workflows</p>
               <h2>Flow 2: Assign substitutes</h2>
             </div>
             <p>
@@ -757,7 +761,7 @@ export default function VACRedesign() {
         <div className="container-1232">
           <div className="top-content">
             <div className="eyebrow-header">
-              <h2 className="eyebrow">Goal 1: Simplify workflows</h2>
+              <p className="eyebrow">Goal 1: Simplify workflows</p>
               <h2>Flow 3: Assign teachers</h2>
             </div>
             <ul role="list">
@@ -866,7 +870,7 @@ export default function VACRedesign() {
         <div className="container-1232">
           <div className="horizontal-container">
             <div className="left-bottom-title">
-              <h2 className="eyebrow light">Goal 2</h2>
+              <p className="eyebrow light">Goal 2</p>
               <h2 className="callout light">
                 Extract and organize important information
               </h2>
@@ -1049,9 +1053,10 @@ export default function VACRedesign() {
         <div className="container-1232">
           <div className="top-content">
             <div className="eyebrow-header">
-              <h2 className="eyebrow light phrase">
+              {/* A sentence, not a label — see .section-lead-in. */}
+              <p className="section-lead-in light">
                 A little more about my process...
-              </h2>
+              </p>
               <h2 className="light">Design iterations: home page</h2>
             </div>
           </div>

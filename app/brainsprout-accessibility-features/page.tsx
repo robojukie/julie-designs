@@ -64,11 +64,11 @@ export default function BrainSproutAccessibility() {
               <div className="column-role">
                 <div className="project-role-details">
                   <div className="project-role">
-                    <div className="eyebrow green">My role</div>
+                    <div className="eyebrow">My role</div>
                     <p>UX/UI Research &amp; Design</p>
                   </div>
                   <div className="project-role">
-                    <div className="eyebrow green">Tools</div>
+                    <div className="eyebrow">Tools</div>
                     <p>Figma, FigJam, Miro, Lookback, ChatGPT</p>
                   </div>
                 </div>
@@ -87,7 +87,7 @@ export default function BrainSproutAccessibility() {
             <div className="container-680">
               <div className="container-title-and-list">
                 <div className="eyebrow-and-headline-container">
-                  <h2 className="eyebrow">Problem</h2>
+                  <p className="eyebrow">Problem</p>
                   <div className="heading-container">
                     <h3 className="h3-thinn">
                       Online learning falls short of its potential to
@@ -104,7 +104,7 @@ export default function BrainSproutAccessibility() {
               </div>
               <div className="container-title-and-list">
                 <div className="eyebrow-and-headline-container">
-                  <h2 className="eyebrow">Solution</h2>
+                  <p className="eyebrow">Solution</p>
                   <div className="heading-container h4-container">
                     <h3 className="h3-thinn">
                       Reduce barriers in online learning for marginalized
@@ -128,7 +128,7 @@ export default function BrainSproutAccessibility() {
           <div className="container-680">
             <div className="container-title-and-list">
               <div className="section-heading-wrapper">
-                <h2 className="eyebrow">Research</h2>
+                <p className="eyebrow">Research</p>
               </div>
               <div className="section-heading-wrapper">
                 <h2>
@@ -516,7 +516,7 @@ export default function BrainSproutAccessibility() {
             <div className="content-container">
               <div className="container-title-and-list">
                 <div className="section-heading-wrapper">
-                  <h2 className="eyebrow">Design</h2>
+                  <p className="eyebrow">Design</p>
                 </div>
                 <div className="heading-container">
                   <h2>Research helped uncover key accessibility features</h2>
@@ -585,7 +585,7 @@ export default function BrainSproutAccessibility() {
           <div className="content-container">
             <div className="container-title-and-list">
               <div className="section-heading-wrapper">
-                <h2 className="eyebrow">ITERATIONS</h2>
+                <p className="eyebrow">Iterations</p>
                 <h2>
                   Observations and testing inspired me to include 2
                   additional features
@@ -645,7 +645,7 @@ export default function BrainSproutAccessibility() {
           <div className="container-680">
             <div className="container-title-and-list">
               <div className="section-heading-wrapper">
-                <h2 className="eyebrow">Final designs</h2>
+                <p className="eyebrow">Final designs</p>
                 <h2>Putting it all together in high fidelity</h2>
               </div>
             </div>
@@ -804,7 +804,7 @@ export default function BrainSproutAccessibility() {
           <div className="container-680">
             <div className="content-container">
               <div className="section-heading-wrapper">
-                <h2 className="eyebrow">Takeaways</h2>
+                <p className="eyebrow">Takeaways</p>
                 <h2>Final thoughts and future visions</h2>
               </div>
               <div className="body-text-container">
