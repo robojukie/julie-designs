@@ -79,6 +79,51 @@
   animation: fadeInUp 0.4s ease forwards;
 }
 
+/* The page-level reveal, for components/FadeIn.tsx. Ports the IX2 "fade in
+   description" / "fade in work" / "fade about" / "fade writing" action lists:
+   opacity 0 -> 1, 500ms delay, 500ms duration.
+
+   HERE FOR THE SAME REASON AS THE KEYFRAMES ABOVE, learned twice. FadeIn was a
+   motion.div with `initial={{ opacity: 0 }}`, which server-renders as
+   `style="opacity: 0"` and is only ever undone by JavaScript: React hydrates,
+   Motion starts a rAF loop, the element fades in. Three ways that fails —
+   a background tab, where Chromium suspends rAF entirely and the content stays
+   invisible until the tab is focused; anything rendering without a frame loop,
+   like headless screenshot and link-preview services; and JS being slow,
+   blocked or erroring, after which the content never appears at all despite
+   being present in the HTML.
+
+   A CSS animation runs off the document timeline rather than rAF, so a hidden
+   tab advances it instead of freezing it, and it needs no JavaScript to
+   finish. `both` holds opacity 0 through the delay so the reveal still starts
+   from nothing.
+
+   The note explaining this used to live only in the comment above — next to
+   the one animation it had been applied to, in a stylesheet no one writing a
+   React component would open. Both were authored in the same initial commit
+   and still didn't meet. It is repeated in components/FadeIn.tsx for that
+   reason. */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.fade-in {
+  animation: fadeIn 0.5s ease 0.5s both;
+}
+
+/* No animation, and no `both` holding it invisible first — the content is
+   simply there. */
+@media (prefers-reduced-motion: reduce) {
+  .fade-in {
+    animation: none;
+  }
+}
+
 /* ---------------------------------------------------------------------------
    3. Project-thumbnail hover
    Ports the "Scale/Reset <project> on hover" IX2 action lists (a-15/16,
