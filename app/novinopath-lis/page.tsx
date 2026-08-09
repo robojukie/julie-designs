@@ -4,11 +4,15 @@
    research, goals, iterations, outcome — because their job is to show how the
    work was done. Anyone reaching this page has already read one of those. What
    they can't see from them is the shape and complexity of the most recent work,
-   so this page is organised by FEATURE AREA instead: product context, then one
-   numbered section per area — before/after, then the individual screens it
-   touched, anchored by its own prototype — then outcomes. No research phase
-   and no goal arc; the before/after pairs are per feature and stand as
-   evidence rather than as a narrative the page is walking through.
+   so this page is organised by PROJECT instead: product context, then one
+   numbered section per project — before/after, then the individual features it
+   shipped or reworked, anchored by its own prototype — then outcomes. No
+   research phase and no goal arc; the before/after pairs are evidence rather
+   than a narrative the page is walking through.
+
+   Project, then feature, and not the other way round: "Consult Review" is a
+   body of work that touched a notification system, a consult document review
+   page and a set of worklists. Those surfaces are the features.
 
    Everything below is placeholder copy and placeholder media — the shell exists
    so the structure can be reviewed before the content is written. */
@@ -17,31 +21,36 @@ import CaseStudyBanner from "@/components/CaseStudyBanner";
 import CaseStudyHero from "@/components/CaseStudyHero";
 import ContextStrip from "@/components/ContextStrip";
 import FadeIn from "@/components/FadeIn";
-import FeatureNav from "@/components/FeatureNav";
-import FeatureSection, {
+import ProjectNav from "@/components/ProjectNav";
+import ProjectSection, {
   pad,
-  type FeaturePart,
-  type FeatureShot,
-} from "@/components/FeatureSection";
+  type ProjectFeature,
+  type ProjectShot,
+  type ProjectState,
+} from "@/components/ProjectSection";
 import ProgressBar from "@/components/ProgressBar";
 
 export const metadata: Metadata = {
   title: "NovinoPath",
 };
 
-/* Single source for the section ids, the in-page TOC, and the cross-links at
-   the foot of every feature section — so an anchor can't drift from the
-   section it points at, and a fourth feature only has to be added once.
+/* Single source for the section ids, the sticky nav and the in-page menu — so
+   an anchor can't drift from the section it points at, and a fourth project
+   only has to be added once.
 
-   No `tag` at the feature level: a feature's badges are derived from its
-   parts' tags in FeatureSection, so the two can't drift apart. Consult Review
-   carries both because two of its three parts are new and one is a rework.
-   Which parts were which is placeholder — that's a fact about the job, not
-   something to guess at here. */
-const PART_BODY =
-  "Placeholder body copy for this part: what this screen had to do, the constraint that made it hard, and what changed. One to two sentences. Replace before publishing.";
+   PROJECT → FEATURE, not feature → part. Consult Review is a body of work that
+   touched several surfaces; those surfaces are the features. Naming it the
+   other way round called a feature a "part" and implied its screens were steps
+   in a sequence.
 
-/* One pair per feature. `id` only keeps the placeholder asset paths distinct
+   `state` and `audiences` are placeholder in value but real in kind: which of
+   these shipped, and who each serves, are facts about the job rather than
+   things to guess at here. Screen count is derived from the feature list so it
+   can't drift from what's actually shown. */
+const FEATURE_BODY =
+  "Placeholder body copy for this feature: what this screen had to do, the constraint that made it hard, and what changed. One to two sentences. Replace before publishing.";
+
+/* One pair per project. `id` only keeps the placeholder asset paths distinct
    so each grey box says which screenshot it is waiting on. */
 const beforeAfter = (id: string) => ({
   before: {
@@ -58,40 +67,44 @@ const beforeAfter = (id: string) => ({
   },
 });
 
-const FEATURES: {
+const PROJECTS: {
   id: string;
-  eyebrow: string;
+  name: string;
+  state: ProjectState;
+  audiences: string[];
   heading: string;
   body: string;
-  beforeAfter: { before: FeatureShot; after: FeatureShot };
-  parts: FeaturePart[];
+  beforeAfter: { before: ProjectShot; after: ProjectShot };
+  features: ProjectFeature[];
   prototypeHref: string;
 }[] = [
   {
     id: "consult-review",
-    eyebrow: "Consult Review",
+    name: "Consult Review",
+    state: "Shipped",
+    audiences: ["Pathologists", "Lab technicians"],
     heading:
       "How does a pathologist review a second-opinion consult without losing the case they came from?",
-    body: "Placeholder body copy describing the constraints of this feature area and why it was hard. Two to three sentences that set up the design problem the prototype answers. Replace before publishing.",
-    parts: [
+    body: "Placeholder body copy describing the constraints of this project and why it was hard. Two to three sentences that set up the design problem the prototype answers. Replace before publishing.",
+    features: [
       {
         title: "Notification redesign",
         tag: "New feature",
-        body: PART_BODY,
+        body: FEATURE_BODY,
         screenshotSrc: "/images/placeholder-consult-notifications.png",
         screenshotAlt: "Placeholder for the notification redesign screenshot",
       },
       {
         title: "Consult queue",
         tag: "New feature",
-        body: PART_BODY,
+        body: FEATURE_BODY,
         screenshotSrc: "/images/placeholder-consult-queue.png",
         screenshotAlt: "Placeholder for the consult queue screenshot",
       },
       {
         title: "Case comparison view",
         tag: "Redesign",
-        body: PART_BODY,
+        body: FEATURE_BODY,
         screenshotSrc: "/images/placeholder-consult-comparison.png",
         screenshotAlt: "Placeholder for the case comparison screenshot",
       },
@@ -101,22 +114,24 @@ const FEATURES: {
   },
   {
     id: "slide-viewer",
-    eyebrow: "Slide Viewer",
+    name: "Slide Viewer",
+    state: "In development",
+    audiences: ["Pathologists"],
     heading:
       "How much of the viewer can be given to the slide before the case context stops being reachable?",
-    body: "Placeholder body copy describing the constraints of this feature area and why it was hard. Two to three sentences that set up the design problem the prototype answers. Replace before publishing.",
-    parts: [
+    body: "Placeholder body copy describing the constraints of this project and why it was hard. Two to three sentences that set up the design problem the prototype answers. Replace before publishing.",
+    features: [
       {
         title: "Viewer chrome",
         tag: "New feature",
-        body: PART_BODY,
+        body: FEATURE_BODY,
         screenshotSrc: "/images/placeholder-viewer-chrome.png",
         screenshotAlt: "Placeholder for the viewer chrome screenshot",
       },
       {
         title: "Annotation panel",
         tag: "Redesign",
-        body: PART_BODY,
+        body: FEATURE_BODY,
         screenshotSrc: "/images/placeholder-viewer-annotations.png",
         screenshotAlt: "Placeholder for the annotation panel screenshot",
       },
@@ -126,22 +141,24 @@ const FEATURES: {
   },
   {
     id: "dashboards",
-    eyebrow: "Dashboards",
+    name: "Dashboards",
+    state: "Approved concept",
+    audiences: ["Pathologists", "Lab technicians", "Lab directors"],
     heading:
       "Four roles, one queue — what does each of them need to see first?",
-    body: "Placeholder body copy describing the constraints of this feature area and why it was hard. Two to three sentences that set up the design problem the prototype answers. Replace before publishing.",
-    parts: [
+    body: "Placeholder body copy describing the constraints of this project and why it was hard. Two to three sentences that set up the design problem the prototype answers. Replace before publishing.",
+    features: [
       {
         title: "Role-based default view",
         tag: "New feature",
-        body: PART_BODY,
+        body: FEATURE_BODY,
         screenshotSrc: "/images/placeholder-dashboard-default.png",
         screenshotAlt: "Placeholder for the default dashboard screenshot",
       },
       {
         title: "Queue filters",
         tag: "Redesign",
-        body: PART_BODY,
+        body: FEATURE_BODY,
         screenshotSrc: "/images/placeholder-dashboard-filters.png",
         screenshotAlt: "Placeholder for the queue filters screenshot",
       },
@@ -274,26 +291,24 @@ export default function NovinoPathLIS() {
               </div>
             </div>
 
-            {/* In-page TOC. Plain anchors — no JS, no scroll-spy — so it works
+            {/* In-page menu. Plain anchors — no JS, no scroll-spy — so it works
                 on first paint and degrades to nothing worse than a jump. */}
-            <div className="container-800 feature-toc-block">
-              <nav className="feature-toc" aria-label="Feature areas">
+            <div className="container-800 project-toc-block">
+              <nav className="project-toc" aria-label="Projects">
                 {/* The count in the label, and a number on every entry. Between
-                    them the reader knows how many areas there are before they
-                    start, and each section's own "Feature n of 3" then keeps
-                    them oriented once they have scrolled past this. */}
-                <p className="eyebrow">
-                  {FEATURES.length} feature areas
-                </p>
-                {/* role="list" alongside <ol>: .feature-toc-list is
+                    them the reader knows how many projects there are before
+                    they start, and the sticky bar then keeps them oriented once
+                    they have scrolled past this. */}
+                <p className="eyebrow">{PROJECTS.length} projects</p>
+                {/* role="list" alongside <ol>: .project-toc-list is
                     list-style: none, and Safari drops list semantics from a
                     list with no marker unless the role is restated. Same
                     reason every other list in this codebase carries it. */}
-                <ol className="feature-toc-list" role="list">
-                  {FEATURES.map((feature, index) => (
-                    <li key={feature.id}>
-                      <a className="inline-link" href={`#${feature.id}`}>
-                        {pad(index + 1)} {feature.eyebrow}
+                <ol className="project-toc-list" role="list">
+                  {PROJECTS.map((project, index) => (
+                    <li key={project.id}>
+                      <a className="inline-link" href={`#${project.id}`}>
+                        {pad(index + 1)} {project.name}
                       </a>
                     </li>
                   ))}
@@ -301,41 +316,34 @@ export default function NovinoPathLIS() {
               </nav>
             </div>
 
-            {/* Closes the opening block and opens the feature run. The page
+            {/* Closes the opening block and opens the project run. The page
                 changes mode here — everything above is context about the
                 product, everything below is one screen after another — and
-                without a mark the first feature's eyebrow reads as a fourth
+                without a mark the first project's label reads as a fourth
                 entry in the menu directly above it. Same rule as the one
                 inside the overview block, so the two boundaries match. */}
-            <div className="container-800 features-start-rule">
+            <div className="container-800 projects-start-rule">
               <hr className="project-rule" />
             </div>
           </div>
         </section>
       </FadeIn>
 
-      {/* .feature-run is what scopes the sticky nav: it spans exactly the three
-          feature sections, so the bar pins under the navbar on entry and leaves
+      {/* .project-run is what scopes the sticky nav: it spans exactly the three
+          project sections, so the bar pins under the navbar on entry and leaves
           with the last section's bottom edge, with no scroll listener deciding
-          when to show it.
-
-          The per-section cross-links that used to sit at the foot of each
-          feature are gone with it. They existed because a reader arriving by
-          anchor had no way to reach a sibling without scrolling back to the
-          top; the bar answers that continuously and one screen earlier, and
-          keeping both would have put two lists of the same three destinations
-          on screen at once. Restore by passing `otherFeatures` again. */}
-      <div className="feature-run">
-        <FeatureNav
-          features={FEATURES.map((f) => ({ id: f.id, label: f.eyebrow }))}
+          when to show it. */}
+      <div className="project-run">
+        <ProjectNav
+          projects={PROJECTS.map((p) => ({ id: p.id, label: p.name }))}
         />
 
-        {FEATURES.map((feature, index) => (
-          <FeatureSection
-            key={feature.id}
-            {...feature}
+        {PROJECTS.map((project, index) => (
+          <ProjectSection
+            key={project.id}
+            {...project}
             index={index + 1}
-            total={FEATURES.length}
+            total={PROJECTS.length}
           />
         ))}
       </div>

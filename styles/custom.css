@@ -1659,11 +1659,11 @@ a.social-link:not(.brand):hover {
    column group rather than as a separate device, since the page now opens on
    three consecutive eyebrow-labelled stacks. The extra margin is what makes it
    land as its own thing. */
-.feature-toc-block {
+.project-toc-block {
   margin-top: 24px;
 }
 
-.feature-toc {
+.project-toc {
   align-items: flex-start;
   display: flex;
   flex-direction: column;
@@ -1673,7 +1673,7 @@ a.social-link:not(.brand):hover {
 
 /* Wraps rather than scrolls: three short labels fit one line on desktop and
    stack on their own below ~479px without any breakpoint of their own. */
-.feature-toc-list {
+.project-toc-list {
   display: flex;
   flex-wrap: wrap;
   gap: 12px 32px;
@@ -1756,7 +1756,7 @@ a.social-link:not(.brand):hover {
    .container-1232's 32px row-gap on its own puts the rule nearer the menu
    above than the section below, which reads as underlining the menu rather
    than dividing the page. */
-.features-start-rule {
+.projects-start-rule {
   margin-top: 32px;
 }
 
@@ -1781,14 +1781,60 @@ a.social-link:not(.brand):hover {
   width: auto;
 }
 
-/* Holds the one or two badges a feature carries. Its own flex row, so the pair
-   stays together at the right edge and wraps as a unit rather than one badge
-   breaking away to a line of its own. */
-.feature-tag-group {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  justify-content: flex-end;
+/* -- Project state ------------------------------------------------------- */
+
+/* A different question from the work-type tag below, at a different level, so
+   it is deliberately a different object: filled rather than outlined, and one
+   per project rather than one per feature. Making them look alike would invite
+   reading them as one row of the same kind of thing.
+
+   Shipped is the only one that gets colour. State is read for triage — a
+   reader scanning wants "what actually exists" — and giving all three an
+   equal-weight treatment would flatten exactly the distinction they are here
+   to draw. The other two sit on the page's own neutrals. */
+.project-state {
+  border-radius: 130px;
+  font-family: var(--text-body-font);
+  font-size: var(--text-size--nav-link-p-text);
+  font-weight: var(--text-weightt--eyebrow-500);
+  line-height: var(--text-height--nav-link-height);
+  padding: 5px 11px;
+  white-space: nowrap;
+}
+
+/* 4.83:1 — the same ink/ground pair the New feature tag uses, measured. */
+.project-state-shipped {
+  background-color: var(--background-color--background-brain-sprout);
+  color: var(--accents--bold--main-brand-dark);
+}
+
+.project-state-building {
+  background-color: var(--color--neutral--warm--400);
+  color: var(--text-colors--muted-dark-blue);
+}
+
+/* Outlined rather than filled: an approved concept is the one state where the
+   thing does not exist yet, and an unfilled pill reads as exactly that without
+   needing a word to explain it. */
+.project-state-concept {
+  border: 1px solid var(--color--beige--600);
+  color: var(--text-colors--muted-dark-blue);
+  padding: 4px 10px;
+}
+
+/* -- Scope metadata ------------------------------------------------------ */
+
+/* Audience and screen count, under the project heading. Text, not pills: the
+   count is a number (a pill implies a category) and audiences run to several
+   values that would overflow a badge row. Read once for context rather than
+   scanned for triage, which is what separates it from state above. */
+.project-meta {
+  color: var(--text-colors--muted-dark-blue);
+  font-family: var(--text-body-font);
+  font-size: var(--text--body-text-sm);
+  font-weight: var(--text-weightt--body-300);
+  line-height: var(--text-height--body-mobile-height);
+  margin: 0;
 }
 
 /* Same pill idiom as the export's .badge on the home-page thumbnails, but
@@ -1884,21 +1930,21 @@ a.social-link:not(.brand):hover {
 /* The screens inside one feature area. Gap is larger than the block-internal
    32px so consecutive parts read as siblings of each other rather than as one
    continuous run of text and images. */
-.feature-parts {
+.project-features {
   display: flex;
   flex-direction: column;
   gap: 56px;
   width: 100%;
 }
 
-.feature-part {
+.project-feature {
   display: flex;
   flex-direction: column;
   gap: 16px;
   width: 100%;
 }
 
-.feature-part p {
+.project-feature p {
   margin: 0;
 }
 
@@ -1908,7 +1954,7 @@ a.social-link:not(.brand):hover {
    sections, so the bar inside it sticks under the navbar for the length of the
    run and scrolls away with the last section — no fixed positioning, no scroll
    listener toggling visibility, no boundary to get wrong. */
-.feature-run {
+.project-run {
   position: relative;
 }
 
@@ -1916,7 +1962,7 @@ a.social-link:not(.brand):hover {
    stack rather than overlap. z-index sits under the navbar's 1000 and well
    under the progress bar's 999999 — the bar should pass beneath both, not
    compete with them. */
-.feature-nav {
+.project-nav {
   -webkit-backdrop-filter: blur(75px);
   backdrop-filter: blur(75px);
   background-color: #f8f4f1e6;
@@ -1927,7 +1973,7 @@ a.social-link:not(.brand):hover {
   z-index: 900;
 }
 
-.feature-nav-list {
+.project-nav-list {
   display: flex;
   gap: 28px;
   list-style: none;
@@ -1940,30 +1986,30 @@ a.social-link:not(.brand):hover {
   scrollbar-width: none;
 }
 
-.feature-nav-list::-webkit-scrollbar {
+.project-nav-list::-webkit-scrollbar {
   display: none;
 }
 
 /* The export puts `margin-bottom: 4px` on every li. Harmless in prose, but
    here it sat under the flex line and made the bar 4px taller than the sum of
    its parts — which is the number three other rules are derived from. */
-.feature-nav-list li {
+.project-nav-list li {
   margin: 0;
 }
 
 /* line-height is stated, not inherited, and that is load-bearing. The
    case-study body sets 28.8px, which made the bar 60px tall by accident — and
    THREE other numbers are derived from that height: the sticky offset of any
-   bar below it, `.feature-run .project-section`'s scroll-margin-top, and the
+   bar below it, `.project-run .project-section`'s scroll-margin-top, and the
    IntersectionObserver band in components/FeatureNav.tsx. An incidental height
    is fine until one of the three drifts from it and anchor jumps start landing
    under the bar.
 
    13 + 18 + 11 + 2px link border = 44, + the bar's own 1px bottom border = 45,
    so navbar + indicator = 105px exactly. KEEP IN SYNC with
-   `.feature-run .project-section`'s scroll-margin-top below and the
+   `.project-run .project-section`'s scroll-margin-top below and the
    IntersectionObserver rootMargin in FeatureNav.tsx. */
-.feature-nav-link {
+.project-nav-link {
   align-items: baseline;
   border-bottom: 2px solid #0000;
   color: var(--text-colors--muted-dark-blue);
@@ -1978,7 +2024,7 @@ a.social-link:not(.brand):hover {
   white-space: nowrap;
 }
 
-.feature-nav-link:hover {
+.project-nav-link:hover {
   color: var(--text-colors--text-primary);
 }
 
@@ -1986,13 +2032,13 @@ a.social-link:not(.brand):hover {
    under it. Colour alone would be the only signal for anyone who can't
    distinguish these two greys, and this bar's entire job is telling you where
    you are. */
-.feature-nav-link[aria-current] {
+.project-nav-link[aria-current] {
   border-bottom-color: var(--accents--bold--accent-heading);
   color: var(--text-colors--text-primary);
   font-weight: var(--text-weightt--eyebrow-500);
 }
 
-.feature-nav-n {
+.project-nav-n {
   font-variant-numeric: tabular-nums;
   opacity: 0.6;
 }
@@ -2000,7 +2046,7 @@ a.social-link:not(.brand):hover {
 /* Visible to a screen reader, not on screen: the list already shows three
    entries with one marked, so rendering "Feature 2 of 3" beside it would be
    saying the same thing twice. role="status" announces the change on scroll. */
-.feature-nav-status {
+.project-nav-status {
   clip-path: inset(50%);
   height: 1px;
   margin: 0;
@@ -2014,12 +2060,12 @@ a.social-link:not(.brand):hover {
    or the feature's own label lands underneath them. Applied to the sections
    themselves so it works for the in-page menu, the bar's own links, and any
    external link carrying a #hash. */
-.feature-run .project-section {
+.project-run .project-section {
   scroll-margin-top: 105px;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .feature-nav-link {
+  .project-nav-link {
     transition: none;
   }
 }
@@ -2029,27 +2075,9 @@ a.social-link:not(.brand):hover {
    scrolls sideways at 375 rather than dropping the sibling entries — losing
    them is losing the count, which is the thing this bar exists to show. */
 @media screen and (max-width: 767px) {
-  .feature-nav-list {
+  .project-nav-list {
     gap: 20px;
   }
-}
-
-/* -- Cross-links to the other feature areas ------------------------------ */
-
-/* Sits at the foot of every feature section so a reader who arrived by anchor
-   can reach a sibling without scrolling back to the top TOC. */
-.feature-more-block {
-  border-top: 1px solid var(--divider);
-  margin-top: 24px;
-  padding-top: 24px;
-}
-
-.feature-more {
-  align-items: flex-start;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  width: 100%;
 }
 
 /* -- Prototype stub routes ----------------------------------------------- */
