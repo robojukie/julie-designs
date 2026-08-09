@@ -769,15 +769,11 @@ export default function BankGreen() {
 
       <div className="project-section fixed dark">
         <div className="container-1232">
-          <div className="side-text-horizontal-container">
-            <div className="left-middle-half-width-container">
-              <div className="slide-left-header">
-                <div className="middle-aligner">
-                  <h2 className="light">Next steps</h2>
-                </div>
-              </div>
+          <div className="split">
+            <div className="split-col">
+              <h2 className="light">Next steps</h2>
             </div>
-            <div className="right-middle-half-width-container">
+            <div className="split-col">
               <ul role="list" className="blue-bullet-list">
                 <li className="list-item-colored-bullet top-align">
                   The next phase will use AI to parse uploaded documents to

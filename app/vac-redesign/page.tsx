@@ -45,8 +45,8 @@ export default function VACRedesign() {
           </div>
         </div>
         <div className="container-1232">
-          <div className="container-stacking">
-            <div className="grid-left-top-content">
+          <div className="split">
+            <div className="split-col">
               <div>
                 <p>
                   Vineyard App Camp (VAC) partners with 400+ schools to teach
@@ -373,8 +373,8 @@ export default function VACRedesign() {
 
       <div className="project-section">
         <div className="container-1232">
-          <div className="side-text-horizontal-container">
-            <div className="left-middle-half-width-container">
+          <div className="split">
+            <div className="split-col">
               <h2>Potential improvements</h2>
               <p>
                 A research-based redesign can help{" "}
@@ -382,7 +382,7 @@ export default function VACRedesign() {
                 <strong>cutting down on task time</strong>
               </p>
             </div>
-            <div className="right-middle-half-width-container">
+            <div className="split-col">
               <div className="list-card">
                 <div className="card-info text-card">
                   <p className="list-card-title">Reduce steps to save time</p>
@@ -409,11 +409,11 @@ export default function VACRedesign() {
 
       <div className="project-section">
         <div className="container-1232">
-          <div className="side-text-horizontal-container">
-            <div className="left-middle-half-width-container">
+          <div className="split">
+            <div className="split-col">
               <h2>Goals</h2>
             </div>
-            <div className="right-middle-half-width-container">
+            <div className="split-col">
               <div className="list-card">
                 <div className="card-info text-card">
                   <p className="list-card-title">Goal 1: Simplify workflows</p>
@@ -462,8 +462,8 @@ export default function VACRedesign() {
 
       <div className="project-section">
         <div className="container-1232">
-          <div className="side-text-horizontal-container">
-            <div className="left-middle-half-width-container">
+          <div className="split">
+            <div className="split-col">
               <h2>Simplify workflows</h2>
               <p>
                 <strong>I identified 3 primary workflows</strong> every Director
@@ -471,23 +471,21 @@ export default function VACRedesign() {
                 with stakeholders through my decision making.
               </p>
             </div>
-            <div className="right-middle-half-width-container">
-              {/* Same .diagram treatment as the organisation drawing: an
-                  illustration rather than a screenshot, so once the two-column
-                  layout collapses it centres at a legible size instead of
-                  keeping the narrow width its half-column gave it. */}
-              <div className="captioned-image centered image-4-col-wrapper">
-                <div className="image-wrapper diagram">
-                  <ZoomableImage
-                    src="/images/Employee-task-list-1.png"
-                    alt="List of prioritized employee tasks"
-                    width={680}
-                    height={641}
-                    sizes="100vw"
-                    className="image-pc image-transparent-bg"
-                    style={{ height: "auto" }}
-                  />
-                </div>
+            {/* Same .diagram treatment as the organisation drawing: an
+                illustration rather than a screenshot, so once the two-column
+                layout collapses it centres at a legible size instead of
+                keeping the narrow width its half-column gave it. */}
+            <div className="captioned-image centered">
+              <div className="image-wrapper diagram">
+                <ZoomableImage
+                  src="/images/Employee-task-list-1.png"
+                  alt="List of prioritized employee tasks"
+                  width={680}
+                  height={641}
+                  sizes="100vw"
+                  className="image-pc image-transparent-bg"
+                  style={{ height: "auto" }}
+                />
               </div>
             </div>
           </div>
@@ -880,53 +878,49 @@ export default function VACRedesign() {
               <h2>Home page redesign</h2>
             </div>
           </div>
-          <div className="horizontal-container">
-            <div className="side-text-horizontal-container">
-              <div className="slide-image-side-container">
-                <ZoomableImage
-                  src="/images/vac-dashboard-01.png"
-                  alt="A screenshot of a computer screen showing a list of names and times for classes and teachers."
-                  width={1512}
-                  height={982}
-                  sizes="(max-width: 1512px) 100vw, 1512px"
-                  className="hifi-half border"
-                  style={{ width: "100%", height: "auto" }}
-                />
+          <div className="split reversed">
+            <ZoomableImage
+              src="/images/vac-dashboard-01.png"
+              alt="A screenshot of a computer screen showing a list of names and times for classes and teachers."
+              width={1512}
+              height={982}
+              sizes="(max-width: 1512px) 100vw, 1512px"
+              className="hifi-half border"
+              style={{ width: "100%", height: "auto" }}
+            />
+            <div className="split-col">
+              <div className="list-card">
+                <div className="card-info text-card">
+                  <p className="card-description-title">
+                    Added overview to home page
+                  </p>
+                  <p className="card-description">
+                    The previous home page had unclear sections and labels
+                    leading to primary tasks. The updated home page allows users
+                    to see their top tasks right away
+                  </p>
+                </div>
               </div>
-              <div className="slide-text-side-container stacking">
-                <div className="list-card">
-                  <div className="card-info text-card">
-                    <p className="card-description-title">
-                      Added overview to home page
-                    </p>
-                    <p className="card-description">
-                      The previous home page had unclear sections and labels
-                      leading to primary tasks. The updated home page allows
-                      users to see their top tasks right away
-                    </p>
-                  </div>
+              <div className="list-card">
+                <div className="card-info text-card">
+                  <p className="card-description-title">
+                    Added side navigation
+                  </p>
+                  <p className="card-description">
+                    Side navigation creates information hierarchy, making it
+                    easier to find information
+                  </p>
                 </div>
-                <div className="list-card">
-                  <div className="card-info text-card">
-                    <p className="card-description-title">
-                      Added side navigation
-                    </p>
-                    <p className="card-description">
-                      Side navigation creates information hierarchy, making it
-                      easier to find information
-                    </p>
-                  </div>
-                </div>
-                <div className="list-card">
-                  <div className="card-info text-card">
-                    <p className="card-description-title">
-                      Room for future features
-                    </p>
-                    <p className="card-description">
-                      The new format allows for additional features to be added
-                      in an organized and intuitive way
-                    </p>
-                  </div>
+              </div>
+              <div className="list-card">
+                <div className="card-info text-card">
+                  <p className="card-description-title">
+                    Room for future features
+                  </p>
+                  <p className="card-description">
+                    The new format allows for additional features to be added in
+                    an organized and intuitive way
+                  </p>
                 </div>
               </div>
             </div>
@@ -941,45 +935,41 @@ export default function VACRedesign() {
               <h2>Added table view</h2>
             </div>
           </div>
-          <div className="horizontal-container">
-            <div className="side-text-horizontal-container">
-              <div className="slide-image-side-container">
-                <ZoomableImage
-                  src="/images/vac-table.png"
-                  alt="A computer screen displaying a list of teachers"
-                  width={912}
-                  height={492}
-                  sizes="100vw"
-                  className="hifi-half border"
-                  style={{ width: "100%", height: "auto" }}
-                />
+          <div className="split reversed">
+            <ZoomableImage
+              src="/images/vac-table.png"
+              alt="A computer screen displaying a list of teachers"
+              width={912}
+              height={492}
+              sizes="100vw"
+              className="hifi-half border"
+              style={{ width: "100%", height: "auto" }}
+            />
+            <div className="split-col">
+              <div className="list-card">
+                <div className="card-info text-card">
+                  <p className="card-description-title">
+                    Highlights important information for quick browsing
+                  </p>
+                </div>
               </div>
-              <div className="slide-text-side-container stacking">
-                <div className="list-card">
-                  <div className="card-info text-card">
-                    <p className="card-description-title">
-                      Highlights important information for quick browsing
-                    </p>
-                  </div>
+              <div className="list-card">
+                <div className="card-info text-card">
+                  <p className="card-description-title">
+                    Filters help users identify primary information
+                  </p>
                 </div>
-                <div className="list-card">
-                  <div className="card-info text-card">
-                    <p className="card-description-title">
-                      Filters help users identify primary information
-                    </p>
-                  </div>
-                </div>
-                <div className="list-card">
-                  <div className="card-info text-card">
-                    <p className="card-description-title">
-                      Move away from unreadable calendar to table
-                    </p>
-                    <p className="card-description">
-                      A table shows relevant important information for quick
-                      browsing and filters help users identify primary
-                      information.
-                    </p>
-                  </div>
+              </div>
+              <div className="list-card">
+                <div className="card-info text-card">
+                  <p className="card-description-title">
+                    Move away from unreadable calendar to table
+                  </p>
+                  <p className="card-description">
+                    A table shows relevant important information for quick
+                    browsing and filters help users identify primary
+                    information.
+                  </p>
                 </div>
               </div>
             </div>
@@ -994,48 +984,44 @@ export default function VACRedesign() {
               <h2>Updated teacher profile view</h2>
             </div>
           </div>
-          <div className="horizontal-container">
-            <div className="side-text-horizontal-container">
-              <div className="slide-image-side-container">
-                <ZoomableImage
-                  src="/images/vac-dashboard-08.png"
-                  alt="A website page with a list of teachers and their contact information."
-                  width={1512}
-                  height={982}
-                  sizes="(max-width: 1512px) 100vw, 1512px"
-                  className="hifi-half border"
-                  style={{ width: "100%", height: "auto" }}
-                />
+          <div className="split reversed">
+            <ZoomableImage
+              src="/images/vac-dashboard-08.png"
+              alt="A website page with a list of teachers and their contact information."
+              width={1512}
+              height={982}
+              sizes="(max-width: 1512px) 100vw, 1512px"
+              className="hifi-half border"
+              style={{ width: "100%", height: "auto" }}
+            />
+            <div className="split-col">
+              <div className="list-card">
+                <div className="card-info text-card">
+                  <p className="card-description-title">
+                    Browsable list eliminates unwanted clicks
+                  </p>
+                </div>
               </div>
-              <div className="slide-text-side-container stacking">
-                <div className="list-card">
-                  <div className="card-info text-card">
-                    <p className="card-description-title">
-                      Browsable list eliminates unwanted clicks
-                    </p>
-                  </div>
+              <div className="list-card">
+                <div className="card-info text-card">
+                  <p className="card-description-title">
+                    Details that matter reduces cognitive load
+                  </p>
+                  <p className="card-description">
+                    Information is organized into sections and tabs, allowing
+                    users to easily find what they need
+                  </p>
                 </div>
-                <div className="list-card">
-                  <div className="card-info text-card">
-                    <p className="card-description-title">
-                      Details that matter reduces cognitive load
-                    </p>
-                    <p className="card-description">
-                      Information is organized into sections and tabs, allowing
-                      users to easily find what they need
-                    </p>
-                  </div>
-                </div>
-                <div className="list-card">
-                  <div className="card-info text-card">
-                    <p className="card-description-title">
-                      Two-pane view and tabs reduces cognitive load
-                    </p>
-                    <p className="card-description">
-                      Allows Directors to browse with ease and reduces cognitive
-                      load when looking for data
-                    </p>
-                  </div>
+              </div>
+              <div className="list-card">
+                <div className="card-info text-card">
+                  <p className="card-description-title">
+                    Two-pane view and tabs reduces cognitive load
+                  </p>
+                  <p className="card-description">
+                    Allows Directors to browse with ease and reduces cognitive
+                    load when looking for data
+                  </p>
                 </div>
               </div>
             </div>
@@ -1289,15 +1275,11 @@ export default function VACRedesign() {
 
       <div className="project-section dark full-height">
         <div className="container-1232">
-          <div className="side-text-horizontal-container">
-            <div className="left-middle-half-width-container">
-              <div className="slide-left-header">
-                <div className="middle-aligner">
-                  <h2 className="light">Constraints</h2>
-                </div>
-              </div>
+          <div className="split">
+            <div className="split-col">
+              <h2 className="light">Constraints</h2>
             </div>
-            <div className="right-middle-half-width-container">
+            <div className="split-col">
               <ul role="list" className="blue-bullet-list">
                 <li className="list-item-colored-bullet">
                   Engineering team of 1
@@ -1316,15 +1298,11 @@ export default function VACRedesign() {
 
       <div className="project-section dark full-height">
         <div className="container-1232">
-          <div className="side-text-horizontal-container">
-            <div className="left-middle-half-width-container">
-              <div className="slide-left-header">
-                <div className="middle-aligner">
-                  <h2 className="light">Reflections</h2>
-                </div>
-              </div>
+          <div className="split">
+            <div className="split-col">
+              <h2 className="light">Reflections</h2>
             </div>
-            <div className="right-middle-half-width-container">
+            <div className="split-col">
               <p className="light">
                 I now have a better appreciation for collaborative and
                 communicative teams. I also learned I really enjoy projects

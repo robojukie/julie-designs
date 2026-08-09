@@ -2138,6 +2138,7 @@ a.social-link:not(.brand):hover {
   }
 }
 
+/* ---------------------------------------------------------------------------
    27. Stacked two-column blocks keep the column's left edge
    NEW BEHAVIOUR, NOT IN THE EXPORT, and the same argument as section 21.
 
@@ -2350,14 +2351,13 @@ a.social-link:not(.brand):hover {
     max-width: calc((var(--width--container-1232) - 24px) / 2);
   }
 
-  /* .right-middle-half-width-container is a shrink-to-fit flex item, so once
-     .side-text-horizontal-container stacks it wraps tightly around its figure
-     and a centred figure centres inside THAT rather than inside the column —
-     the employee task list sat 72px from the left gutter with 325px of space
-     on its right. Full width, so centred means centred in the column. */
-  .right-middle-half-width-container {
-    width: 100%;
-  }
+  /* .right-middle-half-width-container used to be corrected here: a shrink-to-
+     fit flex item that, once stacked, wrapped tightly around its figure so a
+     centred figure centred inside THAT rather than inside the column — the
+     employee task list sat 72px from the left gutter with 325px of space on
+     its right. .split replaced the wrapper and its last call site with it
+     (section 29); a stated track is the same fix, at both ends of the
+     breakpoint rather than one. */
 }
 
 /* .diagram — an illustration rather than a screen capture.
@@ -2377,11 +2377,11 @@ a.social-link:not(.brand):hover {
 }
 
 /* Only once stacked. On desktop each of these two sits in a column of its own —
-   the drawing in the overview's 698 right-hand column, the task list in a
-   462-wide half — and those are the layouts they were drawn for. Applying the
-   480 at every width shrank the drawing from 698 to 480 on desktop, which is a
-   change to a layout nobody asked to change. What was asked for is that they
-   behave alike when their two-column layouts collapse.
+   since section 29, the same one: the 678 wide track of a .split, which at 680
+   native is very nearly the size both were drawn at. Applying the 480 at every
+   width shrank them to 480 on desktop, which is a change to a layout nobody
+   asked to change. What was asked for is that they behave alike when their
+   two-column layouts collapse.
 
    Scoped through .captioned-image so it outranks the fill-the-frame rule above,
    which matches at the same specificity and would otherwise win on source
@@ -2394,14 +2394,18 @@ a.social-link:not(.brand):hover {
   }
 }
 
-/* The legacy caps these two figures used to size themselves by — 480 on
-   .drawing-frame, 462 on .image-4-col-wrapper — now fight the rule above once
-   stacked, and .diagram is the single place their size is decided. On desktop
-   .image-4-col-wrapper's 462 still sets the half-column figure's width, which
-   is the layout it belongs to. */
+/* The legacy cap the drawing still carries — 480 on .drawing-frame — fights the
+   rule above once stacked, and .diagram is the single place a figure's size is
+   decided. The task list had the same problem through .image-4-col-wrapper
+   (`max-width: 462px`, juliepaik.css:2984), a four-column Webflow measure that
+   held it 216px short of the track section 29 gives it. That class came off the
+   markup rather than being neutralised here, so only .drawing-frame is left.
+   It is the same kind of class and could go the same way — its 480 lives at
+   juliepaik.css:5250 and nothing but width and centring is on it — but that is
+   the hero, and taking it off is a change to a block this section is not
+   otherwise touching. */
 @media screen and (max-width: 991px) {
-  .drawing-frame,
-  .image-4-col-wrapper {
+  .drawing-frame {
     max-width: 100%;
   }
 }
@@ -2428,3 +2432,192 @@ a.social-link:not(.brand):hover {
 .caption.centered {
   text-align: center;
 }
+
+/* ---------------------------------------------------------------------------
+   29. .split — the two-column section
+   NEW BEHAVIOUR, NOT IN THE EXPORT.
+
+   Ten blocks across /vac-redesign and /bank-green-gpe put a narrow column of
+   text beside a wider column of content — list-cards, a bullet list, a
+   drawing, a screenshot. The export builds them three different ways:
+
+     .container-stacking                                     (the overview)
+
+     .side-text-horizontal-container
+       > .left-middle-half-width-container
+       + .right-middle-half-width-container                   (six blocks)
+
+     .side-text-horizontal-container
+       > .slide-image-side-container
+       + .slide-text-side-container.stacking                  (three blocks)
+
+   and not one of them states both tracks. .side-text-horizontal-container
+   declares `grid-template-columns: 1fr 1fr` and then `display: flex`
+   (juliepaik.css:2778), so the grid line never applies and both children fall
+   back to `flex: 0 1 auto`. The left one asks for its 528px, the right asks
+   for its max-content, and whichever overflows gets shrunk. Every split on
+   these pages is therefore an accident of what the block happens to contain.
+   Measured at a 1512 viewport (column 1232), the ten produced seven:
+
+     510 / 698   overview — the organisation drawing
+     514 / 678   Potential improvements
+     514 / 678   Goals
+     528 /   0   Simplify workflows            <- see below
+     720 / 396   Home page redesign
+     720 / 396   Added table view
+     720 / 396   Updated teacher profile
+     528 / 390   Constraints
+     522 / 670   Reflections
+     448 / 744   Next steps (/bank-green-gpe)
+
+   They also drift with the viewport, because a content-derived width does:
+   the Goals pair is 514/678 at 1512, 417/519 at 1100 and 380/459 at 992.
+
+   THE CONTRACT
+     side by side  ->  one split, 514 + 40 + 678 = 1232, at every width above
+                       991 and in both directions
+     stacked       ->  one full-width column, 24px apart
+
+   WHY 514 / 678. It is where the two blocks that already read correctly —
+   Potential improvements and Goals — sit on desktop today, and it is 4px from
+   the overview's 510, so three of the ten barely move. The rounder-looking
+   alternative, 0.8fr, resolves to 530/662 at this column: 16px from what those
+   blocks show now and 20px from the overview, i.e. a change to the three that
+   were already right in order to reach a number nothing else refers to.
+
+   fr, NOT PIXELS. `514fr 678fr` against a 40px gap divides 1192px of free
+   space in exactly that ratio, which IS 514/678 once the column is 1232, and
+   holds the proportion at every narrower column (403/532 at a 1100 viewport)
+   rather than overflowing or drifting back to content.
+
+   .reversed — THE SAME TWO WIDTHS, SWAPPED. Home page redesign, Added table
+   view and Updated teacher profile put the screenshot on the left. The export
+   caps their text side at 396 (.slide-text-side-container, juliepaik.css:2734)
+   and gives the image side no width at all, so the pair runs 720/396 and
+   leaves 76px of the column standing empty. Reversed they run 678/514: the
+   column is full, every media edge on the page lands on one of two verticals,
+   and the three list-cards gain 118px — which is why those sections get
+   noticeably shorter.
+
+   WHAT THE STATED TRACK FIXES BY ITSELF. Simplify workflows' figure was
+   rendering 0x0 at every width above 991 — invisible, and the image never even
+   loaded. Section 24 gives .captioned-image `width: 100%`, and inside the
+   shrink-to-fit .right-middle-half-width-container that is a percentage of a
+   width which depends on the percentage; the cycle resolves to zero. A stated
+   track has no cycle. (It also retires the ≤991 `width: 100%` this file used
+   to give .right-middle-half-width-container, which existed so that a figure
+   centred in a tightly-wrapped column centred in the page instead.)
+
+   WHAT IT COSTS. Constraints' bullet list gains 288px and Next steps' loses
+   66px — the two lists that were sizing themselves. The left column's
+   `padding-right: 100px` goes with the wrapper that carried it: with a stated
+   track the space between the columns is the gap, not padding inside one of
+   them, so the text measure in those blocks widens from 414 to 514. And the
+   two vertical rhythms inside a column — 16px in the text half, 32px between
+   list-cards, 24px in the three stacking ones — become one 24px.
+
+   THE HEADING WRAPPERS. Constraints, Reflections and Next steps each wrapped a
+   single <h2> in four nested divs — .slide-left-header > .middle-aligner >
+   .container-eyebrow-and-heading > .wrapper-heading-and-blurb — none of which
+   sizes anything once the track is stated. .middle-aligner also centred that
+   heading vertically against the column beside it; both columns now start at
+   the same y, which is what `align-items: start` below says and what the
+   other seven blocks already did.
+--------------------------------------------------------------------------- */
+.split {
+  display: grid;
+  grid-template-columns: 514fr 678fr;
+  gap: 40px;
+  align-items: start;
+  width: 100%;
+}
+
+/* Media on the left. Markup order matches visual order in both directions, so
+   the stack below 992 needs no reordering and the media stays on top of its
+   text where it has always been. */
+.split.reversed {
+  grid-template-columns: 678fr 514fr;
+}
+
+/* A grid item's automatic minimum size is its content, so one wide screenshot
+   or one long unbroken word would push its track past the share above and put
+   the split back where it started. */
+.split > * {
+  min-width: 0;
+}
+
+/* A column of stacked things: heading and copy, list-cards, a bullet list.
+   Figures go into the track directly and keep the box section 28 gives them,
+   which is why this is a class at the call site rather than `.split > *`.
+
+   stretch, not flex-start: now that the track is stated, a shrink-to-fit child
+   would wrap tightly around its own text instead of filling the column it was
+   given. The list-cards were only ever full width because they were the thing
+   setting the width. */
+.split-col {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 24px;
+}
+
+/* Simplify workflows' task list is the one figure here narrower than its track:
+   .captioned-image is `width: 100%` (section 28) but .image-4-col-wrapper caps
+   it at 462, which in a 678 track leaves 216px on one side. .centered is an
+   instruction about the column, so it has to move the figure within the track
+   and not only its contents within the figure. */
+.split > .captioned-image.centered {
+  justify-self: center;
+}
+
+@media screen and (max-width: 991px) {
+  /* One column, both directions. 24px is the row gap the export already used
+     when these stacked, and it is now also the gap between things inside a
+     column — stacking stops being a different rhythm from not stacking. */
+  .split,
+  .split.reversed {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   29b. The 300px height cap, everywhere — completing section 28.
+
+   .image-max300h is `max-height: 300px` (juliepaik.css:3090). Section 22 took
+   it off, but only for .comparison, because that is where it was doing visible
+   damage at the time. The two before/after flow-chart pairs on /vac-redesign —
+   "Attendance check flow update" and "Flow 3: Assign teachers" — are
+   .vertical-container stacks rather than comparison pairs, so they kept it,
+   and they are the same component with the same classes rendering two
+   different ways. Measured at 1512:
+
+     Attendance  Before   1232x300 box, picture drawn 1123x300
+     Attendance  After    1232x300 box, picture drawn 1021x300
+     Flow 3      Before   1232x214 box, picture drawn 1232x214
+     Flow 3      After    1232x216 box, picture drawn 1232x215
+
+   The cap only bites where the aspect ratio is short enough to reach it. The
+   attendance charts are 3.74 and 3.40 wide-to-tall, so at 1232 they want 329
+   and 362 of height; the teacher-assignment charts are 5.77 and want 214. So
+   one pair fills the column and the other sits 109px and 211px short of its
+   own right edge — 102px short of each other — with the captions still flush
+   at 1232, which reads as two broken margins rather than as a size.
+
+   This is section 28's argument, applied to the last figures on the site still
+   sized by a number instead of by the column: height is the output, not an
+   input. Same specificity and selector as the fill-the-frame rule there, so it
+   is the source order that carries it.
+
+   IT COSTS RESOLUTION, and there is no fix here for that. Attendance-flow-
+   before.png and -after.png are 820px wide and that is the largest version
+   that exists — public/images has nothing bigger, and next/image will not
+   upscale past a source, so the `unoptimized` prop on those two call sites is
+   not what is holding them back either. At 1232 they now draw at 1.50x native.
+   Under the cap they were already drawing at 1.37x, so this is half a step
+   softer in exchange for two figures that agree with every other figure on the
+   page. A re-export at 2x is the only real repair. */
+.captioned-image .image-wrapper > img {
+  max-height: none;
+}
+
