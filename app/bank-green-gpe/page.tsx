@@ -248,7 +248,7 @@ export default function BankGreen() {
             <div className="middle-aligner">
               <div className="heading-and-body-container">
                 <div className="eyebrow-and-headline-container">
-                  <h2 className="eyebrow">Problem statement</h2>
+                  <p className="eyebrow">Problem statement</p>
                   <h2>
                     How might we simplify and speed up the bank rating
                     process?
@@ -280,7 +280,7 @@ export default function BankGreen() {
       <div className="project-section brainsprout">
         <div className="container-1232">
           <div className="eyebrow-and-headline-container">
-            <h2 className="eyebrow">Solution</h2>
+            <p className="eyebrow">Solution</p>
           </div>
           <div className="horizontal-container">
             <div className="center-section">
@@ -302,7 +302,7 @@ export default function BankGreen() {
           <div className="container-680">
             <div className="heading-and-body-container">
               <div className="eyebrow-and-headline-container">
-                <h2 className="eyebrow">Process</h2>
+                <p className="eyebrow">Process</p>
                 <h2>Phase 1: Migrating from spreadsheet to a web-app</h2>
               </div>
               <div>
@@ -624,7 +624,7 @@ export default function BankGreen() {
           <div className="container-800">
             <div className="heading-and-body-container">
               <div className="eyebrow-and-headline-container">
-                <h2 className="eyebrow">Designs</h2>
+                <p className="eyebrow">Designs</p>
                 <h2>Translating engineering and user feedback to designs</h2>
               </div>
               <p>
@@ -764,11 +764,7 @@ export default function BankGreen() {
             <div className="left-middle-half-width-container">
               <div className="slide-left-header">
                 <div className="middle-aligner">
-                  <div className="container-eyebrow-and-heading">
-                    <div className="wrapper-heading-and-blurb">
-                      <h2 className="light">Next steps</h2>
-                    </div>
-                  </div>
+                  <h2 className="light">Next steps</h2>
                 </div>
               </div>
             </div>

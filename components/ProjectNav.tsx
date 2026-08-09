@@ -118,7 +118,7 @@ export default function ProjectNav({ projects }: ProjectNavProps) {
             their own — they read equally well as a breadcrumb or as a
             progress tracker, and both readings are wrong. aria-hidden because
             the <nav> already carries the same word as its accessible name. */}
-        <p className="eyebrow project-nav-label" aria-hidden="true">
+        <p className="eyebrow muted project-nav-label" aria-hidden="true">
           Project
         </p>
 
