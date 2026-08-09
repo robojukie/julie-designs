@@ -1314,31 +1314,48 @@ a.social-link:not(.brand):hover {
    The rules live on the container, not on the images, because every one of
    them is about the RELATIONSHIP between the two halves — how the tracks
    divide, what happens when they stack, where the captions start. An image
-   class could not express any of that, and --cols has to sit on the grid
-   element regardless.
+   class could not express any of that, and --pair-aspect has to sit on the
+   grid element regardless.
 
    THE CONTRACT
-     side by side  ->  equal heights, tops aligned, captions aligned
-     stacked       ->  equal widths, both flush to the gutter
+     side by side  ->  the SAME two columns as every other pair on the page,
+                       both images one height, tops aligned, captions aligned
+     stacked       ->  each image the full width of the column, left-aligned,
+                       its own natural height
 
-   SIDE BY SIDE: equal heights need each track sized in proportion to its
-   image's aspect ratio — width proportional to aspect makes height
-   (width / aspect) identical, at every viewport, with no breakpoint to tune.
-   CSS cannot read an image's aspect, so each pair declares its own as --cols
-   at the call site, next to the width/height props it is derived from. Pairs
-   that omit it fall back to an even split, which is already correct when both
-   images share an aspect. Without this the images only matched once both were
-   tall enough to hit .image-max300h's 300px cap — around 1250 — and below that
-   the wider image ran out of track first: 281 against 300 at 1200, 230 against
-   278 at 992. The cap still applies, and now reaches both at the same moment.
+   SIDE BY SIDE — THE COLUMNS NEVER MOVE. Every pair on a page divides its
+   space the same way, so the right-hand image begins at the same x in every
+   pair, and reading down the page there is one unbroken vertical line. This
+   is the rule the previous version of this section got backwards: it sized
+   each pair's tracks in proportion to that pair's own aspect ratios, which
+   bought equal heights within a pair at the cost of the alignment between
+   pairs. Six pairs on /vac-redesign put their right-hand image at six
+   different offsets, spread across 113px.
+
+   Equal tracks, so HEIGHT is what gives. A pair's shared height is the tallest
+   both images can be while each still fits its track, which is the track
+   divided by the LARGER of the two aspect ratios. CSS cannot read an image's
+   aspect, so each pair declares that one number as --pair-aspect at the call
+   site, next to the width/height props it is derived from. The wider-aspect
+   image then fills its track exactly; its partner is narrower and sits at its
+   track's left edge, with the slack on the right. Never centred, never
+   letterboxed — a picture always fills its own frame, and it is the frame that
+   changes shape.
+
+   One number per pair rather than two, and it is derived rather than measured:
+   at any viewport the tracks are a share of the content column, so the pair
+   holds its proportion of the screen without a breakpoint to tune.
+
+   A pair may opt out with .natural-height. Only one does — "Simplifying
+   substitute assignment", a 440x746 portrait against a 772x416 landscape. It
+   is a flow diagram, not a screen comparison, and a shared height would render
+   the portrait at roughly a third of its track. It keeps the equal tracks and
+   takes its natural heights.
 
    STACKED: the column is the shared measure, so width parity is the goal and
    height parity is not — the images differ in height by their own aspect
-   ratios, which is correct. Two things prevented it. The wrappers are
-   shrink-to-fit, so each image sized itself from whatever the srcset picked;
-   and the 300px height cap made whichever image is taller-per-pixel-of-width
-   hit the cap first and end up NARROWER than its neighbour (480 vs 462 on the
-   sub-requests pair, 375 vs 480 on Design iterations at 900).
+   ratios, which is correct. --pair-aspect is switched off, and each image
+   takes the full column.
 
    Multi-image rows that are NOT comparisons keep their own behaviour — a
    ._3-x-1-card-grid row of three may legitimately want differing sizes, and
@@ -1353,139 +1370,134 @@ a.social-link:not(.brand):hover {
   justify-content: flex-start;
 }
 
-/* .image-wrapper is `justify-content/align-items: center` with padding, so it
-   stands 40px taller than its image and centres it; the .left-align variant
-   used by the other half of the same pair hugs the image instead. That
-   mismatch alone offset the two images by 20px vertically. Make both hug and
-   top-align, so the pair agrees regardless of which variant a half uses. */
-.comparison .image-wrapper {
-  align-items: flex-start;
-  justify-content: flex-start;
-  padding-top: 0;
-  padding-bottom: 0;
-}
+/* .image-wrapper's centring — the thing that used to offset the two halves of
+   a pair from each other — is now handled for every captioned figure, not just
+   comparison ones, by section 28. Nothing comparison-specific is left to say
+   about it. */
 
-/* Break the shrink-to-fit sizing loop: give the wrappers the track's width so
-   `width: 100%` on the image resolves against a real box rather than against
-   the image's own intrinsic width. */
-/* max-width alongside width, or the width is inert: the wrappers carry caps of
-   their own — .card-image-wrapper._2-x-1-image-fixed-height-wrapper is
-   `max-width: 440px` below 767 (juliepaik.css:6049 and neighbours) — which
-   held the image to 440 inside a 480 track, so the pair matched each other but
-   sat short of the column. The track is the measure; nothing between it and
-   the image should narrow it further. */
-.comparison .card-image-wrapper,
-.comparison .image-container-left-align,
-.comparison .w-inline-block {
-  width: 100%;
-  max-width: 100%;
-}
+/* NOTHING BETWEEN THE FRAME AND THE IMAGE. Every half of every pair is now
+   .captioned-image > .image-wrapper > img, with no intermediate wrapper — which
+   is what lets the frame's height reach the image at all. Four halves used to
+   carry one: two an .image-container-left-align (20px of vertical margin, so
+   that half stood 40px taller and started 20px lower than its partner), two a
+   vestigial Webflow lightbox <a>. Both are gone from the markup, and with them
+   the rules that used to neutralise them.
 
-/* .image-container-left-align adds 20px of vertical margin, so the half that
-   uses it stands 40px taller than its image and starts 20px lower; the other
-   half of the same pair wraps its image in a bare <a> and has none. Drop it,
-   so which wrapper a half happens to use stops affecting where it sits. */
-.comparison .image-container-left-align {
-  margin-top: 0;
-  margin-bottom: 0;
-}
-
+   .card-image-wrapper survives only outside .comparison, so the two rules below
+   are the last of that family here — kept because .natural-height's pair still
+   uses .media-card. */
 .comparison .card-image-wrapper {
   justify-content: flex-start;
+  width: 100%;
+  max-width: 100%;
 }
 
 .comparison .card-media {
   align-items: flex-start;
 }
 
-/* The caption's text starts on the image's left edge. .caption-wrapper carries
-   `padding-left: 10px` (juliepaik.css:3227), which set the caption 10px inside
-   the image above it — small, but it is the one thing that stops a labelled
-   half from reading as a single left-aligned column. The pairs without
-   captions (Design iterations) never showed it, which is why they looked right
-   while the labelled ones did not. */
-.comparison .caption-wrapper {
-  padding-left: 0;
-  padding-right: 0;
-}
+/* The caption's 10px inset used to be zeroed here, for comparison pairs only.
+   It applies to every captioned figure now — section 28. */
 
-/* THE IMAGE FILLS ITS TRACK, at every width.
+/* No height cap anywhere, at any width. The export sizes these by cap alone —
+   .process-image at 440/480, .image-max300h at 800 wide and 300 tall — with no
+   width, so an image rendered at whatever intrinsic width the srcset picked and
+   merely got clamped. On a wide screen a 440px-capped image sat in a 604px
+   track looking undersized while on a phone the same image filled the column
+   and looked right: proportionally LARGEST at the smallest viewport, which is
+   backwards.
 
-   The export sizes these by cap alone — .process-image at 440/480,
-   .image-max300h at 800 — with no width, so an image rendered at whatever
-   intrinsic width the srcset picked and merely got clamped. Two consequences:
-   the halves of a pair rarely matched, and on a wide screen a 440px-capped
-   image sat in a 604px track looking undersized while on a phone the same
-   image filled the column and looked right. That inversion — proportionally
-   LARGEST at the smallest viewport — is backwards.
-
-   Filling the track fixes both at once, and it is a ratio rather than a fixed
-   size: the track is a share of the content column, which is itself
-   gutter-bound, so the image holds the same proportion of the screen at 375px
-   as at 1512px. Nothing here hard-codes a width; max-width: 100% only stops an
-   image exceeding the track it was given.
-
-   With --cols the tracks are aspect-proportional, so filling them yields equal
-   heights; without it the tracks are even, so filling them yields equal
-   widths. Either way the pair matches, in both layouts. */
+   The 300px height cap is the specific thing that has to go. Under this
+   section's contract the pair's height is derived from the track and the
+   images' own aspect ratios; a fixed 300 fought that, and where it won it
+   forced a box whose shape did not match the picture. That is what letterboxed
+   the Design iterations pair — 42-73px of blank down the left of every one of
+   them at 1440, with the caption still flush at the frame's edge — and it left
+   the .image-max300h pairs 85-113px short of their own right edge. Height is
+   not something to cap here; it is the output. */
 .comparison img {
-  width: 100%;
-  height: auto;
   max-width: 100%;
+  max-height: none;
 
-  /* .image-max300h is `object-fit: scale-down`, which is min(none, contain):
-     it will shrink a picture to fit its box but never enlarge one. The box
-     obeys `width: 100%` and reaches the full track, so the two halves measure
-     identical — but a source smaller than the track paints at its natural size
-     inside that box and leaves the remainder blank. og-schools-classes-page is
-     613px wide, so at a 990px viewport it drew 613px of an 800px box while its
-     1512px-wide partner filled the same box completely. The boxes matched; the
-     pictures did not, which is why measuring geometry kept reporting this as
-     correct.
-
-     `contain` is the same fit rule without the no-upscale clause. Nothing is
-     cropped or stretched: the box already carries the image's own aspect
-     ratio, so contain resolves to an exact fill. Design iterations never
-     showed this because its images use ._2x1-image-fixed-height, which sets no
-     object-fit at all. */
+  /* The frame the image is given already carries the image's own aspect ratio,
+     so `contain` resolves to an exact fill and nothing is cropped, stretched or
+     padded. It is here as a guarantee rather than a fit: if a frame ever does
+     disagree with its picture, the picture stays undistorted and anchors left
+     — never centred, which is what made a disagreement read as a broken
+     margin rather than as a rendering artefact. */
   object-fit: contain;
+  object-position: left center;
 }
 
 @media screen and (max-width: 991px) {
-  /* The 300px height cap would otherwise bind before the width does and leave
-     the taller-per-pixel image narrower than its neighbour. Stacked, the
-     column is the shared measure and width parity is the goal. */
-  .comparison img {
-    max-height: none;
+  /* Stacked: the column is the shared measure. --pair-aspect is off, so each
+     frame takes the column's width and its own natural height. */
+  .comparison .image-wrapper {
+    aspect-ratio: auto;
   }
 
-  /* Same argument, one level up: .card-image-wrapper._2-x-1-image-fixed-height-wrapper
-     is a literal `height: 300px` (juliepaik.css:2925), which holds the image to
-     300px tall and so to whatever width its aspect implies — 440px inside a
-     480px track between roughly 480 and 767. Height is the wrong master when
-     the images are stacked; let the track's width set the size and the height
-     follow. Above 992 the fixed height stays: there it is what keeps a
-     side-by-side row to an even depth. */
+  .comparison img {
+    width: 100%;
+    height: auto;
+  }
+
+  /* .card-image-wrapper._2-x-1-image-fixed-height-wrapper is a literal
+     `height: 300px` (juliepaik.css:2925). No comparison pair uses that wrapper
+     any more — section 28 moved them all onto .image-wrapper — but the class
+     survives elsewhere, so the rule stays scoped and harmless. */
   .comparison .card-image-wrapper {
     height: auto;
   }
 
-  /* And the grid's own cap, for the same reason one level further out.
-     ._2-x-1-grid is `max-width: 480px` below 992, so once stacked the pair sat
-     in a 480px column no matter how much room the section had: 100% of the
-     content column at 375, but only 59% of it at 900. The image looked
-     proportionally BIGGEST on the smallest screen, which is the wrong way
-     round. Letting the pair take the content column keeps its share of the
-     screen roughly constant, and the column is already gutter-bound, so this
-     stays a ratio rather than a size. */
+  /* The grid's own cap. ._2-x-1-grid is `max-width: 480px` below 992, so once
+     stacked the pair sat in a 480px column no matter how much room the section
+     had: 100% of the content column at 375, but only 59% of it at 900 — again
+     proportionally biggest on the smallest screen. The column, so a stacked
+     pair lands on the same figure measure as every lone figure — see section
+     24. */
   .comparison {
     max-width: 100%;
   }
 }
 
 @media screen and (min-width: 992px) {
+  /* The same two columns for every pair on the page. Not per-pair, not derived
+     from the images — that is the whole point of this rule. */
   .comparison {
-    grid-template-columns: var(--cols, 1fr 1fr);
+    grid-template-columns: 1fr 1fr;
+  }
+
+  /* The pair's shared height, expressed as a shape on the frame rather than a
+     length: the frame is one track wide, so `aspect-ratio` makes it
+     track / --pair-aspect tall, and both frames in the pair resolve to the same
+     number without either of them naming it. Responsive for free.
+
+     The image then takes that height and whatever width its own aspect implies
+     — so the image whose aspect IS --pair-aspect fills its track exactly, and
+     its partner comes up short on the right, at its track's left edge. */
+  /* Scoped through .captioned-image so these outrank section 28's
+     fill-the-frame rule, which now applies at every width rather than only
+     below 992 and would otherwise win on source order. */
+  .comparison .captioned-image .image-wrapper {
+    aspect-ratio: var(--pair-aspect);
+    width: 100%;
+  }
+
+  .comparison .captioned-image .image-wrapper > img {
+    height: 100%;
+    width: auto;
+  }
+
+  /* The opt-out: equal tracks, but each image keeps its natural height. For a
+     pair whose two images are not the same KIND of picture, a shared height is
+     not a thing worth having. */
+  .comparison.natural-height .captioned-image .image-wrapper {
+    aspect-ratio: auto;
+  }
+
+  .comparison.natural-height .captioned-image .image-wrapper > img {
+    width: 100%;
+    height: auto;
   }
 
   /* `1fr` is `minmax(auto, 1fr)`, and that auto floor takes each item's
@@ -2124,4 +2136,295 @@ a.social-link:not(.brand):hover {
     font-size: var(--text-size--body-mobile);
     line-height: var(--text-height--body-mobile-height);
   }
+}
+
+   27. Stacked two-column blocks keep the column's left edge
+   NEW BEHAVIOUR, NOT IN THE EXPORT, and the same argument as section 21.
+
+   The .grid-2-col-first / .grid-2-col-last pair is /brainsprout's
+   image-beside-text block: two columns on desktop, one below 992. It carries
+   `max-width: 680px`, and both wrappers it is used inside —
+   .container-1232.full and .content-container — are column flexes at
+   `align-items: center`. So once stacked it floats in the middle of the
+   content column while the section's own prose, which is ALSO 680 wide, starts
+   at the gutter. At a 900px viewport that is prose at 45 and image at 102.5:
+   two different left edges for two blocks of identical width, seventeen times
+   down one page.
+
+   All of the selectors are needed. The block appears as `.grid-2-col-first`
+   alone, as `.grid-long-text .grid-2-col-first`, and as `.grid-long-text`
+   carrying the cap itself, depending on the call site — measured, not assumed,
+   and keying off only one of them left six of the seventeen still centred.
+
+   .container-680 is in the list because it is the OTHER 680-wide block in
+   those same sections: the running prose. Left-aligning only the figures moved
+   the mismatch rather than removing it — figure on the gutter at 45, the
+   paragraph above it still floating at 102.5. Both are the same measure and
+   both belong on the same edge.
+
+   It is the one selector here that has to be scoped by parent. .container-680
+   is the whole of /about, where a centred narrow measure IS the page — an
+   unscoped rule shifted all thirteen of its figures 57.5px left, which the
+   before/after measurements caught. The two parents named are the ones that
+   centre, and /about's .container-680 sits under neither.
+
+   Section 21 turned off the two centring mechanisms it found — `justify-content`
+   on .horizontal-container and the auto margins on .card-info. This is the
+   third, and it needs its own rule because the free space here belongs to the
+   parent's cross axis, which neither of those touch.
+
+   align-self on the block rather than align-items on the two wrappers: the
+   wrappers hold other children (headings, quote blocks, full-bleed figures)
+   that are either full width already or deliberately centred, and there is no
+   reason to disturb them to move this one thing. Above 992 the block is wider
+   than 680 and fills its wrapper, so the rule has nothing to do there — but it
+   is scoped anyway, so desktop cannot be affected by a later cap change.
+
+   The image and its adjacent text column both sit inside .grid-long-text, so
+   moving the block moves the pair together and their relationship is
+   unchanged. Only the offset from the gutter changes.
+--------------------------------------------------------------------------- */
+@media screen and (max-width: 991px) {
+  .grid-long-text,
+  .grid-2-col-first,
+  .grid-2-col-last,
+  .container-1232.full > .container-680,
+  .content-container > .container-680 {
+    align-self: flex-start;
+  }
+
+  /* .subsection-last pays 24px a side of its own, inside a .container-1232.full
+     that already pays the gutter (section 17). Two of /brainsprout's figures
+     live in it and sat 24px inside every other figure on the page — the same
+     one-section-disagrees-with-the-rest problem, one level further out. */
+  .subsection-last {
+    padding-left: 0;
+    padding-right: 0;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   28. One structure for every captioned figure
+   NEW BEHAVIOUR, NOT IN THE EXPORT.
+
+   The export grew three different ways to put a caption under a picture:
+
+     .captioned-image  > .image-wrapper + .caption-wrapper > .caption-title/.caption
+     .media-card       > .card-media    + .card-info       > .card-description-title/.card-description
+     .image-wrapper-*  >  <img>         + .image-caption-wrapper > .image-caption
+
+   Same job, three vocabularies, and they did not agree: .caption-wrapper's
+   `padding-left: 10px` (juliepaik.css:3227) set its text 10px inside the image
+   above it, while .card-info's text sat flush. Two before/after flow-chart
+   pairs on /vac-redesign — "Attendance check flow update" and "Flow 3: Assign
+   teachers" — are the same component built both ways, with captions at two
+   different offsets on one page.
+
+   The markup is now .captioned-image + .image-wrapper + .caption-wrapper
+   everywhere, so the rules below are the whole contract and there is one place
+   to change it. .card-info keeps its OTHER job — the text-card body used by
+   .card-info.text-card and by the side-panel lists — which is why it could not
+   simply be renamed.
+
+   THE CONTRACT
+     a figure is left-aligned, and its caption starts on the image's left edge
+
+   .comparison (section 22) still owns what a PAIR does — how the tracks
+   divide, what happens when they stack. This section owns what a single figure
+   does, and applies whether or not the figure is half of a pair.
+--------------------------------------------------------------------------- */
+
+/* Left-aligned is the default. .image-wrapper is `justify-content/align-items:
+   center` in the export and re-asserts it at <=767 (juliepaik.css:3530), which
+   is what centred the picture inside its own box; .captioned-image scopes the
+   correction to figures, leaving .image-wrapper's other call sites alone. */
+.captioned-image .image-wrapper {
+  justify-content: flex-start;
+  align-items: flex-start;
+}
+
+/* .captioned-image is a flex item inside .vertical-container, which is
+   `align-items: flex-start`, so it would shrink to its content instead of
+   taking the column. Its width is the measure the caption aligns to, so it has
+   to be the column's. */
+.captioned-image {
+  width: 100%;
+}
+
+/* Dark sections. .card-description/.card-description-title carried a .light
+   modifier for the three Design iterations sections; .caption/.caption-title
+   never needed one until those sections moved onto them. */
+.caption.light,
+.caption-title.light {
+  color: var(--text-colors--text-light);
+}
+
+/* .caption-title already steps down to the mobile size (juliepaik.css:6149)
+   and .caption never did, so a converted caption's body text would sit a step
+   larger than its own title below 768. Match the title. */
+@media screen and (max-width: 767px) {
+  .caption {
+    font-size: var(--text-size--caption-mobile);
+    line-height: var(--text-height--caption-mobile-height);
+  }
+}
+
+/* THE CONTENT COLUMN IS THE FIGURE MEASURE, at every width.
+
+   The export capped figures at 800 — .image-wrapper and .image-wrapper-800
+   both — inside a 1232 column. Nothing chose that number; it is what the
+   Webflow export carried, and it costs 432px of the column standing empty
+   beside every lone figure while a comparison pair right above it spans the
+   whole 1232. Two figure widths down one page, on desktop.
+
+   Following the column instead gives one figure measure everywhere, and it is
+   continuous: the column runs 1232 at 1440, 975 at 1100, 877.8 at 992 and
+   876.9 at 991, so a figure that tracks it has nothing to jump over when the
+   layout reflows. The earlier 800→877 jump at the breakpoint was an artefact
+   of the cap applying above 992 and being released below it, not of filling
+   the column — remove the cap at both ends and the discontinuity goes with it.
+
+   It also shows the work bigger, which for a case study is the point: the
+   dashboards are 1512px natively and were rendering at 53%.
+
+   Body copy keeps its own narrower measure. A reading measure and a figure
+   measure are different things, and widening prose to match would cost line
+   length to buy an alignment nobody reads as alignment. */
+.captioned-image .image-wrapper {
+  max-width: 100%;
+}
+
+/* .image-wrapper-800 is a literal `width: 800px`, so it needs the width
+   changed rather than a cap lifted. Same family, same argument: these are the
+   lone figures on /vac-redesign — the starting-point and redesign screens, the
+   attendance flow, the redesigned attendance screen. */
+.image-wrapper-800 {
+  width: 100%;
+}
+
+/* .image-800w is the bordered frame inside one of them. It carries its own
+   `max-width: 800px`, and below 992 an `align-items: center` that centres the
+   picture inside the frame — which put the redesigned attendance screen 39.5px
+   in from both gutters while every figure around it sat flush. */
+.image-800w {
+  max-width: 100%;
+  align-items: flex-start;
+}
+
+/* Releasing the frame is only half of it. Outside .comparison nothing states a
+   width on the image, and the image classes carry caps of their own measured
+   against something other than the column: .image-max300h is `max-width: 800px`
+   and .image-pc is `max-width: 85vw` below 768 — a share of the VIEWPORT, which
+   left 4.5px of stray inset on each side at 480 that no other figure had.
+
+   The frame is the measure; a cap measured against anything else does not
+   belong between it and the image. .diagram and the .comparison rules above are
+   the deliberate exceptions and outrank this. */
+.captioned-image .image-wrapper > img {
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+}
+
+@media screen and (max-width: 991px) {
+
+  /* ...except that filling the column is exactly wrong for .natural-height.
+     Its two images are a 440x746 portrait and a 772x416 landscape, and a
+     portrait that fills the column is enormous: at a 991px viewport the
+     portrait went from 426 wide and 723 tall just before the pair stacked to
+     877 wide and 1486 tall just after — nearly double, and taller than the
+     screen it was on. Stacking should never make a picture bigger than it ever
+     was on desktop.
+
+     The cap is the desktop track: half of the 1232 column, less the grid's
+     24px gap. At that width the pair renders at exactly the size it has at
+     1440 — its largest on desktop — so the stacked images can equal their
+     desktop maximum and never pass it. Both halves take the same cap, so they
+     keep equal widths, and once the column itself falls below the cap they go
+     back to filling it and shrinking with it.
+
+     Scoped to .natural-height. The same argument technically covers the
+     landscape pairs, but a landscape screenshot filling the column does not
+     read as oversized, and there the even gutters matter more. */
+  .comparison.natural-height .captioned-image .image-wrapper > img {
+    max-width: calc((var(--width--container-1232) - 24px) / 2);
+  }
+
+  /* .right-middle-half-width-container is a shrink-to-fit flex item, so once
+     .side-text-horizontal-container stacks it wraps tightly around its figure
+     and a centred figure centres inside THAT rather than inside the column —
+     the employee task list sat 72px from the left gutter with 325px of space
+     on its right. Full width, so centred means centred in the column. */
+  .right-middle-half-width-container {
+    width: 100%;
+  }
+}
+
+/* .diagram — an illustration rather than a screen capture.
+   Two figures on /vac-redesign: the organisation drawing and the employee task
+   list. A screenshot can fill whatever it is given, but these stop being
+   readable past a point and stop looking deliberate below one, so they hold a
+   single size — 480, or the column when the column is smaller than that.
+
+   min(), not min-width: a bare `min-width: 480px` is what the drawing carried
+   before, and at a 480px viewport it forced 480 into a 417px column and bled
+   31.5px past the gutter on both sides.
+
+   Both call sites pair it with .captioned-image.centered, which is what makes
+   the leftover space split evenly rather than falling on one side. */
+.image-wrapper.diagram {
+  overflow: visible;
+}
+
+/* Only once stacked. On desktop each of these two sits in a column of its own —
+   the drawing in the overview's 698 right-hand column, the task list in a
+   462-wide half — and those are the layouts they were drawn for. Applying the
+   480 at every width shrank the drawing from 698 to 480 on desktop, which is a
+   change to a layout nobody asked to change. What was asked for is that they
+   behave alike when their two-column layouts collapse.
+
+   Scoped through .captioned-image so it outranks the fill-the-frame rule above,
+   which matches at the same specificity and would otherwise win on source
+   order. */
+@media screen and (max-width: 991px) {
+  .captioned-image .image-wrapper.diagram > img {
+    width: min(480px, 100%);
+    max-width: 100%;
+    height: auto;
+  }
+}
+
+/* The legacy caps these two figures used to size themselves by — 480 on
+   .drawing-frame, 462 on .image-4-col-wrapper — now fight the rule above once
+   stacked, and .diagram is the single place their size is decided. On desktop
+   .image-4-col-wrapper's 462 still sets the half-column figure's width, which
+   is the layout it belongs to. */
+@media screen and (max-width: 991px) {
+  .drawing-frame,
+  .image-4-col-wrapper {
+    max-width: 100%;
+  }
+}
+
+/* bank-green's before/after pair keeps the 12px radius .card-media.border-radius
+   gave it, which is not .image-wrapper's --radius-sm. */
+.image-wrapper.border-radius {
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+/* The opt-in exception: one figure — /vac-redesign's organisation drawing — is
+   meant to sit centred in its column, and its caption centred under it. Every
+   other figure on the site is left-aligned, so this is a modifier at the call
+   site rather than a default anything has to opt out of. */
+.captioned-image.centered {
+  align-items: center;
+}
+
+.captioned-image.centered .image-wrapper {
+  justify-content: center;
+}
+
+.caption.centered {
+  text-align: center;
 }

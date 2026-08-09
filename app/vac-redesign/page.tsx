@@ -93,22 +93,23 @@ export default function VACRedesign() {
                 </div>
               </div>
             </div>
-            <div className="drawing-frame">
-              <div className="card-media">
-                <div className="card-image-wrapper vac-intro-drawing-wrapper">
-                  <ZoomableImage
-                    src="/images/VAC-structure-1.png"
-                    alt="Illustration of a person, teacher, and school with arrows pointing from person to school and teacher, and a double arrow between teacher and school"
-                    width={680}
-                    height={380}
-                    sizes="(max-width: 680px) 100vw, 680px"
-                    className="vac-illustration"
-                    style={{ height: "auto" }}
-                  />
-                </div>
+            {/* .centered is the opt-in exception to the left-aligned default —
+                see section 28 of styles/custom.css. This is the one figure on
+                the site that is meant to sit centred in its column. */}
+            <div className="captioned-image centered drawing-frame">
+              <div className="image-wrapper diagram">
+                <ZoomableImage
+                  src="/images/VAC-structure-1.png"
+                  alt="Illustration of a person, teacher, and school with arrows pointing from person to school and teacher, and a double arrow between teacher and school"
+                  width={680}
+                  height={380}
+                  sizes="(max-width: 680px) 100vw, 680px"
+                  className="vac-illustration"
+                  style={{ height: "auto" }}
+                />
               </div>
-              <div className="image-caption-wrapper">
-                <p className="image-caption centered">The organization</p>
+              <div className="caption-wrapper">
+                <p className="caption centered">The organization</p>
               </div>
             </div>
           </div>
@@ -471,8 +472,12 @@ export default function VACRedesign() {
               </p>
             </div>
             <div className="right-middle-half-width-container">
-              <div className="image-4-col-wrapper">
-                <div className="card-media">
+              {/* Same .diagram treatment as the organisation drawing: an
+                  illustration rather than a screenshot, so once the two-column
+                  layout collapses it centres at a legible size instead of
+                  keeping the narrow width its half-column gave it. */}
+              <div className="captioned-image centered image-4-col-wrapper">
+                <div className="image-wrapper diagram">
                   <ZoomableImage
                     src="/images/Employee-task-list-1.png"
                     alt="List of prioritized employee tasks"
@@ -644,42 +649,38 @@ export default function VACRedesign() {
               </p>
             </div>
             <div className="horizontal-container">
-              {/* No --cols: this pair is a flow diagram, not a screen
-                  comparison — 440x746 portrait against 772x416 landscape.
-                  Aspect-proportional tracks would split them roughly 1:3 and
-                  upscale the landscape past its native width, so it keeps the
-                  even split and its natural heights. It still takes
-                  .comparison for the stacked width parity and alignment. */}
-              <div className="_2-x-1-grid comparison">
-                <div className="media-card">
-                  <div className="card-media">
-                    <div className="card-image-wrapper">
-                      <ZoomableImage
-                        src="/images/Assign-sub-before.png"
-                        alt="Steps to assign a sub"
-                        width={440}
-                        height={746}
-                        sizes="440px"
-                        unoptimized
-                        className="process-image image-transparent-bg"
-                        style={{ height: "auto" }}
-                      />
-                    </div>
+              {/* .natural-height, not --pair-aspect: this pair is a flow
+                  diagram, not a screen comparison — 440x746 portrait against
+                  772x416 landscape. A shared height would be set by the
+                  landscape and leave the portrait about a third of its track.
+                  It keeps the shared columns and its natural heights. See
+                  section 22 of styles/custom.css. */}
+              <div className="_2-x-1-grid comparison natural-height">
+                <div className="captioned-image">
+                  <div className="image-wrapper">
+                    <ZoomableImage
+                      src="/images/Assign-sub-before.png"
+                      alt="Steps to assign a sub"
+                      width={440}
+                      height={746}
+                      sizes="440px"
+                      unoptimized
+                      className="process-image image-transparent-bg"
+                      style={{ height: "auto" }}
+                    />
                   </div>
                 </div>
-                <div className="media-card">
-                  <div className="card-media">
-                    <div className="card-image-wrapper">
-                      <ZoomableImage
-                        src="/images/Assign-sub-after.png"
-                        alt="Number of steps to assign a sub"
-                        width={772}
-                        height={416}
-                        sizes="100vw"
-                        className="process-image image-transparent-bg"
-                        style={{ height: "auto" }}
-                      />
-                    </div>
+                <div className="captioned-image">
+                  <div className="image-wrapper">
+                    <ZoomableImage
+                      src="/images/Assign-sub-after.png"
+                      alt="Number of steps to assign a sub"
+                      width={772}
+                      height={416}
+                      sizes="100vw"
+                      className="process-image image-transparent-bg"
+                      style={{ height: "auto" }}
+                    />
                   </div>
                 </div>
               </div>
@@ -699,26 +700,25 @@ export default function VACRedesign() {
             </p>
           </div>
           <div className="horizontal-container">
-            {/* --cols is each image's aspect ratio, in order; it sizes the
-                tracks so the pair renders at one height. See section 22 of
-                styles/custom.css. Here: 600/336 and 1512/982. */}
+            {/* --pair-aspect is the LARGER of the two images' aspect ratios; it
+                sets the height both frames share inside equal tracks. See
+                section 22 of styles/custom.css. Here: 600/336 = 1.786 against
+                1512/982 = 1.540. */}
             <div
               className="_2-x-1-grid comparison"
-              style={{ "--cols": "1.786fr 1.540fr" } as React.CSSProperties}
+              style={{ "--pair-aspect": "1.786" } as React.CSSProperties}
             >
               <div className="captioned-image">
                 <div className="image-wrapper">
-                  <div className="image-container-left-align">
-                    <ZoomableImage
-                      src="/images/og-subreq-page-blurred.png"
-                      alt="Screenshot of webpage showing a list of teachers"
-                      width={600}
-                      height={336}
-                      sizes="100vw"
-                      unoptimized
-                      className="image-max300h"
-                    />
-                  </div>
+                  <ZoomableImage
+                    src="/images/og-subreq-page-blurred.png"
+                    alt="Screenshot of webpage showing a list of teachers"
+                    width={600}
+                    height={336}
+                    sizes="100vw"
+                    unoptimized
+                    className="image-max300h"
+                  />
                 </div>
                 <div className="caption-wrapper">
                   <p className="caption-title">Before</p>
@@ -730,22 +730,21 @@ export default function VACRedesign() {
                 </div>
               </div>
               <div className="captioned-image">
-                <div className="image-wrapper left-align">
-                  {/* The export wraps this image in a Webflow lightbox anchor.
-                      The lightbox needs webflow.js, which we don't run, so the
-                      anchor gets no href — but it must stay an <a>: the
-                      stylesheet's bare `a { max-width: 100%; max-height: 100% }`
-                      is what .image-max300h's `height: 100%` resolves against. */}
-                  <a className="zoom-link-rounded w-inline-block">
-                    <ZoomableImage
-                      src="/images/vac-dashboard-06.png"
-                      alt="A computer screen displaying sub requests for a teacher."
-                      width={1512}
-                      height={982}
-                      sizes="(max-width: 1512px) 100vw, 1512px"
-                      className="image-max300h"
-                    />
-                  </a>
+                <div className="image-wrapper">
+                  {/* The export wrapped this in a Webflow lightbox anchor, kept
+                      because the stylesheet's bare `a { max-height: 100% }` was
+                      what .image-max300h's `height: 100%` resolved against.
+                      Section 22 now states the height on the image directly, so
+                      the anchor has no job left and the figure matches every
+                      other one: .image-wrapper > img, nothing in between. */}
+                  <ZoomableImage
+                    src="/images/vac-dashboard-06.png"
+                    alt="A computer screen displaying sub requests for a teacher."
+                    width={1512}
+                    height={982}
+                    sizes="(max-width: 1512px) 100vw, 1512px"
+                    className="image-max300h"
+                  />
                 </div>
                 <div className="caption-wrapper">
                   <p className="caption-title">After</p>
@@ -769,8 +768,8 @@ export default function VACRedesign() {
             </ul>
           </div>
           <div className="vertical-container">
-            <div className="media-card">
-              <div className="card-media">
+            <div className="captioned-image">
+              <div className="image-wrapper">
                 <ZoomableImage
                   src="/images/Teacher-assignment-flow-before.png"
                   alt="Flow chart"
@@ -780,12 +779,12 @@ export default function VACRedesign() {
                   className="image-max300h"
                 />
               </div>
-              <div className="card-info">
-                <p className="card-description-title">Before</p>
+              <div className="caption-wrapper">
+                <p className="caption-title">Before</p>
               </div>
             </div>
-            <div className="media-card">
-              <div className="card-media">
+            <div className="captioned-image">
+              <div className="image-wrapper">
                 <ZoomableImage
                   src="/images/Teacher-assignment-flow-after.png"
                   alt="Flow chart"
@@ -795,8 +794,8 @@ export default function VACRedesign() {
                   className="image-max300h"
                 />
               </div>
-              <div className="card-info">
-                <p className="card-description-title">After</p>
+              <div className="caption-wrapper">
+                <p className="caption-title">After</p>
               </div>
             </div>
           </div>
@@ -811,24 +810,22 @@ export default function VACRedesign() {
             </div>
           </div>
           <div className="horizontal-container">
-            {/* --cols: 613/330 and 1512/982. */}
+            {/* --pair-aspect: 613/330 = 1.858 against 1512/982 = 1.540. */}
             <div
               className="_2-x-1-grid comparison"
-              style={{ "--cols": "1.858fr 1.540fr" } as React.CSSProperties}
+              style={{ "--pair-aspect": "1.858" } as React.CSSProperties}
             >
               <div className="captioned-image">
                 <div className="image-wrapper">
-                  <div className="image-container-left-align">
-                    <ZoomableImage
-                      src="/images/og-schools-classes-page.png"
-                      alt="Screenshot of webpage showing a list of classes"
-                      width={613}
-                      height={330}
-                      sizes="100vw"
-                      unoptimized
-                      className="image-max300h"
-                    />
-                  </div>
+                  <ZoomableImage
+                    src="/images/og-schools-classes-page.png"
+                    alt="Screenshot of webpage showing a list of classes"
+                    width={613}
+                    height={330}
+                    sizes="100vw"
+                    unoptimized
+                    className="image-max300h"
+                  />
                 </div>
                 <div className="caption-wrapper">
                   <p className="caption-title">Before</p>
@@ -839,18 +836,16 @@ export default function VACRedesign() {
                 </div>
               </div>
               <div className="captioned-image">
-                <div className="image-wrapper left-align">
-                  {/* Lightbox anchor, as above — load-bearing for height: 100%. */}
-                  <a className="w-inline-block">
-                    <ZoomableImage
-                      src="/images/vac-dashboard-09.png"
-                      alt="A computer screen displaying teacher assignment page"
-                      width={1512}
-                      height={982}
-                      sizes="(max-width: 1512px) 100vw, 1512px"
-                      className="image-max300h"
-                    />
-                  </a>
+                <div className="image-wrapper">
+                  {/* Lightbox anchor removed, as above. */}
+                  <ZoomableImage
+                    src="/images/vac-dashboard-09.png"
+                    alt="A computer screen displaying teacher assignment page"
+                    width={1512}
+                    height={982}
+                    sizes="(max-width: 1512px) 100vw, 1512px"
+                    className="image-max300h"
+                  />
                 </div>
                 <div className="caption-wrapper">
                   <p className="caption-title">After</p>
@@ -1061,53 +1056,48 @@ export default function VACRedesign() {
             </div>
           </div>
           <div className="horizontal-container">
-            {/* --cols: 800/528 and 1512/982 — near-identical aspects, so close
-                to an even split; declared anyway to stay explicit. */}
+            {/* --pair-aspect: 800/528 = 1.515 against 1512/982 = 1.540. */}
             <div
               className="_2-x-1-grid comparison"
-              style={{ "--cols": "1.515fr 1.540fr" } as React.CSSProperties}
+              style={{ "--pair-aspect": "1.540" } as React.CSSProperties}
             >
-              <div className="media-card">
-                <div className="card-media">
-                  <div className="card-image-wrapper _2-x-1-image-fixed-height-wrapper">
-                    <ZoomableImage
-                      src="/images/image-65.png"
-                      alt="Screen with grid of options"
-                      width={800}
-                      height={528}
-                      sizes="100vw"
-                      className="_2x1-image-fixed-height"
-                    />
-                  </div>
+              <div className="captioned-image">
+                <div className="image-wrapper">
+                  <ZoomableImage
+                    src="/images/image-65.png"
+                    alt="Screen with grid of options"
+                    width={800}
+                    height={528}
+                    sizes="100vw"
+                    className="_2x1-image-fixed-height"
+                  />
                 </div>
-                <div className="card-info">
-                  <p className="card-description-title light">
+                <div className="caption-wrapper">
+                  <p className="caption-title light">
                     Concept testing new dashboard
                   </p>
-                  <p className="card-description light">
+                  <p className="caption light">
                     Realized primary information from &ldquo;Today&rdquo; and
                     &ldquo;Sub requests&rdquo; could be further extracted
                   </p>
                 </div>
               </div>
-              <div className="media-card">
-                <div className="card-media">
-                  <div className="card-image-wrapper _2-x-1-image-fixed-height-wrapper">
-                    <ZoomableImage
-                      src="/images/vac-dashboard-01.png"
-                      alt="A screenshot of a computer screen showing a list of names and times for classes and teachers."
-                      width={1512}
-                      height={982}
-                      sizes="(max-width: 1512px) 100vw, 1512px"
-                      className="_2x1-image-fixed-height"
-                    />
-                  </div>
+              <div className="captioned-image">
+                <div className="image-wrapper">
+                  <ZoomableImage
+                    src="/images/vac-dashboard-01.png"
+                    alt="A screenshot of a computer screen showing a list of names and times for classes and teachers."
+                    width={1512}
+                    height={982}
+                    sizes="(max-width: 1512px) 100vw, 1512px"
+                    className="_2x1-image-fixed-height"
+                  />
                 </div>
-                <div className="card-info">
-                  <p className="card-description-title light">
+                <div className="caption-wrapper">
+                  <p className="caption-title light">
                     Eliminated extra navigation step
                   </p>
-                  <p className="card-description light">
+                  <p className="caption light">
                     First view after logging displays immediately actionable
                     information
                   </p>
@@ -1128,52 +1118,48 @@ export default function VACRedesign() {
             </div>
           </div>
           <div className="horizontal-container">
-            {/* --cols: 800/558 and 1670/982. */}
+            {/* --pair-aspect: 800/558 = 1.434 against 1670/982 = 1.701. */}
             <div
               className="_2-x-1-grid comparison"
-              style={{ "--cols": "1.434fr 1.700fr" } as React.CSSProperties}
+              style={{ "--pair-aspect": "1.701" } as React.CSSProperties}
             >
-              <div className="media-card">
-                <div className="card-media">
-                  <div className="card-image-wrapper _2-x-1-image-fixed-height-wrapper">
-                    <ZoomableImage
-                      src="/images/image.png"
-                      alt="Screen with list of teachers"
-                      width={800}
-                      height={558}
-                      sizes="100vw"
-                      className="_2x1-image-fixed-height"
-                    />
-                  </div>
+              <div className="captioned-image">
+                <div className="image-wrapper">
+                  <ZoomableImage
+                    src="/images/image.png"
+                    alt="Screen with list of teachers"
+                    width={800}
+                    height={558}
+                    sizes="100vw"
+                    className="_2x1-image-fixed-height"
+                  />
                 </div>
-                <div className="card-info">
-                  <p className="card-description-title light">
+                <div className="caption-wrapper">
+                  <p className="caption-title light">
                     Concept testing teacher assignment flows
                   </p>
-                  <p className="card-description light">
+                  <p className="caption light">
                     Will the simplified flows cover everything employees need to
                     accomplish their tasks?
                   </p>
                 </div>
               </div>
-              <div className="media-card">
-                <div className="card-media">
-                  <div className="card-image-wrapper _2-x-1-image-fixed-height-wrapper">
-                    <ZoomableImage
-                      src="/images/suggested-teachers-zoom.png"
-                      alt="A computer screen displaying a table with teacher details"
-                      width={1670}
-                      height={982}
-                      sizes="100vw"
-                      className="_2x1-image-fixed-height"
-                    />
-                  </div>
+              <div className="captioned-image">
+                <div className="image-wrapper">
+                  <ZoomableImage
+                    src="/images/suggested-teachers-zoom.png"
+                    alt="A computer screen displaying a table with teacher details"
+                    width={1670}
+                    height={982}
+                    sizes="100vw"
+                    className="_2x1-image-fixed-height"
+                  />
                 </div>
-                <div className="card-info">
-                  <p className="card-description-title light">
+                <div className="caption-wrapper">
+                  <p className="caption-title light">
                     Adding nearby teachers section
                   </p>
-                  <p className="card-description light">
+                  <p className="caption light">
                     Half of the users mentioned distance as a primary factor in
                     assigning permanent and substitute teachers
                   </p>
@@ -1195,51 +1181,47 @@ export default function VACRedesign() {
             </div>
           </div>
           <div className="horizontal-container">
-            {/* --cols: 800/521 and 912/492. */}
+            {/* --pair-aspect: 800/521 = 1.535 against 912/492 = 1.854. */}
             <div
               className="_2-x-1-grid comparison"
-              style={{ "--cols": "1.535fr 1.854fr" } as React.CSSProperties}
+              style={{ "--pair-aspect": "1.854" } as React.CSSProperties}
             >
-              <div className="media-card">
-                <div className="card-media">
-                  <div className="card-image-wrapper _2-x-1-image-fixed-height-wrapper">
-                    <ZoomableImage
-                      src="/images/image-85.png"
-                      alt="Screen with grid of teachers"
-                      width={800}
-                      height={521}
-                      sizes="100vw"
-                      className="_2x1-image-fixed-height"
-                    />
-                  </div>
+              <div className="captioned-image">
+                <div className="image-wrapper">
+                  <ZoomableImage
+                    src="/images/image-85.png"
+                    alt="Screen with grid of teachers"
+                    width={800}
+                    height={521}
+                    sizes="100vw"
+                    className="_2x1-image-fixed-height"
+                  />
                 </div>
-                <div className="card-info">
-                  <p className="card-description-title light">
+                <div className="caption-wrapper">
+                  <p className="caption-title light">
                     Card view of attendance checks
                   </p>
-                  <p className="card-description light">
+                  <p className="caption light">
                     The original version took up lots of screen space
                   </p>
                 </div>
               </div>
-              <div className="media-card">
-                <div className="card-media">
-                  <div className="card-image-wrapper _2-x-1-image-fixed-height-wrapper">
-                    <ZoomableImage
-                      src="/images/vac-table.png"
-                      alt="A computer screen displaying a list of teachers"
-                      width={912}
-                      height={492}
-                      sizes="100vw"
-                      className="_2x1-image-fixed-height"
-                    />
-                  </div>
+              <div className="captioned-image">
+                <div className="image-wrapper">
+                  <ZoomableImage
+                    src="/images/vac-table.png"
+                    alt="A computer screen displaying a list of teachers"
+                    width={912}
+                    height={492}
+                    sizes="100vw"
+                    className="_2x1-image-fixed-height"
+                  />
                 </div>
-                <div className="card-info">
-                  <p className="card-description-title light">
+                <div className="caption-wrapper">
+                  <p className="caption-title light">
                     Table view of attendance checks
                   </p>
-                  <p className="card-description light">
+                  <p className="caption light">
                     Table rows allow data to be more easily scannable and leaves
                     space for other sections like overview and tasks
                   </p>
