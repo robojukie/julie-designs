@@ -21,6 +21,7 @@ import CaseStudyBanner from "@/components/CaseStudyBanner";
 import CaseStudyHero from "@/components/CaseStudyHero";
 import ContextColumns from "@/components/ContextColumns";
 import FadeIn from "@/components/FadeIn";
+import ProjectNav from "@/components/ProjectNav";
 import ProjectSection, {
   pad,
   type ProjectFeature,
@@ -350,6 +351,12 @@ export default function NovinoPathLIS() {
           here. It was dropped because it duplicated the label it sat above and
           was the heaviest object on a deliberately quiet page. */}
       <div className="project-run">
+        {/* First, so keyboard order reaches the section nav before the sections
+            it navigates. */}
+        <ProjectNav
+          projects={PROJECTS.map((p) => ({ id: p.id, label: p.name }))}
+        />
+
         {PROJECTS.map((project, index) => (
           <ProjectSection
             key={project.id}

@@ -2015,126 +2015,43 @@ a.social-link:not(.brand):hover {
   z-index: 900;
 }
 
-:root[data-nav-hidden="true"] .project-nav,
-:root[data-nav-hidden="true"] .project-sticky-label {
+:root[data-nav-hidden="true"] .project-nav {
   transform: translateY(-60px);
   transition-duration: 0.4s;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .project-nav,
-  .project-sticky-label {
+  .project-nav {
     transition: none;
   }
 }
 
-/* -- Sticky project label ------------------------------------------------ */
-
-/* The project's own label, pinned for the length of its own section, instead
-   of a separate indicator bar above the content.
-
-   WHY THIS RATHER THAN A BAR. A second pinned bar was built first and worked,
-   and it was the loudest object on the page: a filled near-black pill against
-   a layout of thin weights and hairline rules, occupying 113px of every
-   viewport with a navbar of identical material, and repeating the section's
-   own label 88px below itself on arrival. This says the same thing with the
-   page's existing typography, adds no new vocabulary, and cannot duplicate
-   the label because it IS the label.
-
-   What it gives up is jumping between projects. The menu in the opening block
-   still does that; the brief was to make the count and position clear at all
-   times, which this does.
-
-   Sticky, not fixed, and hung off the <section>: it pins when its own project
-   starts and is pushed out by the next one's label, so the handover happens
-   in the layout with nothing to coordinate.
-
-   Travels with the navbar on the same rule as the bar did — see the coupling
-   above. */
-.project-sticky-label {
-  align-self: stretch;
-  background-color: var(--background-color--background-case-study);
-  border-bottom: 1px solid var(--divider);
-  padding: 14px var(--gutter);
-  position: sticky;
-  top: 60px;
-  transition: transform 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
-  width: 100%;
-  z-index: 800;
-}
-
-/* The label has to be the section's FIRST pixel, or an anchor jump lands the
-   section top under the navbar with the label still 88px below it — in flow,
-   not yet pinned, with the section's top padding sitting emptily above it.
-   Measured: label at 148 instead of 60.
-
-   So the run's sections give up their top padding and the air moves below the
-   label instead, where it separates a header from its content rather than
-   pushing that header out of position. `.showcase-section`'s own 32px gap
-   supplies part of it. */
-.project-run .project-section {
-  padding-top: 0;
-}
-
-.project-run .project-section > .container-1232 {
-  margin-top: 24px;
-}
-
-/* Opaque, not translucent. Content passes directly under this — a screenshot
-   ghosting through the label it sits below would undo the one thing it is
-   here for. */
-.project-sticky-inner {
-  align-items: baseline;
+.project-nav-inner {
+  align-items: center;
   display: flex;
-  flex-wrap: wrap;
-  gap: 8px 12px;
+  gap: 12px;
   margin: 0 auto;
   max-width: var(--width--container-1232);
-  width: 100%;
+  /* Scrolls rather than wraps: a second row would change the bar's height
+     mid-scroll and shift every section under it. */
+  overflow-x: auto;
+  padding: 9px 0;
+  scrollbar-width: none;
 }
 
-/* .eyebrow is display:flex and width:100%, which would push the state badge to
-   its own line. */
-.project-sticky-inner .eyebrow {
+.project-nav-inner::-webkit-scrollbar {
+  display: none;
+}
+
+/* Says what the row is. Without it three numbered names read as a breadcrumb
+   or a step tracker — plausible readings that are both wrong. It also gives
+   the left edge something to hold: the chips use about a third of the bar's
+   width, and starting on a bare pill left the rest looking unfinished. */
+.project-nav-label {
+  color: var(--text-colors--muted-dark-blue);
+  flex: none;
   margin-bottom: 0;
   width: auto;
-}
-
-/* The position marker is the quieter half of the pair — the name is what a
-   reader is looking for, the numbers only say where it sits. */
-.project-sticky-n {
-  color: var(--text-colors--muted-dark-blue);
-  font-variant-numeric: tabular-nums;
-}
-
-/* Available to a screen reader, absent from the page. Used for the spoken form
-   of the position marker: "01 / 03" is a graphic, not a sentence. */
-.visually-hidden {
-  clip-path: inset(50%);
-  height: 1px;
-  overflow: hidden;
-  position: absolute;
-  white-space: nowrap;
-  width: 1px;
-}
-
-/* One line at 375. The label is pinned to every screen, so a second line is
-   not a small cost — measured at 103px tall before this, which with the navbar
-   put 20% of a phone viewport under permanent chrome. */
-@media screen and (max-width: 767px) {
-  .project-sticky-label {
-    padding-bottom: 11px;
-    padding-top: 11px;
-  }
-
-  .project-sticky-inner .eyebrow {
-    font-size: 0.875rem;
-  }
-
-  .project-sticky-inner .project-state {
-    font-size: 0.8rem;
-    padding: 3px 8px;
-  }
 }
 
 .project-nav-list {
@@ -2142,81 +2059,68 @@ a.social-link:not(.brand):hover {
   display: flex;
   gap: 8px;
   list-style: none;
-  margin: 0 auto;
-  max-width: var(--width--container-1232);
-  /* Scrolls rather than wraps: a second row would change the bar's height
-     mid-scroll and shift every section under it. */
-  overflow-x: auto;
-  padding: 10px 0;
-  scrollbar-width: none;
+  margin: 0;
+  padding: 0;
 }
 
-.project-nav-list::-webkit-scrollbar {
-  display: none;
-}
-
-/* The export puts `margin-bottom: 4px` on every li. Harmless in prose, but
-   here it sat under the flex line and made the bar 4px taller than the sum of
-   its parts — which is the number three other rules are derived from. */
 .project-nav-list li {
+  /* The export puts margin-bottom: 4px on every li — harmless in prose, but
+     here it sat under the flex line and made the bar taller than the sum of
+     its parts. */
   margin: 0;
 }
 
-/* PILLS, not text links. Three underlined words on a strip look like a caption;
-   pills with hit areas look like something you press, which is what a reader
-   has to believe before they will try it. The bar can only do its job if it is
-   recognised as a control.
+/* CHIPS. Outlined rather than filled, because the page they sit on is made of
+   thin weights and hairline rules — an earlier version marked the current item
+   with a solid near-black pill, which became the darkest object on the page
+   outside the dark Outcomes section and permanently on screen.
 
-   line-height is stated rather than inherited — the case-study body sets
-   28.8px, which sized the bar by accident. Nothing derives the number by hand
-   any more (PrototypeJump measures the bar at runtime), so this only keeps the
-   height from moving for reasons nobody intended. */
+   A border is enough to say "pressable". The selected state then only has to
+   differ from its neighbours, not shout at the page. */
 .project-nav-link {
   align-items: baseline;
+  border: 1px solid var(--color--neutral--warm--400);
   border-radius: 130px;
   color: var(--text-colors--muted-dark-blue);
   display: flex;
   font-family: var(--text-body-font);
   font-size: var(--text-size--nav-link-p-text);
-  gap: 8px;
+  gap: 7px;
   line-height: 18px;
-  padding: 7px 14px;
+  padding: 6px 13px;
   text-decoration: none;
   transition:
     background-color 0.2s,
+    border-color 0.2s,
     color 0.2s;
   white-space: nowrap;
 }
 
 .project-nav-link:hover {
   background-color: #0d09090d;
+  border-color: var(--color--beige--600);
   color: var(--text-colors--text-primary);
 }
 
-/* The current entry is marked three ways — filled, inverted, and heavier —
-   because this is the one thing the bar exists to say. A filled pill is also
-   what makes the row read as a segmented control rather than as three links:
-   the earlier version marked the current item with an underline, which is
-   what a link looks like anyway.
-
-   Ink on paper measures 14.12:1, so the inversion is legible at this small
-   size. The accent is deliberately not spent here — it belongs to the page's
-   own links, and a pink pill pinned to the top of every screen would outrank
-   the content it sits above. */
+/* Selected reads as RAISED, not inverted: a solid light fill against the bar's
+   slightly darker ground, an ink border, and ink text. That is the difference
+   between a chip that looks pressed in a set and a black tag stuck to the top
+   of the screen. Ink on the fill measures 14.12:1. */
 .project-nav-link[aria-current] {
-  background-color: var(--color--neutral--800);
-  color: var(--text-colors--text-light);
+  background-color: var(--color--neutral--100);
+  border-color: var(--color--neutral--800);
+  color: var(--text-colors--text-primary);
   font-weight: var(--text-weightt--eyebrow-500);
 }
 
 .project-nav-n {
   font-variant-numeric: tabular-nums;
-  opacity: 0.65;
+  opacity: 0.6;
 }
 
-/* Visible to a screen reader, not on screen: the list already shows three
-   entries with one marked, so rendering "Feature 2 of 3" beside it would be
-   saying the same thing twice. role="status" announces the change on scroll. */
+/* Visible to a screen reader, not on screen: the chips already show three
+   entries with one marked, so rendering "Project 2 of 3" beside them would say
+   the same thing twice. role="status" announces the change on scroll. */
 .project-nav-status {
   clip-path: inset(50%);
   height: 1px;
@@ -2227,32 +2131,28 @@ a.social-link:not(.brand):hover {
   width: 1px;
 }
 
-/* Anchor jumps clear the navbar only. The sticky label is the first thing in
-   the section, so once the section top lands at 60 the label pins immediately
-   below the nav and nothing is covered — the indicator does not need to be
-   counted twice. Applied to the sections themselves so it works for the
-   in-page menu and any external link carrying a #hash. */
+/* Anchor jumps have to clear BOTH pinned bars — 60px navbar + 51px indicator
+   (6 + 18 + 6 chip, + 2px chip border, + 9 + 9 bar padding, + 1px border).
+   Applied to the sections themselves so it works for the in-page menu, the
+   chips' own links, and any external link carrying a #hash. */
 .project-run .project-section {
-  scroll-margin-top: 60px;
+  scroll-margin-top: 111px;
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .project-nav-link {
-    transition: none;
-  }
-}
-
-/* Below 991 the navbar is still 60px tall, so the offset holds; only the
-   horizontal padding changes, and --gutter already handles that. The list
-   scrolls sideways at 375 rather than dropping the sibling entries — losing
-   them is losing the count, which is the thing this bar exists to show. */
+/* The label is the first thing to go: at 375 the three chips alone need more
+   than the column, so the row scrolls, and a label that scrolls off is worse
+   than no label. The chips carry numbers, which is most of what it said. */
 @media screen and (max-width: 767px) {
+  .project-nav-label {
+    display: none;
+  }
+
   .project-nav-list {
     gap: 6px;
   }
 
   .project-nav-link {
-    padding: 7px 11px;
+    padding: 6px 11px;
   }
 }
 

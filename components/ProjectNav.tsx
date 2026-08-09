@@ -43,12 +43,12 @@ import { useEffect, useState } from "react";
    suspended in a background tab. */
 
 /* The line a reader's eye sits on, measured from the top of the viewport: just
-   below the navbar and the indicator together (60 + 53 = 113), and then five
+   below the navbar and the indicator together (60 + 51 = 111), and then five
    more.
 
    BELOW the landing point, not above it. A section is current once its top has
    passed this line (`top <= READ_LINE`), and an anchor jump parks that top at
-   exactly 113 — so a line at 113 or less leaves the arriving section one pixel
+   exactly 111 — so a line at 111 or less leaves the arriving section one pixel
    short and the previous project stays marked. Verified: at 108 a jump to
    Dashboards still read "Slide Viewer".
 
@@ -57,7 +57,7 @@ import { useEffect, useState } from "react";
    failure was a zero-area TOUCH at the boundary, so the line had to sit above.
    Reading geometry inverts that. Same number, opposite sign, and nothing in
    the old comment would have warned anyone. */
-const READ_LINE = 118;
+const READ_LINE = 116;
 
 type ProjectNavProps = {
   projects: { id: string; label: string }[];
@@ -99,7 +99,7 @@ export default function ProjectNav({ projects }: ProjectNavProps) {
        line means the callback fires around each boundary and not on every
        pixel of a 3.6-screen section. */
     const observer = new IntersectionObserver(() => setActiveId(pick()), {
-      rootMargin: "-108px 0px -85% 0px",
+      rootMargin: "-111px 0px -85% 0px",
       threshold: 0,
     });
 
@@ -113,27 +113,37 @@ export default function ProjectNav({ projects }: ProjectNavProps) {
 
   return (
     <nav className="project-nav" aria-label="Projects">
-      <ol className="project-nav-list" role="list">
-        {projects.map((project, index) => {
-          const isActive = project.id === activeId;
-          return (
-            <li key={project.id}>
-              <a
-                className="project-nav-link"
-                href={`#${project.id}`}
-                /* aria-current="location" rather than "page": these are
-                   positions within this document, not separate pages. */
-                aria-current={isActive ? "location" : undefined}
-              >
-                <span className="project-nav-n" aria-hidden="true">
-                  {String(index + 1).padStart(2, "0")}
-                </span>
-                <span className="project-nav-name">{project.label}</span>
-              </a>
-            </li>
-          );
-        })}
-      </ol>
+      <div className="project-nav-inner">
+        {/* Names the row. Three numbered titles on a strip are ambiguous on
+            their own — they read equally well as a breadcrumb or as a
+            progress tracker, and both readings are wrong. aria-hidden because
+            the <nav> already carries the same word as its accessible name. */}
+        <p className="eyebrow project-nav-label" aria-hidden="true">
+          Project
+        </p>
+
+        <ol className="project-nav-list" role="list">
+          {projects.map((project, index) => {
+            const isActive = project.id === activeId;
+            return (
+              <li key={project.id}>
+                <a
+                  className="project-nav-link"
+                  href={`#${project.id}`}
+                  /* aria-current="location" rather than "page": these are
+                     positions within this document, not separate pages. */
+                  aria-current={isActive ? "location" : undefined}
+                >
+                  <span className="project-nav-n" aria-hidden="true">
+                    {String(index + 1).padStart(2, "0")}
+                  </span>
+                  <span className="project-nav-name">{project.label}</span>
+                </a>
+              </li>
+            );
+          })}
+        </ol>
+      </div>
 
       {/* The count, stated once, for anyone who cannot see that the list has
           three entries. Visually redundant, so it is hidden from sight only. */}
