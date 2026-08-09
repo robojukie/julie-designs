@@ -2555,26 +2555,6 @@ figure {
   display: flex;
 }
 
-.container-eyebrow-and-heading {
-  grid-row-gap: 0px;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-items: flex-start;
-  width: 100%;
-  text-decoration: none;
-  display: flex;
-}
-
-.wrapper-heading-and-blurb {
-  grid-row-gap: 16px;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-items: flex-start;
-  width: 100%;
-  text-decoration: none;
-  display: flex;
-}
-
 .card-media {
   grid-row-gap: 10px;
   flex-direction: column;
@@ -4940,19 +4920,6 @@ figure {
       align-items: flex-start;
       height: auto;
       padding-bottom: 0;
-  }
-
-  .container-eyebrow-and-heading {
-      color: var(--text--light);
-      justify-content: center;
-      align-items: flex-start;
-  }
-
-  .wrapper-heading-and-blurb {
-      justify-content: center;
-      align-items: flex-start;
-      width: 100%;
-      height: auto;
   }
 
   .card-media {

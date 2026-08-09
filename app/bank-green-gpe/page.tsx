@@ -764,11 +764,7 @@ export default function BankGreen() {
             <div className="left-middle-half-width-container">
               <div className="slide-left-header">
                 <div className="middle-aligner">
-                  <div className="container-eyebrow-and-heading">
-                    <div className="wrapper-heading-and-blurb">
-                      <h2 className="light">Next steps</h2>
-                    </div>
-                  </div>
+                  <h2 className="light">Next steps</h2>
                 </div>
               </div>
             </div>

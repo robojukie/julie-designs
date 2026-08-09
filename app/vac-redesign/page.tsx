@@ -1311,11 +1311,7 @@ export default function VACRedesign() {
             <div className="left-middle-half-width-container">
               <div className="slide-left-header">
                 <div className="middle-aligner">
-                  <div className="container-eyebrow-and-heading">
-                    <div className="wrapper-heading-and-blurb">
-                      <h2 className="light">Constraints</h2>
-                    </div>
-                  </div>
+                  <h2 className="light">Constraints</h2>
                 </div>
               </div>
             </div>
@@ -1342,11 +1338,7 @@ export default function VACRedesign() {
             <div className="left-middle-half-width-container">
               <div className="slide-left-header">
                 <div className="middle-aligner">
-                  <div className="container-eyebrow-and-heading">
-                    <div className="wrapper-heading-and-blurb">
-                      <h2 className="light">Reflections</h2>
-                    </div>
-                  </div>
+                  <h2 className="light">Reflections</h2>
                 </div>
               </div>
             </div>
