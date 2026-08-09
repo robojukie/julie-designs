@@ -1451,3 +1451,482 @@ a.social-link:not(.brand):hover {
     min-width: 0;
   }
 }
+
+/* ---------------------------------------------------------------------------
+   17. NovinoPath showcase  — NEW, NOT IN THE EXPORT
+
+   /novinopath-lis is the one project page that isn't a case study: it's
+   organised by feature area rather than by process, so it needs a few shapes
+   the ported case-study stylesheet has no equivalent for — the opening block,
+   the prototype embed, and the in-page TOC. See app/novinopath-lis/page.tsx.
+
+   Every value below resolves to an EXISTING token. No new custom properties
+   are declared here: the brief asked for none, and the two things that might
+   have wanted one (the placeholder grey, the embed height) are answered by
+   --color--neutral--warm--400 and a plain aspect-ratio instead.
+
+   The section paddings deliberately match .project-section's own 88px/104px →
+   40px/24px ramp (juliepaik.css) rather than picking new numbers, so the page
+   stays on the same vertical rhythm as the rest of the site at every
+   breakpoint.
+--------------------------------------------------------------------------- */
+
+/* -- Hero spacing when the hero is title-only ---------------------------- */
+
+/* MEASURED: 276px of empty between the tagline and the "Overview" label. It is
+   three separate paddings stacking, none of them wrong on their own:
+
+     .content-title      margin-bottom  60px
+     .project-section-hero padding-bottom 88px
+     .project-section    padding-top    88px
+
+   All three exist to make room for something this page doesn't have. The case
+   studies put a description paragraph and a role list in the hero's second
+   row, and .project-section-hero is justify-content: space-between — it is
+   built as a full slide with content top and bottom. The showcase hero is a
+   title and a tagline, full stop, so the three gaps land end to end with
+   nothing between them.
+
+   Keyed off :has() rather than a class on the page, so it is the ABSENCE of
+   the second row that tightens the spacing — CaseStudyHero only renders
+   .horizontal-container when it has a description or roles to put in it. Any
+   future title-only hero gets this automatically, and the four case studies,
+   which all pass roles, are untouched.
+
+   min-height goes too: the responsive rules set 560px at <=991 and 85vh below
+   that, and with one child in a space-between column that height becomes gap
+   under the tagline again. */
+.project-section-hero:not(:has(.horizontal-container)) {
+  min-height: 0;
+  padding-bottom: 24px;
+}
+
+.project-section-hero:not(:has(.horizontal-container)) .content-title {
+  margin-bottom: 0;
+}
+
+/* The other half of the same gap. Scoped to the page's first section rather
+   than to .showcase-section, which every feature section also carries — those
+   follow another section and want the full 88px.
+
+   24 + 24 rather than the 40 + 48 this started at. The tagline and the
+   "Overview" label are two halves of one thought — the title block naming the
+   product, then the paragraph explaining it — and the opening block's own
+   internal rhythm is 24–32px. At 88px of separation the hero read as a
+   detached slide rather than as the top of the page it introduces. Still ~2×
+   the internal gap, which is enough to mark a boundary. */
+.project-section.opening-section {
+  padding-top: 24px;
+}
+
+/* -- Opening block: overview, rule, context columns ---------------------- */
+
+/* One block, one measure. The overview prose, the rule and the columns all sit
+   inside .container-800 and share a left edge — the rule is what separates the
+   two halves, so no second container width is introduced to do it.
+
+   This replaces an earlier full-width four-up band. That band ran to 1232
+   while every paragraph sits at 800, giving the first two screens two
+   competing measures, and its one-line cells couldn't hold a value longer than
+   a job title without breaking the row's baseline. */
+
+.project-overview {
+  align-items: flex-start;
+  display: flex;
+  flex-direction: column;
+  /* Wider than .heading-and-body-container's 8px: this gap separates the
+     label from the prose and the prose from the rule, which are section-level
+     transitions rather than heading-to-body. */
+  gap: 24px;
+  width: 100%;
+}
+
+/* Both references set this small label in a muted grey against the body text.
+   That is what keeps "Overview" reading as a label rather than as a heading
+   competing with the section headings further down the page. */
+.project-overview-label {
+  color: var(--text-colors--muted-dark-blue);
+}
+
+.project-overview-body {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin: 0;
+  /* .eyebrow above is max-width:680px, but the prose keeps the full measure —
+     it is the page's main column, not a label. */
+  width: 100%;
+}
+
+.project-overview-body p {
+  margin: 0;
+}
+
+.project-rule {
+  background-color: var(--divider);
+  border: 0;
+  height: 1px;
+  margin: 8px 0;
+  width: 100%;
+}
+
+/* A <dl>, so the facts stay a label/value set for a screen reader rather than
+   loose paragraphs.
+
+   grid-auto-flow: column gives exactly one equal track per child, so the block
+   holds its shape at three columns or four without naming a count.
+   `repeat(auto-fit, minmax(0, 1fr))` was tried first and is the wrong tool: a
+   0 minimum gives the browser no width to fit against, so it laid out 25
+   candidate tracks and collapsed 22 of them. The result LOOKED right at three
+   children — which is exactly why it's worth not shipping. */
+.context-columns {
+  display: grid;
+  gap: 32px;
+  grid-auto-columns: 1fr;
+  grid-auto-flow: column;
+  margin: 0;
+  width: 100%;
+}
+
+.context-column {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Clears the UA's 40px dd indent, which would otherwise push every value out
+   of line with its own label. */
+.context-column-item {
+  font-family: var(--text-body-font);
+  font-size: var(--text--body-text-sm);
+  font-weight: var(--text-weightt--body-300);
+  line-height: var(--text-height--body-mobile-height);
+  margin: 0 0 4px;
+}
+
+.context-column-item:last-child {
+  margin-bottom: 0;
+}
+
+/* Columns become rows before they become unreadably narrow. At 767 a
+   three-column grid gives each column ~200px, which is where a two-word value
+   starts wrapping mid-phrase. */
+@media screen and (max-width: 767px) {
+  .context-columns {
+    gap: 24px;
+    grid-auto-flow: row;
+  }
+}
+
+/* -- Opening product shot ------------------------------------------------ */
+
+/* Sits inside the overview block, between the prose and the rule, on the same
+   800px measure as everything around it.
+
+   Position and width are both deliberate. Between the prose and the rule
+   rather than after the rule, because the rule's job is to divide the block's
+   two halves — what this is, then who built it — and the shot belongs to the
+   first: it is what the paragraph above just described. And at the text
+   measure rather than the container's, so the opening block keeps ONE left
+   edge and one right edge from the label down to the last context column.
+
+   An earlier version ran this full-width at 1232 and it was worse in both
+   respects. The wider box turned the block back into two competing measures,
+   which is the exact problem that retiring the old four-up strip had just
+   solved, and at that size the image swallowed a whole screen before the
+   reader reached anything else.
+
+   No aspect-ratio or radius of its own: at the same width as the feature
+   screenshots, .placeholder-media's own 16:10 and --radius-md give the page a
+   single image rhythm for free. When the real asset lands, let it keep its own
+   ratio if it differs — a letterboxed screenshot is worse than a slightly
+   taller box. */
+.project-shot {
+  width: 100%;
+}
+
+/* -- In-page TOC --------------------------------------------------------- */
+
+/* .container-1232 stacks its children on a 32px row-gap, which is the internal
+   rhythm of the opening block — the same distance that separates the overview
+   label from its prose. At that spacing the TOC reads as a fourth context
+   column group rather than as a separate device, since the page now opens on
+   three consecutive eyebrow-labelled stacks. The extra margin is what makes it
+   land as its own thing. */
+.feature-toc-block {
+  margin-top: 24px;
+}
+
+.feature-toc {
+  align-items: flex-start;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+}
+
+/* Wraps rather than scrolls: three short labels fit one line on desktop and
+   stack on their own below ~479px without any breakpoint of their own. */
+.feature-toc-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 32px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* -- Showcase sections --------------------------------------------------- */
+
+/* .project-section is built for a SLIDE: `height: 810px` with
+   `justify-content: space-between`, so a header pins to the top and a footer to
+   the bottom of a full-height panel. `.hug-height` relaxes the height to a
+   min-height but keeps both the 810px floor and the distribution.
+
+   Neither suits this page. Its sections are stacks of prose and one artefact,
+   of genuinely different lengths — measured at 1280x900, the intro, outcomes
+   and reflection sections each rendered 810px tall around ~350px of content,
+   and space-between then flung the TOC 400px clear of the paragraph above it.
+
+   So: no floor, and children packed from the top with an even gap. The
+   horizontal padding, background and type all still come from .project-section
+   — this overrides only the declarations that assume a slide.
+
+   Two class names in the selector, not one: `.hug-height`'s min-height is set
+   by `.project-section.hug-height` at (0,2,0), so a bare `.showcase-section` at
+   (0,1,0) loses to it and the 810px floor survives. Matching specificity and
+   relying on this file's later load order is what actually removes it. */
+.project-section.showcase-section {
+  gap: 32px;
+  height: auto;
+  justify-content: flex-start;
+  min-height: 0;
+}
+
+/* .hug-height's responsive overrides (juliepaik.css sets min-height: 85vh at
+   ≤991 and 560px for .blue-accent at ≤767) sit in media queries and would beat
+   the min-height above on specificity ties, so they're cancelled at the same
+   breakpoints rather than by raising specificity here. */
+@media screen and (max-width: 991px) {
+  .project-section.hug-height.showcase-section {
+    min-height: 0;
+  }
+}
+
+.feature-prototype {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+}
+
+/* 16:10 matches the aspect the app's own screens are captured at, so swapping
+   the placeholder for a real screenshot won't reflow the page. */
+.feature-embed,
+.placeholder-media {
+  aspect-ratio: 16 / 10;
+  border: 0;
+  border-radius: var(--radius-md);
+  display: block;
+  width: 100%;
+}
+
+/* Stands in for the brief's Tailwind `bg-gray-100`; there is no Tailwind in
+   this project, so the flat neutral already in the token set does the job. */
+.placeholder-media {
+  background-color: var(--color--neutral--warm--400);
+}
+
+/* Sits inside .heading-and-body-container, whose 8px row-gap is tuned for a
+   heading against its body. The link is a separate move from the paragraph
+   above it and needs more air than that. */
+.feature-prototype-link {
+  margin: 8px 0 0;
+}
+
+/* The rule that closes the opening block and opens the feature run.
+   .container-1232's 32px row-gap on its own puts the rule nearer the menu
+   above than the section below, which reads as underlining the menu rather
+   than dividing the page. */
+.features-start-rule {
+  margin-top: 32px;
+}
+
+/* -- Feature label and work-type tag ------------------------------------- */
+
+/* The label row: "FEATURE: CONSULT REVIEW" on the left, its pill flush right.
+   .eyebrow is display:flex and width:100%, so it would eat the whole row and
+   push the pill to a second line — `width: auto` on it is what lets
+   space-between do the aligning. Wraps rather than overflowing when the
+   feature name runs long on a narrow column. */
+.feature-label {
+  align-items: baseline;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 12px;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.feature-label .eyebrow {
+  margin-bottom: 0;
+  width: auto;
+}
+
+/* Holds the one or two badges a feature carries. Its own flex row, so the pair
+   stays together at the right edge and wraps as a unit rather than one badge
+   breaking away to a line of its own. */
+.feature-tag-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+/* Same pill idiom as the export's .badge on the home-page thumbnails, but
+   static rather than position:absolute — that rule exists to float a badge
+   over an image and can't be reused inline. Outlined: the border is what makes
+   it read as a tag on a tinted page, where a fill alone is easy to mistake for
+   a highlight behind the words. */
+.feature-tag {
+  border: 1px solid currentColor;
+  border-radius: 130px;
+  font-family: var(--text-body-font);
+  font-size: var(--text-size--nav-link-p-text);
+  font-weight: var(--text-weightt--eyebrow-500);
+  line-height: var(--text-height--nav-link-height);
+  padding: 4px 10px;
+  white-space: nowrap;
+}
+
+/* ONE ink, TWO grounds. --accents--bold--main-brand-dark clears AA on both
+   fills (4.83:1 on the green, 4.99:1 on the yellow), so the two tags read as
+   members of one set and only the ground tells them apart. `currentColor` on
+   the border above then follows for free.
+
+   The obvious bright accents were the first choice and had to go — measured
+   against the same grounds:
+
+     --accents--bold--green #43a363 on the green   2.58:1  FAIL
+     --accents--bold--blue  #52afcf on the blue    2.12:1  FAIL
+
+   Both are unreadable for anyone with low vision, and a tag whose whole job is
+   to be glanced at is the wrong place to spend that. */
+.feature-tag-new {
+  background-color: var(--background-color--background-brain-sprout);
+  color: var(--accents--bold--main-brand-dark);
+}
+
+/* #e8f0c7 — the only yellow in the token set. It is named for Bank Green
+   because that is the page it was introduced on, not because it is a green;
+   it reads as a pale chartreuse and is the right ground here. */
+.feature-tag-redesign {
+  background-color: var(--background-color--background-accent-bankgreen);
+  color: var(--accents--bold--main-brand-dark);
+}
+
+/* ---------------------------------------------------------------------------
+   18. Flush image captions  — SITE-WIDE, DELIBERATE DIVERGENCE FROM THE EXPORT
+
+   The export gives .caption-wrapper `padding-left: 10px; padding-right: 10px`,
+   which insets every image caption 10px from its own image's left edge. That
+   reads as a mistake rather than as a margin: the caption is not in a card, so
+   there is no box for the inset to belong to — just a caption that fails to
+   line up with the thing it captions, on a site where everything else shares
+   one left edge.
+
+   ONE rule reaches all of it. .caption-wrapper is declared exactly once in
+   juliepaik.css with no responsive override, and appears in 10 places:
+   vac-redesign (6), bank-green-gpe (3) and the NovinoPath before/after pairs
+   (1). .image-caption-wrapper — used by brainsprout and the accessibility page
+   — is a different class and already has no horizontal padding, so it needs
+   nothing.
+
+   Lives in custom.css rather than being edited out of juliepaik.css, because
+   that file is frozen (scripts/check-frozen-stylesheet.mjs) and this is an
+   addition, not a deletion.
+--------------------------------------------------------------------------- */
+.caption-wrapper {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+/* -- Feature before/after ------------------------------------------------ */
+
+/* Side by side, because the comparison IS the point — stacked, the reader has
+   to hold the first image in memory while scrolling to the second, which is
+   the one thing a before/after must not ask.
+
+   The halves are ~388px at the 800 measure, so each placeholder's 16:10 lands
+   around 242px tall and the pair reads as one row. align-items: start keeps
+   the two images' top edges aligned when one caption runs longer than the
+   other — .captioned-image is justify-content: space-between, which would
+   otherwise stretch the shorter card and push its image down. */
+.feature-beforeafter {
+  align-items: start;
+  display: grid;
+  gap: 24px;
+  grid-template-columns: 1fr 1fr;
+  width: 100%;
+}
+
+/* Stacking below 767 is the lesser evil: at that width two columns give each
+   image ~160px, which is too small to see what changed at all. */
+@media screen and (max-width: 767px) {
+  .feature-beforeafter {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* -- Feature parts ------------------------------------------------------- */
+
+/* The screens inside one feature area. Gap is larger than the block-internal
+   32px so consecutive parts read as siblings of each other rather than as one
+   continuous run of text and images. */
+.feature-parts {
+  display: flex;
+  flex-direction: column;
+  gap: 56px;
+  width: 100%;
+}
+
+.feature-part {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+}
+
+.feature-part p {
+  margin: 0;
+}
+
+/* -- Cross-links to the other feature areas ------------------------------ */
+
+/* Sits at the foot of every feature section so a reader who arrived by anchor
+   can reach a sibling without scrolling back to the top TOC. */
+.feature-more-block {
+  border-top: 1px solid var(--divider);
+  margin-top: 24px;
+  padding-top: 24px;
+}
+
+.feature-more {
+  align-items: flex-start;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+}
+
+/* -- Prototype stub routes ----------------------------------------------- */
+
+/* app/prototype/*: a single centred heading, vertically centred in whatever is
+   left between the shared navbar and footer. */
+.prototype-stub {
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  min-height: 60vh;
+  padding: 88px 24px;
+  text-align: center;
+}
