@@ -204,7 +204,7 @@ export default function NovinoPathLIS() {
       />
 
       <FadeIn>
-        <section className="project-section hug-height showcase-section opening-section">
+        <section className="project-section showcase-section opening-section">
           <div className="container-1232">
             {/* The opening block: overview prose, the product shot, a rule,
                 then the context columns. Everything shares .container-800's
@@ -230,11 +230,14 @@ export default function NovinoPathLIS() {
                 </div>
 
                 <div className="project-shot">
+                  {/* aria-hidden rather than role="img" — a grey box is
+                      scaffolding, and announcing it as a picture that isn't
+                      there is worse than silence. Real alt goes on the real
+                      image. */}
                   <div
                     className="placeholder-media"
                     data-placeholder-for="/images/placeholder-novinopath-hero.png"
-                    role="img"
-                    aria-label="Placeholder for the product overview screenshot"
+                    aria-hidden="true"
                   />
                 </div>
 
@@ -313,7 +316,7 @@ export default function NovinoPathLIS() {
       ))}
 
       <FadeIn>
-        <section className="project-section hug-height showcase-section dark">
+        <section className="project-section showcase-section dark">
           <div className="container-1232">
             <div className="top-content">
               <div className="slide-header">
@@ -348,7 +351,7 @@ export default function NovinoPathLIS() {
       </FadeIn>
 
       <FadeIn>
-        <section className="project-section hug-height showcase-section">
+        <section className="project-section showcase-section">
           <div className="container-1232">
             <div className="container-800">
               <div className="heading-and-body-container">

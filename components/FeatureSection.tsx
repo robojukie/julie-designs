@@ -143,8 +143,15 @@ function ShotPlaceholder({ src, alt }: { src: string; alt: string }) {
     <div
       className="placeholder-media"
       data-placeholder-for={src}
-      role="img"
-      aria-label={alt}
+      /* aria-hidden, NOT role="img". A grey box is scaffolding, not content —
+         role="img" promised assistive tech a picture that isn't there, and
+         with 14 of these on the page that was 14 announcements of images that
+         don't exist, several with alt text generated from a URL slug.
+         `alt` is still taken so the call sites keep the description next to
+         the asset path; write the real alt at swap time, against a real
+         image. */
+      aria-hidden="true"
+      data-alt={alt}
     />
   );
 }
@@ -180,15 +187,25 @@ export default function FeatureSection({
       {/* id on the <section>, not on FadeIn's motion.div, so the in-page TOC
           lands on the element that actually carries the section's padding —
           scrolling to the wrapper would put the heading under the navbar. */}
-      <section id={id} className="project-section hug-height showcase-section">
+      <section id={id} className="project-section showcase-section">
         <div className="container-1232">
           <div className="container-800">
             <div className="heading-and-body-container">
               <div className="eyebrow-and-headline-container">
                 <div className="feature-label">
-                  <h2 className="eyebrow">
+                  {/* A <p>, not an <h2>. This is a kicker on the heading below
+                      it, and as a heading it put TWO h2s in every feature
+                      section — so heading-by-heading navigation heard six
+                      across three features, alternating label and question at
+                      the same level with nothing pairing them.
+
+                      The case studies' .eyebrow-and-headline-container does
+                      use an h2 here; that is the export's mistake and not a
+                      pattern worth matching. Every other kicker on this page
+                      (Part 01, Overview) is already a <p>. */}
+                  <p className="eyebrow">
                     Feature {pad(index)} of {pad(total)}: {eyebrow}
-                  </h2>
+                  </p>
                   {featureTags.length > 0 && (
                     <span className="feature-tag-group">
                       {featureTags.map((t) => (
@@ -239,16 +256,31 @@ export default function FeatureSection({
               its flow comparisons — so this needs a grid and nothing else. */}
           {beforeAfter && (
             <div className="container-800">
-              <div className="feature-beforeafter">
+              {/* `_2-x-1-grid comparison` — the site's screen-comparison
+                  contract (custom.css §22), not a local grid. It brings equal
+                  heights with tops and captions aligned side by side, and
+                  equal widths flush to the gutter once stacked.
+
+                  No --cols: both halves are placeholders at a shared 16:10, so
+                  the even split already gives equal heights. Real screenshots
+                  will need it — derive the two fr values from their
+                  width/height props at this call site, as the vac-redesign
+                  pairs do.
+
+                  .image-wrapper is load-bearing, not decoration: §22's rules
+                  reach the image through it. */}
+              <div className="_2-x-1-grid comparison">
                 {[
                   { label: "Before", shot: beforeAfter.before },
                   { label: "After", shot: beforeAfter.after },
                 ].map(({ label, shot }) => (
                   <div className="captioned-image" key={label}>
-                    <ShotPlaceholder
-                      src={shot.screenshotSrc}
-                      alt={shot.screenshotAlt}
-                    />
+                    <div className="image-wrapper">
+                      <ShotPlaceholder
+                        src={shot.screenshotSrc}
+                        alt={shot.screenshotAlt}
+                      />
+                    </div>
                     <div className="caption-wrapper">
                       <p className="caption-title">{label}</p>
                       <p className="caption">{shot.caption}</p>

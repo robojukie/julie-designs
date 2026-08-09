@@ -1453,12 +1453,17 @@ a.social-link:not(.brand):hover {
 }
 
 /* ---------------------------------------------------------------------------
-   17. NovinoPath showcase  — NEW, NOT IN THE EXPORT
+   23. NovinoPath showcase  — NEW, NOT IN THE EXPORT
 
    /novinopath-lis is the one project page that isn't a case study: it's
    organised by feature area rather than by process, so it needs a few shapes
    the ported case-study stylesheet has no equivalent for — the opening block,
    the prototype embed, and the in-page TOC. See app/novinopath-lis/page.tsx.
+
+   Horizontal padding is NOT set anywhere in this section. Section 17 gives
+   every page wrapper `padding-left/right: var(--gutter)`, and this page's
+   sections are ordinary .project-section / .container-1232 stacks, so they
+   inherit that for free. Only vertical rhythm is tuned here.
 
    Every value below resolves to an EXISTING token. No new custom properties
    are declared here: the brief asked for none, and the two things that might
@@ -1679,37 +1684,39 @@ a.social-link:not(.brand):hover {
 
 /* .project-section is built for a SLIDE: `height: 810px` with
    `justify-content: space-between`, so a header pins to the top and a footer to
-   the bottom of a full-height panel. `.hug-height` relaxes the height to a
-   min-height but keeps both the 810px floor and the distribution.
+   the bottom of a full-height panel.
 
    Neither suits this page. Its sections are stacks of prose and one artefact,
    of genuinely different lengths — measured at 1280x900, the intro, outcomes
    and reflection sections each rendered 810px tall around ~350px of content,
    and space-between then flung the TOC 400px clear of the paragraph above it.
 
-   So: no floor, and children packed from the top with an even gap. The
-   horizontal padding, background and type all still come from .project-section
-   — this overrides only the declarations that assume a slide.
+   So: no floor, and children packed from the top with an even gap. Two
+   declarations undone; the other seven — ground, colour, type, z-index,
+   position, the flex column, the centred cross-axis, and now the shared
+   --gutter from section 17 — are inherited unchanged, which is the whole
+   reason to stay on this base rather than fork a second section primitive.
+   Section 17 targets `.project-section` by name: a fork would have opted this
+   page OUT of the gutter unification without anyone noticing.
 
-   Two class names in the selector, not one: `.hug-height`'s min-height is set
-   by `.project-section.hug-height` at (0,2,0), so a bare `.showcase-section` at
-   (0,1,0) loses to it and the 810px floor survives. Matching specificity and
-   relying on this file's later load order is what actually removes it. */
+   TWO classes in the selector, and one is not optional. A single
+   `.showcase-section` at (0,1,0) was tried and beats `.project-section`'s own
+   `min-height: 85vh` at <=767 on source order — but not the compound
+   modifiers, which sit at (0,2,0): `.project-section.dark { min-height:
+   560px }` at that breakpoint reimposed a floor on the outcomes section, and
+   `.blue-accent` would do the same. Matching (0,2,0) covers that whole tier
+   with one rule instead of one rule per modifier.
+
+   `.hug-height` is nevertheless GONE from the markup, and that is the change
+   worth having: it was only ever there to soften a height this rule removes
+   outright, and carrying it meant also cancelling its 85vh and 560px floors in
+   a separate media query. One class fewer on every section, one rule fewer
+   here, and no breakpoint to keep in sync. */
 .project-section.showcase-section {
   gap: 32px;
   height: auto;
   justify-content: flex-start;
   min-height: 0;
-}
-
-/* .hug-height's responsive overrides (juliepaik.css sets min-height: 85vh at
-   ≤991 and 560px for .blue-accent at ≤767) sit in media queries and would beat
-   the min-height above on specificity ties, so they're cancelled at the same
-   breakpoints rather than by raising specificity here. */
-@media screen and (max-width: 991px) {
-  .project-section.hug-height.showcase-section {
-    min-height: 0;
-  }
 }
 
 .feature-prototype {
@@ -1825,21 +1832,22 @@ a.social-link:not(.brand):hover {
 }
 
 /* ---------------------------------------------------------------------------
-   18. Flush image captions  — SITE-WIDE, DELIBERATE DIVERGENCE FROM THE EXPORT
+   24. Flush image captions  — the remaining, non-comparison ones
 
-   The export gives .caption-wrapper `padding-left: 10px; padding-right: 10px`,
-   which insets every image caption 10px from its own image's left edge. That
-   reads as a mistake rather than as a margin: the caption is not in a card, so
-   there is no box for the inset to belong to — just a caption that fails to
-   line up with the thing it captions, on a site where everything else shares
-   one left edge.
+   The export insets every caption 10px from its own image's left edge with
+   `.caption-wrapper { padding: 0 10px }`. Section 22 already removes that for
+   comparison pairs — `.comparison .caption-wrapper` — which is where it was
+   most visible. This unscopes it.
 
-   ONE rule reaches all of it. .caption-wrapper is declared exactly once in
-   juliepaik.css with no responsive override, and appears in 10 places:
-   vac-redesign (6), bank-green-gpe (3) and the NovinoPath before/after pairs
-   (1). .image-caption-wrapper — used by brainsprout and the accessibility page
-   — is a different class and already has no horizontal padding, so it needs
-   nothing.
+   The 10px reads as a mistake rather than as a margin wherever it survives:
+   the caption is not in a card, so there is no box for the inset to belong to,
+   just a caption that fails to line up with the thing it captions on a site
+   whose whole layout is now one gutter.
+
+   Placed AFTER section 22 so the two agree rather than fight; the scoped rule
+   there becomes redundant but stays, because it documents the contract that
+   `.comparison` promises and deleting it would make that contract depend on
+   this rule staying put.
 
    Lives in custom.css rather than being edited out of juliepaik.css, because
    that file is frozen (scripts/check-frozen-stylesheet.mjs) and this is an
@@ -1852,30 +1860,22 @@ a.social-link:not(.brand):hover {
 
 /* -- Feature before/after ------------------------------------------------ */
 
-/* Side by side, because the comparison IS the point — stacked, the reader has
-   to hold the first image in memory while scrolling to the second, which is
-   the one thing a before/after must not ask.
+/* Nothing here. The pair uses `._2-x-1-grid comparison` from section 22, which
+   is the site's contract for exactly this shape:
 
-   The halves are ~388px at the 800 measure, so each placeholder's 16:10 lands
-   around 242px tall and the pair reads as one row. align-items: start keeps
-   the two images' top edges aligned when one caption runs longer than the
-   other — .captioned-image is justify-content: space-between, which would
-   otherwise stretch the shorter card and push its image down. */
-.feature-beforeafter {
-  align-items: start;
-  display: grid;
-  gap: 24px;
-  grid-template-columns: 1fr 1fr;
-  width: 100%;
-}
+       side by side  ->  equal heights, tops aligned, captions aligned
+       stacked       ->  equal widths, both flush to the gutter
 
-/* Stacking below 767 is the lesser evil: at that width two columns give each
-   image ~160px, which is too small to see what changed at all. */
-@media screen and (max-width: 767px) {
-  .feature-beforeafter {
-    grid-template-columns: 1fr;
-  }
-}
+   An earlier version of this page carried its own `.feature-beforeafter` grid
+   — a 2-up with align-items:start and a 767 stack. It looked right and was a
+   second, weaker implementation of the same idea: no aspect-proportional
+   tracks, no width parity when stacked, and its own breakpoint to keep in sync
+   with the one in section 22. Deleted in favour of the real thing.
+
+   No --cols: both halves are .placeholder-media at a shared 16:10, so the even
+   split already yields equal heights. When real screenshots land, set --cols
+   at the call site from their width/height props — see the comments on the
+   vac-redesign pairs. */
 
 /* -- Feature parts ------------------------------------------------------- */
 
