@@ -103,18 +103,40 @@ function rectOf(el: HTMLElement): Rect {
    offers a "+".
 
    left/top centre the box in the viewport, which is the resting position when
-   it fits. In pan mode they are ignored — the scroll container places it. */
+   it fits. In pan mode they are ignored — the scroll container places it.
+
+   MEASURE THE LAYOUT VIEWPORT, NOT window.innerWidth. The frame is
+   position: fixed, so its containing block is the initial containing block —
+   the viewport MINUS any scrollbar or reserved scrollbar space — and that is
+   exactly what documentElement.clientWidth reports. window.innerWidth includes
+   that space, and app/globals.css sets `scrollbar-gutter: stable`, so the two
+   differ by the scrollbar's width on every desktop page, permanently: hiding
+   the page's overflow while the overlay is open does not reclaim a reserved
+   gutter.
+
+   Centring against the wider number pushed the frame half a scrollbar to the
+   right — a visible gutter on the left, the image against the reserved strip
+   on the right — and the cap let it size a full scrollbar wider than the space
+   it actually had, so at narrow widths, where the viewport cap binds rather
+   than MAX_W, the right edge ran under the scrollbar. Both come from the same
+   mismatch, and both go away by measuring the box the frame is positioned in. */
+function viewport(): { width: number; height: number } {
+  const el = document.documentElement;
+  return { width: el.clientWidth, height: el.clientHeight };
+}
+
 function fitRect(naturalW: number, naturalH: number): Rect {
-  const capW = Math.min(MAX_W, window.innerWidth - FIT_INSET);
-  const capH = Math.min(MAX_H, window.innerHeight - FIT_INSET);
+  const view = viewport();
+  const capW = Math.min(MAX_W, view.width - FIT_INSET);
+  const capH = Math.min(MAX_H, view.height - FIT_INSET);
   const scale = Math.min(capW / naturalW, capH / naturalH);
   const width = naturalW * scale;
   const height = naturalH * scale;
   return {
     width,
     height,
-    left: (window.innerWidth - width) / 2,
-    top: (window.innerHeight - height) / 2,
+    left: (view.width - width) / 2,
+    top: (view.height - height) / 2,
   };
 }
 
@@ -127,7 +149,11 @@ function fitRect(naturalW: number, naturalH: number): Rect {
    phone here, and a phone showing a small thumbnail behaves like a desktop.
    Asking whether the one sized box happens to fit answers all of them. */
 function modeFor(sized: Rect): "fit" | "pan" {
-  return sized.width <= window.innerWidth && sized.height <= window.innerHeight
+  /* Same layout-viewport measure as fitRect — asking the question against a
+     wider box than the frame actually has would answer "fit" for an image that
+     is in fact a scrollbar's width too wide. */
+  const view = viewport();
+  return sized.width <= view.width && sized.height <= view.height
     ? "fit"
     : "pan";
 }
@@ -199,14 +225,24 @@ function Overlay({
 
     const { body } = document;
     const prevOverflow = body.style.overflow;
-    /* The scrollbar's width, given back as padding. Without it, hiding the
-       page's scroll reflows the whole layout one scrollbar narrower for the
-       length of the overlay — which the eye reads as the page twitching at
-       the exact moment the image lifts off it. */
-    const gutter = window.innerWidth - body.clientWidth;
+    /* Whatever width hiding the scroll actually costs, given back as padding.
+       Without it, hiding the page's scroll reflows the whole layout one
+       scrollbar narrower for the length of the overlay — which the eye reads
+       as the page twitching at the exact moment the image lifts off it.
+
+       Measured as the CHANGE in layout width across the overflow change, not
+       as `innerWidth - body.clientWidth`. That older expression reports the
+       scrollbar's width whether or not hiding overflow reclaims it, and
+       app/globals.css sets `scrollbar-gutter: stable`, which reserves the
+       strip permanently — so nothing was reclaimed and the compensation was
+       pure surplus, padding the body a scrollbar to the right behind the blur.
+       Comparing before and after is self-correcting: it yields 0 when the
+       gutter is reserved and the real width when it isn't. */
     const prevPad = body.style.paddingRight;
+    const widthBefore = document.documentElement.clientWidth;
     body.style.overflow = "hidden";
-    if (gutter > 0) body.style.paddingRight = `${gutter}px`;
+    const reclaimed = document.documentElement.clientWidth - widthBefore;
+    if (reclaimed > 0) body.style.paddingRight = `${reclaimed}px`;
 
     return () => {
       body.style.overflow = prevOverflow;

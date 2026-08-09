@@ -146,6 +146,10 @@ export const widths = {
   widthVideoWidth: "var(--width--video-width)",
 } as const;
 
+export const spacing = {
+  gutter: "var(--gutter)",
+} as const;
+
 export const radii = {
   largeRadius: "var(--large-radius)",
   smallRadius: "var(--small-radius)",
@@ -180,6 +184,7 @@ export const theme = {
   textColors,
   surfaces,
   widths,
+  spacing,
   radii,
   shadows,
   misc,

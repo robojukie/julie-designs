@@ -641,7 +641,13 @@ export default function VACRedesign() {
               </p>
             </div>
             <div className="horizontal-container">
-              <div className="_2-x-1-grid">
+              {/* No --cols: this pair is a flow diagram, not a screen
+                  comparison — 440x746 portrait against 772x416 landscape.
+                  Aspect-proportional tracks would split them roughly 1:3 and
+                  upscale the landscape past its native width, so it keeps the
+                  even split and its natural heights. It still takes
+                  .comparison for the stacked width parity and alignment. */}
+              <div className="_2-x-1-grid comparison">
                 <div className="media-card">
                   <div className="card-media">
                     <div className="card-image-wrapper">
@@ -690,7 +696,13 @@ export default function VACRedesign() {
             </p>
           </div>
           <div className="horizontal-container">
-            <div className="_2-x-1-grid">
+            {/* --cols is each image's aspect ratio, in order; it sizes the
+                tracks so the pair renders at one height. See section 22 of
+                styles/custom.css. Here: 600/336 and 1512/982. */}
+            <div
+              className="_2-x-1-grid comparison"
+              style={{ "--cols": "1.786fr 1.540fr" } as React.CSSProperties}
+            >
               <div className="captioned-image">
                 <div className="image-wrapper">
                   <div className="image-container-left-align">
@@ -796,7 +808,11 @@ export default function VACRedesign() {
             </div>
           </div>
           <div className="horizontal-container">
-            <div className="_2-x-1-grid">
+            {/* --cols: 613/330 and 1512/982. */}
+            <div
+              className="_2-x-1-grid comparison"
+              style={{ "--cols": "1.858fr 1.540fr" } as React.CSSProperties}
+            >
               <div className="captioned-image">
                 <div className="image-wrapper">
                   <div className="image-container-left-align">
@@ -1040,7 +1056,12 @@ export default function VACRedesign() {
             </div>
           </div>
           <div className="horizontal-container">
-            <div className="_2-x-1-grid">
+            {/* --cols: 800/528 and 1512/982 — near-identical aspects, so close
+                to an even split; declared anyway to stay explicit. */}
+            <div
+              className="_2-x-1-grid comparison"
+              style={{ "--cols": "1.515fr 1.540fr" } as React.CSSProperties}
+            >
               <div className="media-card">
                 <div className="card-media">
                   <div className="card-image-wrapper _2-x-1-image-fixed-height-wrapper">
@@ -1102,7 +1123,11 @@ export default function VACRedesign() {
             </div>
           </div>
           <div className="horizontal-container">
-            <div className="_2-x-1-grid">
+            {/* --cols: 800/558 and 1670/982. */}
+            <div
+              className="_2-x-1-grid comparison"
+              style={{ "--cols": "1.434fr 1.700fr" } as React.CSSProperties}
+            >
               <div className="media-card">
                 <div className="card-media">
                   <div className="card-image-wrapper _2-x-1-image-fixed-height-wrapper">
@@ -1165,7 +1190,11 @@ export default function VACRedesign() {
             </div>
           </div>
           <div className="horizontal-container">
-            <div className="_2-x-1-grid">
+            {/* --cols: 800/521 and 912/492. */}
+            <div
+              className="_2-x-1-grid comparison"
+              style={{ "--cols": "1.535fr 1.854fr" } as React.CSSProperties}
+            >
               <div className="media-card">
                 <div className="card-media">
                   <div className="card-image-wrapper _2-x-1-image-fixed-height-wrapper">

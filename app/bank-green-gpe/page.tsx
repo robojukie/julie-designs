@@ -421,7 +421,10 @@ export default function BankGreen() {
             <h3>Before and after redesign</h3>
           </div>
           <div className="container-800">
-            <div className="w-layout-grid _2-x-1-grid-real">
+            {/* Same .comparison contract as /vac-redesign's pairs, on this
+                page's own grid class. No --cols: both images are 797x703, so
+                the even split already gives them one height. */}
+            <div className="w-layout-grid _2-x-1-grid-real comparison">
               <div className="media-card">
                 <div className="card-media border-radius">
                   <ZoomableImage
@@ -557,12 +560,17 @@ export default function BankGreen() {
         />
         <div className="full-overlay" />
         <div className="container-1232-absolute">
-          <div className="middle-aligner">
-            <h2>User flows and technical constraints inform error handling</h2>
-            <p>
-              I started my process by drawing out user flows and getting
-              feedback from users and engineers.
-            </p>
+          {/* Same centre-940 structure as the overview block at the top of the
+              page, so both land on one left edge — see section 19 of
+              styles/custom.css. */}
+          <div className="center-middle-aligner">
+            <div className="container-content-center">
+              <h2>User flows and technical constraints inform error handling</h2>
+              <p>
+                I started my process by drawing out user flows and getting
+                feedback from users and engineers.
+              </p>
+            </div>
           </div>
         </div>
       </div>

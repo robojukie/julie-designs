@@ -67,6 +67,12 @@
   --accents--bold--secondary-brand-color: #ab91b4;
   --width--container-1232: 1232px;
   --width--container-1224: 1224px;
+  /* Single horizontal page gutter. Consumed by section 17 of styles/custom.css,
+     which neutralises the six disagreeing per-wrapper gutters in juliepaik.css.
+     The clamp hits 24px at a 480px viewport and 104px at 2080px, so it lands on
+     the export's own mobile and large-desktop endpoints and only replaces the
+     stepped values in between. */
+  --gutter: clamp(24px, 5vw, 104px);
   --text--farewell: 2rem;
   --translucent-white: #ffffffde;
   --divider: var(--shadow-color);
