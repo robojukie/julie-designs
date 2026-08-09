@@ -421,7 +421,10 @@ export default function BankGreen() {
             <h3>Before and after redesign</h3>
           </div>
           <div className="container-800">
-            <div className="w-layout-grid _2-x-1-grid-real">
+            {/* Same .comparison contract as /vac-redesign's pairs, on this
+                page's own grid class. No --cols: both images are 797x703, so
+                the even split already gives them one height. */}
+            <div className="w-layout-grid _2-x-1-grid-real comparison">
               <div className="media-card">
                 <div className="card-media border-radius">
                   <ZoomableImage

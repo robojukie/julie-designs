@@ -1242,27 +1242,212 @@ a.social-link:not(.brand):hover {
     margin-right: auto;
   }
 
-  /* Third mechanism, in the stacked image grids. At <=991 the export flips
-     .card-media to `align-items: center` (juliepaik.css:4975) — and
-     .card-media is `flex-direction: column`, so align-items is its HORIZONTAL
-     axis. Every image wrapper inside a card gets centred rather than
-     left-aligned.
+  /* A third mechanism — .card-media flipped to `align-items: center` at <=991
+     (juliepaik.css:4975), which on a column flex is the HORIZONTAL axis, so
+     every image wrapper inside a card is centred rather than left-aligned —
+     lives in section 22 as `.comparison .card-media`. It belongs with the rest
+     of the comparison-pair contract rather than here, and it is deliberately
+     NOT applied to ._3-x-1-card-grid, where three tracks across want their
+     images centred in their own column. */
+}
 
-     It hides on mobile, where the card is narrower than the image so there is
-     no slack to centre within, and it hides on desktop, where the rule doesn't
-     apply. Tablet is the only place it shows: in "Simplifying substitute
-     assignment" the stacked ._2-x-1-grid track is 480px and .process-image
-     caps at 440px, so both images sit 20px in from the heading above them —
-     aligned with each other, which is why it reads as a deliberate-looking
-     inset rather than an obvious break, and off from everything else in the
-     section.
+/* ---------------------------------------------------------------------------
+   22. .comparison — the screen-comparison pair
+   NEW BEHAVIOUR, NOT IN THE EXPORT.
 
-     Scoped to ._2-x-1-grid, which collapses to one 480px column at this
-     breakpoint. Left alone in ._3-x-1-card-grid, which stays three tracks
-     across here — images centred within their own narrow track is the right
-     call there, and left-aligning three images of differing widths would just
-     make the row look ragged. */
-  ._2-x-1-grid .card-media {
-    align-items: flex-start;
+   One opt-in container class for every before/after screen pair, replacing the
+   per-legacy-class rules this section used to carry. The export spreads these
+   pairs across two different grid classes — ._2-x-1-grid on /vac-redesign and
+   ._2-x-1-grid-real on /bank-green-gpe — and neither is a reliable signal:
+   three call sites using those same classes hold text cards, not images
+   (bank-green's "Consumer campaigns" and "Asynchronous actions", vac's
+   "-20 steps"). Keying off the legacy class would style those by accident and
+   would still need a second selector for the other page. `.comparison` is
+   added at the call site, so it says what the markup means and the text-card
+   grids simply don't get it.
+
+   The rules live on the container, not on the images, because every one of
+   them is about the RELATIONSHIP between the two halves — how the tracks
+   divide, what happens when they stack, where the captions start. An image
+   class could not express any of that, and --cols has to sit on the grid
+   element regardless.
+
+   THE CONTRACT
+     side by side  ->  equal heights, tops aligned, captions aligned
+     stacked       ->  equal widths, both flush to the gutter
+
+   SIDE BY SIDE: equal heights need each track sized in proportion to its
+   image's aspect ratio — width proportional to aspect makes height
+   (width / aspect) identical, at every viewport, with no breakpoint to tune.
+   CSS cannot read an image's aspect, so each pair declares its own as --cols
+   at the call site, next to the width/height props it is derived from. Pairs
+   that omit it fall back to an even split, which is already correct when both
+   images share an aspect. Without this the images only matched once both were
+   tall enough to hit .image-max300h's 300px cap — around 1250 — and below that
+   the wider image ran out of track first: 281 against 300 at 1200, 230 against
+   278 at 992. The cap still applies, and now reaches both at the same moment.
+
+   STACKED: the column is the shared measure, so width parity is the goal and
+   height parity is not — the images differ in height by their own aspect
+   ratios, which is correct. Two things prevented it. The wrappers are
+   shrink-to-fit, so each image sized itself from whatever the srcset picked;
+   and the 300px height cap made whichever image is taller-per-pixel-of-width
+   hit the cap first and end up NARROWER than its neighbour (480 vs 462 on the
+   sub-requests pair, 375 vs 480 on Design iterations at 900).
+
+   Multi-image rows that are NOT comparisons keep their own behaviour — a
+   ._3-x-1-card-grid row of three may legitimately want differing sizes, and
+   nothing here reaches it.
+--------------------------------------------------------------------------- */
+
+/* Both halves hug a common top edge. .captioned-image is a column flex at
+   `justify-content: space-between`, so unequal content pushed the spare height
+   between image and caption instead of leaving it at the bottom — at 1200 the
+   two images started 20px apart and the captions with them. */
+.comparison .captioned-image {
+  justify-content: flex-start;
+}
+
+/* .image-wrapper is `justify-content/align-items: center` with padding, so it
+   stands 40px taller than its image and centres it; the .left-align variant
+   used by the other half of the same pair hugs the image instead. That
+   mismatch alone offset the two images by 20px vertically. Make both hug and
+   top-align, so the pair agrees regardless of which variant a half uses. */
+.comparison .image-wrapper {
+  align-items: flex-start;
+  justify-content: flex-start;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+/* Break the shrink-to-fit sizing loop: give the wrappers the track's width so
+   `width: 100%` on the image resolves against a real box rather than against
+   the image's own intrinsic width. */
+/* max-width alongside width, or the width is inert: the wrappers carry caps of
+   their own — .card-image-wrapper._2-x-1-image-fixed-height-wrapper is
+   `max-width: 440px` below 767 (juliepaik.css:6049 and neighbours) — which
+   held the image to 440 inside a 480 track, so the pair matched each other but
+   sat short of the column. The track is the measure; nothing between it and
+   the image should narrow it further. */
+.comparison .card-image-wrapper,
+.comparison .image-container-left-align,
+.comparison .w-inline-block {
+  width: 100%;
+  max-width: 100%;
+}
+
+/* .image-container-left-align adds 20px of vertical margin, so the half that
+   uses it stands 40px taller than its image and starts 20px lower; the other
+   half of the same pair wraps its image in a bare <a> and has none. Drop it,
+   so which wrapper a half happens to use stops affecting where it sits. */
+.comparison .image-container-left-align {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.comparison .card-image-wrapper {
+  justify-content: flex-start;
+}
+
+.comparison .card-media {
+  align-items: flex-start;
+}
+
+/* The caption's text starts on the image's left edge. .caption-wrapper carries
+   `padding-left: 10px` (juliepaik.css:3227), which set the caption 10px inside
+   the image above it — small, but it is the one thing that stops a labelled
+   half from reading as a single left-aligned column. The pairs without
+   captions (Design iterations) never showed it, which is why they looked right
+   while the labelled ones did not. */
+.comparison .caption-wrapper {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+/* THE IMAGE FILLS ITS TRACK, at every width.
+
+   The export sizes these by cap alone — .process-image at 440/480,
+   .image-max300h at 800 — with no width, so an image rendered at whatever
+   intrinsic width the srcset picked and merely got clamped. Two consequences:
+   the halves of a pair rarely matched, and on a wide screen a 440px-capped
+   image sat in a 604px track looking undersized while on a phone the same
+   image filled the column and looked right. That inversion — proportionally
+   LARGEST at the smallest viewport — is backwards.
+
+   Filling the track fixes both at once, and it is a ratio rather than a fixed
+   size: the track is a share of the content column, which is itself
+   gutter-bound, so the image holds the same proportion of the screen at 375px
+   as at 1512px. Nothing here hard-codes a width; max-width: 100% only stops an
+   image exceeding the track it was given.
+
+   With --cols the tracks are aspect-proportional, so filling them yields equal
+   heights; without it the tracks are even, so filling them yields equal
+   widths. Either way the pair matches, in both layouts. */
+.comparison img {
+  width: 100%;
+  height: auto;
+  max-width: 100%;
+
+  /* .image-max300h is `object-fit: scale-down`, which is min(none, contain):
+     it will shrink a picture to fit its box but never enlarge one. The box
+     obeys `width: 100%` and reaches the full track, so the two halves measure
+     identical — but a source smaller than the track paints at its natural size
+     inside that box and leaves the remainder blank. og-schools-classes-page is
+     613px wide, so at a 990px viewport it drew 613px of an 800px box while its
+     1512px-wide partner filled the same box completely. The boxes matched; the
+     pictures did not, which is why measuring geometry kept reporting this as
+     correct.
+
+     `contain` is the same fit rule without the no-upscale clause. Nothing is
+     cropped or stretched: the box already carries the image's own aspect
+     ratio, so contain resolves to an exact fill. Design iterations never
+     showed this because its images use ._2x1-image-fixed-height, which sets no
+     object-fit at all. */
+  object-fit: contain;
+}
+
+@media screen and (max-width: 991px) {
+  /* The 300px height cap would otherwise bind before the width does and leave
+     the taller-per-pixel image narrower than its neighbour. Stacked, the
+     column is the shared measure and width parity is the goal. */
+  .comparison img {
+    max-height: none;
+  }
+
+  /* Same argument, one level up: .card-image-wrapper._2-x-1-image-fixed-height-wrapper
+     is a literal `height: 300px` (juliepaik.css:2925), which holds the image to
+     300px tall and so to whatever width its aspect implies — 440px inside a
+     480px track between roughly 480 and 767. Height is the wrong master when
+     the images are stacked; let the track's width set the size and the height
+     follow. Above 992 the fixed height stays: there it is what keeps a
+     side-by-side row to an even depth. */
+  .comparison .card-image-wrapper {
+    height: auto;
+  }
+
+  /* And the grid's own cap, for the same reason one level further out.
+     ._2-x-1-grid is `max-width: 480px` below 992, so once stacked the pair sat
+     in a 480px column no matter how much room the section had: 100% of the
+     content column at 375, but only 59% of it at 900. The image looked
+     proportionally BIGGEST on the smallest screen, which is the wrong way
+     round. Letting the pair take the content column keeps its share of the
+     screen roughly constant, and the column is already gutter-bound, so this
+     stays a ratio rather than a size. */
+  .comparison {
+    max-width: 100%;
+  }
+}
+
+@media screen and (min-width: 992px) {
+  .comparison {
+    grid-template-columns: var(--cols, 1fr 1fr);
+  }
+
+  /* `1fr` is `minmax(auto, 1fr)`, and that auto floor takes each item's
+     content-derived minimum — which the image caps pin at 480px. Two 480px
+     floors plus the gap need 984px, more than the 879px column at a 992px
+     viewport, and the right-hand image hung about 105px past the gutter. */
+  .comparison > * {
+    min-width: 0;
   }
 }
