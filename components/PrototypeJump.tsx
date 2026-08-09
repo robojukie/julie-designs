@@ -25,18 +25,6 @@
 
 const BOTTOM_GAP = 32;
 
-/* The project indicator is pinned to the bottom of the viewport for the whole
-   project run, so "just inside the bottom" has to mean just inside the BAR —
-   otherwise this scroll parks the prototype link underneath it.
-
-   Measured rather than hard-coded: the bar's height comes out of type metrics
-   and padding, and a number repeated here would be a number that silently goes
-   stale. Falls back to 0 when the bar isn't rendered. */
-function bottomObstruction() {
-  const bar = document.querySelector(".project-nav");
-  return bar ? bar.getBoundingClientRect().height : 0;
-}
-
 export default function PrototypeJump({
   targetId,
   children,
@@ -56,10 +44,10 @@ export default function PrototypeJump({
         event.preventDefault();
 
         const bottom = target.getBoundingClientRect().bottom + window.scrollY;
-        const top = Math.max(
-          0,
-          bottom - window.innerHeight + BOTTOM_GAP + bottomObstruction(),
-        );
+        /* Nothing is pinned to the bottom of the viewport, so the gap is all
+           that's needed here. It was briefly measured against a bottom-pinned
+           indicator; that bar now lives under the navbar instead. */
+        const top = Math.max(0, bottom - window.innerHeight + BOTTOM_GAP);
 
         window.scrollTo({
           top,

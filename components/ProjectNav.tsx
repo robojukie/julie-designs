@@ -12,25 +12,25 @@ import { useEffect, useState } from "react";
    the top of a long section cannot answer a question that is asked all the way
    down it.
 
-   WHY STICKY-IN-A-WRAPPER, NOT FIXED. The bar is the LAST child of
-   .project-run, which spans exactly the three project sections.
-   `position: sticky; bottom: 0` then does the appearing and disappearing on its
-   own: it pins to the viewport bottom while the run is on screen and releases
-   when the last project ends. The alternative — position: fixed plus a scroll
-   listener toggling visibility — needs JS to decide something CSS already
-   knows, and gets it wrong at both boundaries during momentum scrolling.
+   WHY STICKY-IN-A-WRAPPER, NOT FIXED. The bar is a child of .project-run,
+   which spans exactly the three project sections. `position: sticky` then does
+   the appearing and disappearing on its own: it pins under the navbar while
+   the run is on screen and scrolls away with the wrapper's bottom edge. The
+   alternative — position: fixed plus a scroll listener toggling visibility —
+   needs JS to decide something CSS already knows, and gets it wrong at both
+   boundaries during momentum scrolling.
 
-   LAST child specifically. Sticky clamps an element inside its parent's box, so
-   as the FIRST child its static position is the top of the run — already above
-   the viewport bottom for the entire run, so it never sticks and just scrolls
-   away with the opening. Verified both ways.
+   WHERE IT SITS. Attached to the navbar and travelling with it: pinned at 60px
+   while the nav is out, moving up to 0 when the nav hides so it takes the
+   nav's place rather than hanging below an empty band. See .project-nav in
+   styles/custom.css for how that is driven.
 
-   WHY THE BOTTOM. The top edge is contested: navbar, progress bar, and a navbar
-   that hides on scroll-down by translating up while keeping its 60px slot. A
-   bar pinned below it hung under an empty band the moment the nav slid away,
-   and closing that gap meant publishing the nav's hidden state to the document
-   and matching its easing. The bottom edge is uncontested, so none of that
-   exists — and it stops taking back the reading room the nav hides to give.
+   Two other positions were built and rejected. Flush to the BOTTOM of the
+   viewport removed the coupling entirely — but that edge belongs to the
+   browser toolbar, the home indicator and the window frame, and a dark band
+   there reads as the reader's own chrome rather than as part of the page. A
+   light translucent strip in the page's paper colour, at either edge, simply
+   disappeared into it.
 
    WHY ALL THREE ITEMS ARE SHOWN. The brief was "clear at all times how many
    there are and which one is which". Showing only the current one answers half
@@ -42,15 +42,22 @@ import { useEffect, useState } from "react";
    no work on frames where nothing crossed, and it keeps working when rAF is
    suspended in a background tab. */
 
-/* The line a reader's eye sits on, measured from the top of the viewport. Just
-   under the 60px navbar, and five above where an anchor jump lands
-   (`.project-run .project-section` scroll-margin-top: 60px) so an arriving
-   section is unambiguously past it rather than exactly on it.
+/* The line a reader's eye sits on, measured from the top of the viewport: just
+   below the navbar and the indicator together (60 + 53 = 113), and then five
+   more.
 
-   The indicator's own height is not in this number — it is pinned to the
-   BOTTOM of the viewport, so it obstructs nothing up here. That is the second
-   thing moving it down bought. */
-const READ_LINE = 55;
+   BELOW the landing point, not above it. A section is current once its top has
+   passed this line (`top <= READ_LINE`), and an anchor jump parks that top at
+   exactly 113 — so a line at 113 or less leaves the arriving section one pixel
+   short and the previous project stays marked. Verified: at 108 a jump to
+   Dashboards still read "Slide Viewer".
+
+   The five was originally on the other side, which was right for a different
+   implementation. When this derived from IntersectionObserver entries the
+   failure was a zero-area TOUCH at the boundary, so the line had to sit above.
+   Reading geometry inverts that. Same number, opposite sign, and nothing in
+   the old comment would have warned anyone. */
+const READ_LINE = 118;
 
 type ProjectNavProps = {
   projects: { id: string; label: string }[];
@@ -92,7 +99,7 @@ export default function ProjectNav({ projects }: ProjectNavProps) {
        line means the callback fires around each boundary and not on every
        pixel of a 3.6-screen section. */
     const observer = new IntersectionObserver(() => setActiveId(pick()), {
-      rootMargin: "-55px 0px -85% 0px",
+      rootMargin: "-108px 0px -85% 0px",
       threshold: 0,
     });
 

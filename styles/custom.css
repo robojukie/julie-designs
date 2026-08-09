@@ -1979,23 +1979,51 @@ a.social-link:not(.brand):hover {
    on its own, exactly as `top` did: pinned to the viewport bottom while the
    run is on screen, gone when the last project ends.
 
-   DARK, AND OPAQUE. The first version was a translucent blurred strip in the
-   page's own paper colour with grey text, and it disappeared — a light bar on
-   a light page reads as more page, not as a control. Nothing about it said it
-   was there to be used.
+   ATTACHED TO THE NAVBAR, and travelling with it. `top: 60px` is the navbar's
+   own height, so the two stack as one unit: a site nav with a section nav
+   under it, which is a shape readers already know.
 
-   The dark ground is the same one the Outcomes section uses, so it is not a
-   new colour on the site, and it does the one thing the light version could
-   not: separate the bar from the content it floats over. The shadow above it
-   completes that, since without a cast shadow a full-width band still reads as
-   a section rather than as something on top. */
+   The navbar hides on scroll-down by TRANSLATING up (components/Nav.tsx,
+   `animate={{ y: hidden ? -60 : 0 }}`) while keeping its 60px slot in the
+   sticky stack the whole time. Left alone, this bar stayed at 60 and hung
+   below an empty navbar-height band. Moving by the same -60px takes its place
+   at the top of the screen instead, and moving back down when the navbar
+   returns keeps them reading as one object rather than two that drift.
+
+   Duration and curve match the navbar's own (0.3s returning, 0.4s hiding, and
+   its EASE constant) so neither appears to chase the other.
+
+   Driven by a data attribute Nav writes to <html>, not by React state here:
+   the only consumer is this rule, and re-rendering a subtree on every scroll
+   direction change to move one element would be the expensive way round.
+
+   Two other positions were tried and rejected. Flush to the BOTTOM of the
+   viewport removed the coupling entirely but sat where the browser toolbar,
+   the home indicator and the window edge live — a dark band there reads as
+   the reader's own chrome, and a control mistaken for chrome never gets
+   pressed. A light translucent strip in the page's paper colour, at either
+   edge, simply disappeared into the page. */
 .project-nav {
-  background-color: var(--background-color--background-dark-blue);
-  bottom: 0;
-  box-shadow: 0 -6px 24px #0000001f;
+  -webkit-backdrop-filter: blur(75px);
+  backdrop-filter: blur(75px);
+  background-color: #f8f4f1f2;
+  border-bottom: 1px solid var(--divider);
   padding: 0 var(--gutter);
   position: sticky;
+  top: 60px;
+  transition: transform 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
   z-index: 900;
+}
+
+:root[data-nav-hidden="true"] .project-nav {
+  transform: translateY(-60px);
+  transition-duration: 0.4s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .project-nav {
+    transition: none;
+  }
 }
 
 .project-nav-list {
@@ -2035,7 +2063,7 @@ a.social-link:not(.brand):hover {
 .project-nav-link {
   align-items: baseline;
   border-radius: 130px;
-  color: #fcfcfcb8;
+  color: var(--text-colors--muted-dark-blue);
   display: flex;
   font-family: var(--text-body-font);
   font-size: var(--text-size--nav-link-p-text);
@@ -2050,18 +2078,23 @@ a.social-link:not(.brand):hover {
 }
 
 .project-nav-link:hover {
-  background-color: #ffffff1f;
-  color: var(--text-colors--text-light);
+  background-color: #0d09090d;
+  color: var(--text-colors--text-primary);
 }
 
-/* The current entry is marked three ways — filled, darkened, and heavier —
-   because this is the one piece of information the bar exists to carry.
-   #ed6b6b against the dark ground measures 5.28:1, and the dark ink on that
-   fill measures the same 5.28:1, so the pill is legible whichever way round
-   you read it. */
+/* The current entry is marked three ways — filled, inverted, and heavier —
+   because this is the one thing the bar exists to say. A filled pill is also
+   what makes the row read as a segmented control rather than as three links:
+   the earlier version marked the current item with an underline, which is
+   what a link looks like anyway.
+
+   Ink on paper measures 14.12:1, so the inversion is legible at this small
+   size. The accent is deliberately not spent here — it belongs to the page's
+   own links, and a pink pill pinned to the top of every screen would outrank
+   the content it sits above. */
 .project-nav-link[aria-current] {
-  background-color: var(--accents--bold--accent-heading);
-  color: var(--background-color--background-dark-blue);
+  background-color: var(--color--neutral--800);
+  color: var(--text-colors--text-light);
   font-weight: var(--text-weightt--eyebrow-500);
 }
 
@@ -2083,13 +2116,13 @@ a.social-link:not(.brand):hover {
   width: 1px;
 }
 
-/* Anchor jumps clear the navbar and nothing else — the indicator is pinned to
-   the BOTTOM, so it never covers an arriving heading. This was 105px when the
-   bar sat under the nav. Applied to the sections themselves so it works for
+/* Anchor jumps have to clear BOTH pinned bars — 60px navbar + 53px indicator
+   (7 + 18 + 7 pill, + 10 + 10 list padding, + 1px border).
+   Applied to the sections themselves so it works for
    the in-page menu, the bar's own links, and any external link carrying a
    #hash. */
 .project-run .project-section {
-  scroll-margin-top: 60px;
+  scroll-margin-top: 113px;
 }
 
 @media (prefers-reduced-motion: reduce) {
