@@ -357,7 +357,7 @@ export default function NovinoPathLIS() {
           projects={PROJECTS.map((p) => ({ id: p.id, label: p.name }))}
         />
 
-        {PROJECTS.map((project, index) => (
+        {PROJECTS.map((project) => (
           <ProjectSection key={project.id} {...project} />
         ))}
       </div>
