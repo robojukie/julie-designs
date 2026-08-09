@@ -99,7 +99,7 @@ export default function BankGreen() {
 
       <div className="project-section">
         <div className="container-1232">
-          <div className="container-800">
+          <div className="container-680">
             <div className="heading-and-body-container">
               <h2>
                 Bank ratings power 2 strategies that pressure banks to defund
@@ -148,7 +148,7 @@ export default function BankGreen() {
 
       <div className="project-section hug-height">
         <div className="container-1232">
-          <div className="container-800">
+          <div className="container-680">
             <div className="heading-and-body-container">
               <h2>Raters use an inefficient bank rating process</h2>
               <p>
@@ -340,7 +340,7 @@ export default function BankGreen() {
               </div>
             </div>
           </div>
-          <div className="container-800">
+          <div className="container-680">
             <div className="image-with-heading">
               <p>
                 <strong>Initial migration attempt</strong>
@@ -371,7 +371,7 @@ export default function BankGreen() {
               </p>
             </div>
           </div>
-          <div className="container-800">
+          <div className="container-680">
             <div className="image-with-heading">
               <p>
                 <strong>Phase 1 evaluation and iterations</strong>
@@ -396,7 +396,7 @@ export default function BankGreen() {
               </div>
             </div>
           </div>
-          <div className="container-800">
+          <div className="container-680">
             <div className="captioned-image">
               <div className="image-wrapper">
                 <ZoomableImage
@@ -421,10 +421,17 @@ export default function BankGreen() {
 
       <div className="project-section hug-height">
         <div className="container-1232">
+          {/* The last 800px measure on this page: .section-heading-wrapper puts
+              this heading 120px wider than its own body copy. It can NOT be
+              swapped for .container-680 — that class is `display: flex;
+              flex-direction: column; align-items: center`, which shrink-wraps
+              AND centres a bare block child, so the heading lands centred at
+              its text width. .container-680 only works for children that carry
+              `width: 100%`. Left at 800 until the .measure/.stack pair lands. */}
           <div className="section-heading-wrapper">
             <h3>Before and after redesign</h3>
           </div>
-          <div className="container-800">
+          <div className="container-680">
             {/* Same .comparison contract as /vac-redesign's pairs, on this
                 page's own grid class. --pair-aspect: both images are 797x703,
                 so the two aspects are the same 1.134 and each fills its track
@@ -529,7 +536,7 @@ export default function BankGreen() {
 
       <div className="project-section">
         <div className="container-1232">
-          <div className="container-800">
+          <div className="container-680">
             <div className="heading-and-body-container">
               <h3>Phase 1 redesign outcomes</h3>
               <ul role="list">
@@ -546,7 +553,7 @@ export default function BankGreen() {
               </ul>
             </div>
           </div>
-          <div className="container-800">
+          <div className="container-680">
             <div className="heading-and-body-container">
               <h3>Persisting issues after redesign</h3>
               <ul role="list">
@@ -630,7 +637,7 @@ export default function BankGreen() {
 
       <section className="project-section hug-height">
         <div className="container-1232">
-          <div className="container-800">
+          <div className="container-680">
             <div className="heading-and-body-container">
               <div className="eyebrow-and-headline-container">
                 <p className="eyebrow">Designs</p>
@@ -668,7 +675,7 @@ export default function BankGreen() {
               </div>
             </div>
           </div>
-          <div className="container-800">
+          <div className="container-680">
             <div className="image-with-heading">
               <p>
                 Document processing errors are backend heavy and include
