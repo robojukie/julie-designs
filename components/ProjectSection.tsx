@@ -165,19 +165,49 @@ export default function ProjectSection({
       {/* id on the <section>, not on FadeIn's motion.div, so anchors land on
           the element that carries the section's padding. */}
       <section id={id} className="project-section showcase-section">
+        {/* THE LABEL IS THE INDICATOR. It pins under the navbar for the length
+            of its own section, so the thing already naming the project keeps
+            naming it all the way down instead of scrolling away in the first
+            0.15 of a 3.6-screen read.
+
+            A direct child of the <section>, not of .container-1232, for two
+            reasons: sticky is clamped by its parent's box, so it has to hang
+            off something that spans the whole section; and only a full-width
+            element can carry a ground that covers content passing underneath.
+
+            A <p>, not an <h2>. This is a kicker on the heading below it; as a
+            heading it put two h2s in every section and heading navigation
+            heard them as siblings. */}
+        <div className="project-sticky-label">
+          <div className="project-sticky-inner">
+            {/* "01 / 03  Consult Review", not "Project 01 of 03: Consult
+                Review". The prose form runs 31 characters before reaching the
+                name, and pinned to every screen that cost is paid constantly —
+                on a 375px viewport it wrapped the label to two lines and put
+                103px of header above the content. The slash form says the same
+                thing as a position marker rather than as a sentence about one.
+
+                aria-label carries the long form, because "01 / 03" read aloud
+                is not a sentence. */}
+            <p className="eyebrow project-sticky-position">
+              <span aria-hidden="true">
+                <span className="project-sticky-n">
+                  {pad(index)} / {pad(total)}
+                </span>{" "}
+                {name}
+              </span>
+              <span className="visually-hidden">
+                Project {index} of {total}: {name}
+              </span>
+            </p>
+            <StateTag state={state} />
+          </div>
+        </div>
+
         <div className="container-1232">
           <div className="container-800">
             <div className="heading-and-body-container">
               <div className="eyebrow-and-headline-container">
-                <div className="feature-label">
-                  {/* A <p>, not an <h2>. This is a kicker on the heading below
-                      it; as a heading it put two h2s in every section and
-                      heading navigation heard them as siblings. */}
-                  <p className="eyebrow">
-                    Project {pad(index)} of {pad(total)}: {name}
-                  </p>
-                  <StateTag state={state} />
-                </div>
                 <h2>{heading}</h2>
               </div>
 

@@ -2015,14 +2015,125 @@ a.social-link:not(.brand):hover {
   z-index: 900;
 }
 
-:root[data-nav-hidden="true"] .project-nav {
+:root[data-nav-hidden="true"] .project-nav,
+:root[data-nav-hidden="true"] .project-sticky-label {
   transform: translateY(-60px);
   transition-duration: 0.4s;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .project-nav {
+  .project-nav,
+  .project-sticky-label {
     transition: none;
+  }
+}
+
+/* -- Sticky project label ------------------------------------------------ */
+
+/* The project's own label, pinned for the length of its own section, instead
+   of a separate indicator bar above the content.
+
+   WHY THIS RATHER THAN A BAR. A second pinned bar was built first and worked,
+   and it was the loudest object on the page: a filled near-black pill against
+   a layout of thin weights and hairline rules, occupying 113px of every
+   viewport with a navbar of identical material, and repeating the section's
+   own label 88px below itself on arrival. This says the same thing with the
+   page's existing typography, adds no new vocabulary, and cannot duplicate
+   the label because it IS the label.
+
+   What it gives up is jumping between projects. The menu in the opening block
+   still does that; the brief was to make the count and position clear at all
+   times, which this does.
+
+   Sticky, not fixed, and hung off the <section>: it pins when its own project
+   starts and is pushed out by the next one's label, so the handover happens
+   in the layout with nothing to coordinate.
+
+   Travels with the navbar on the same rule as the bar did — see the coupling
+   above. */
+.project-sticky-label {
+  align-self: stretch;
+  background-color: var(--background-color--background-case-study);
+  border-bottom: 1px solid var(--divider);
+  padding: 14px var(--gutter);
+  position: sticky;
+  top: 60px;
+  transition: transform 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
+  width: 100%;
+  z-index: 800;
+}
+
+/* The label has to be the section's FIRST pixel, or an anchor jump lands the
+   section top under the navbar with the label still 88px below it — in flow,
+   not yet pinned, with the section's top padding sitting emptily above it.
+   Measured: label at 148 instead of 60.
+
+   So the run's sections give up their top padding and the air moves below the
+   label instead, where it separates a header from its content rather than
+   pushing that header out of position. `.showcase-section`'s own 32px gap
+   supplies part of it. */
+.project-run .project-section {
+  padding-top: 0;
+}
+
+.project-run .project-section > .container-1232 {
+  margin-top: 24px;
+}
+
+/* Opaque, not translucent. Content passes directly under this — a screenshot
+   ghosting through the label it sits below would undo the one thing it is
+   here for. */
+.project-sticky-inner {
+  align-items: baseline;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 12px;
+  margin: 0 auto;
+  max-width: var(--width--container-1232);
+  width: 100%;
+}
+
+/* .eyebrow is display:flex and width:100%, which would push the state badge to
+   its own line. */
+.project-sticky-inner .eyebrow {
+  margin-bottom: 0;
+  width: auto;
+}
+
+/* The position marker is the quieter half of the pair — the name is what a
+   reader is looking for, the numbers only say where it sits. */
+.project-sticky-n {
+  color: var(--text-colors--muted-dark-blue);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Available to a screen reader, absent from the page. Used for the spoken form
+   of the position marker: "01 / 03" is a graphic, not a sentence. */
+.visually-hidden {
+  clip-path: inset(50%);
+  height: 1px;
+  overflow: hidden;
+  position: absolute;
+  white-space: nowrap;
+  width: 1px;
+}
+
+/* One line at 375. The label is pinned to every screen, so a second line is
+   not a small cost — measured at 103px tall before this, which with the navbar
+   put 20% of a phone viewport under permanent chrome. */
+@media screen and (max-width: 767px) {
+  .project-sticky-label {
+    padding-bottom: 11px;
+    padding-top: 11px;
+  }
+
+  .project-sticky-inner .eyebrow {
+    font-size: 0.875rem;
+  }
+
+  .project-sticky-inner .project-state {
+    font-size: 0.8rem;
+    padding: 3px 8px;
   }
 }
 
@@ -2116,13 +2227,13 @@ a.social-link:not(.brand):hover {
   width: 1px;
 }
 
-/* Anchor jumps have to clear BOTH pinned bars — 60px navbar + 53px indicator
-   (7 + 18 + 7 pill, + 10 + 10 list padding, + 1px border).
-   Applied to the sections themselves so it works for
-   the in-page menu, the bar's own links, and any external link carrying a
-   #hash. */
+/* Anchor jumps clear the navbar only. The sticky label is the first thing in
+   the section, so once the section top lands at 60 the label pins immediately
+   below the nav and nothing is covered — the indicator does not need to be
+   counted twice. Applied to the sections themselves so it works for the
+   in-page menu and any external link carrying a #hash. */
 .project-run .project-section {
-  scroll-margin-top: 113px;
+  scroll-margin-top: 60px;
 }
 
 @media (prefers-reduced-motion: reduce) {

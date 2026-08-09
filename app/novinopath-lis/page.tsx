@@ -21,7 +21,6 @@ import CaseStudyBanner from "@/components/CaseStudyBanner";
 import CaseStudyHero from "@/components/CaseStudyHero";
 import ContextColumns from "@/components/ContextColumns";
 import FadeIn from "@/components/FadeIn";
-import ProjectNav from "@/components/ProjectNav";
 import ProjectSection, {
   pad,
   type ProjectFeature,
@@ -341,14 +340,16 @@ export default function NovinoPathLIS() {
           project sections, so the bar pins under the navbar on entry and leaves
           with the last section's bottom edge, with no scroll listener deciding
           when to show it. */}
-      <div className="project-run">
-        {/* First, so keyboard order reaches the section nav before the sections
-            it navigates. `position: sticky; top` works from any position in the
-            flow, unlike sticky-bottom, which only pins from the last child. */}
-        <ProjectNav
-          projects={PROJECTS.map((p) => ({ id: p.id, label: p.name }))}
-        />
+      {/* .project-run no longer scopes a sticky bar — each project's own label
+          pins itself now (see .project-sticky-label). Kept because it still
+          groups the run for the eye and gives anything added here later a
+          container that spans exactly the three projects.
 
+          components/ProjectNav.tsx is the indicator-bar version, left in the
+          tree rather than deleted: restoring it is an import and two lines
+          here. It was dropped because it duplicated the label it sat above and
+          was the heaviest object on a deliberately quiet page. */}
+      <div className="project-run">
         {PROJECTS.map((project, index) => (
           <ProjectSection
             key={project.id}
