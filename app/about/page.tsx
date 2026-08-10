@@ -1,6 +1,7 @@
 import Image from "next/image";
 import type { Metadata } from "next";
 import FadeIn from "@/components/FadeIn";
+import NewTabArrow from "@/components/NewTabArrow";
 
 export const metadata: Metadata = {
   title: "Who am I?",
@@ -36,8 +37,11 @@ export default function About() {
                   <a
                     href="https://www.coursera.org/learn/the-science-of-well-being"
                     className="inline-link"
+                    target="_blank"
+                    rel="noreferrer"
                   >
                     Science of Well-Being
+                    <NewTabArrow />
                   </a>
                   , and learning about the human brain. My goal is to{" "}
                   <strong>
@@ -141,8 +145,13 @@ export default function About() {
                   Before I entered tech, I studied social sciences 🧠,
                   journalism 📰, and architecture 📐, and worked in
                   communications 📝 and education 🍎. I blend my{" "}
-                  <a href="https://liberalarts.utexas.edu/plan2/about-plan-ii/">
+                  <a
+                    href="https://liberalarts.utexas.edu/plan2/about-plan-ii/"
+                    target="_blank"
+                    rel="noreferrer"
+                  >
                     interdisciplinary background
+                    <NewTabArrow />
                   </a>{" "}
                   to tie together my technical knowledge with creative
                   problem-solving.
@@ -156,8 +165,13 @@ export default function About() {
               <p>
                 A lifelong learner, I&rsquo;m always curious about something
                 new. Recently, I&apos;ve learned about how{" "}
-                <a href="https://www.youtube.com/watch?v=Gg3YQbNxtaY">
+                <a
+                  href="https://www.youtube.com/watch?v=Gg3YQbNxtaY"
+                  target="_blank"
+                  rel="noreferrer"
+                >
                   downward learning
+                  <NewTabArrow />
                 </a>
                 , or learning from someone more junior, creates stronger
                 leaders. A big factor behind this is that{" "}

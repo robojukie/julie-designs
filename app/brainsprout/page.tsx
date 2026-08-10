@@ -7,6 +7,7 @@ import type { Metadata } from "next";
 import CaseStudyBanner from "@/components/CaseStudyBanner";
 import CaseStudyHero from "@/components/CaseStudyHero";
 import ProgressBar from "@/components/ProgressBar";
+import NewTabArrow from "@/components/NewTabArrow";
 
 export const metadata: Metadata = {
   title: "BrainSprout - Online learning app",
@@ -143,8 +144,11 @@ export default function BrainSprout() {
                       <a
                         href="https://www.nytimes.com/2016/08/28/opinion/sunday/the-good-news-about-educational-inequality.html"
                         className="link-accent-bold"
+                        target="_blank"
+                        rel="noreferrer"
                       >
                         NYT
+                        <NewTabArrow />
                       </a>
                     </p>
                   </div>
@@ -1255,8 +1259,13 @@ export default function BrainSprout() {
                   <li>
                     Mobile solutions are a must - consider inclusivity and
                     the{" "}
-                    <a href="https://blog.google/technology/next-billion-users/">
+                    <a
+                      href="https://blog.google/technology/next-billion-users/"
+                      target="_blank"
+                      rel="noreferrer"
+                    >
                       <strong>Next Billion Users</strong>
+                      <NewTabArrow />
                     </a>
                   </li>
                   <li>

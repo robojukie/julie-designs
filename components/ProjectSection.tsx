@@ -1,6 +1,7 @@
 import ContextColumns from "@/components/ContextColumns";
 import FadeIn from "@/components/FadeIn";
 import PrototypeJump from "@/components/PrototypeJump";
+import NewTabArrow from "@/components/NewTabArrow";
 
 /* One PROJECT on the NovinoPath showcase: a design problem, the features it
    shipped or reworked, and the prototype that demonstrates it.
@@ -270,9 +271,9 @@ export default function ProjectSection({
               <p className="feature-prototype-link">
                 {/* New tab, so opening a prototype doesn't cost the reader
                     their place on a 13-screen page. rel="noopener" is required
-                    with target="_blank". ↗ rather than → is the convention for
+                    with target="_blank". The arrow is the convention for
                     "leaves this page", and the aria-label says so for anyone
-                    who can't see the glyph. */}
+                    who can't see it. */}
                 <a
                   className="inline-link"
                   href={prototypeHref}
@@ -280,7 +281,8 @@ export default function ProjectSection({
                   rel="noopener noreferrer"
                   aria-label={`Try the ${name} prototype (opens in a new tab)`}
                 >
-                  Try it &#8599;
+                  Try it
+                  <NewTabArrow />
                 </a>
               </p>
             </div>

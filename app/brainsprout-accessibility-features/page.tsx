@@ -6,6 +6,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import CaseStudyBanner from "@/components/CaseStudyBanner";
 import ProgressBar from "@/components/ProgressBar";
+import NewTabArrow from "@/components/NewTabArrow";
 
 export const metadata: Metadata = {
   title: "BrainSprout - Online learning accessibility",
@@ -189,8 +190,11 @@ export default function BrainSproutAccessibility() {
                     <a
                       href="https://www.nytimes.com/2016/08/28/opinion/sunday/the-good-news-about-educational-inequality.html"
                       className="link image-caption"
+                      target="_blank"
+                      rel="noreferrer"
                     >
                       NYT
+                      <NewTabArrow />
                     </a>
                   </p>
                 </div>
@@ -528,8 +532,13 @@ export default function BrainSproutAccessibility() {
               </div>
               <div className="heading-container h4-container">
                 <h3>
-                  <a href="https://www.weforum.org/videos/bionic-reading-could-help-you-become-a-faster-and-more-effective-reader/">
+                  <a
+                    href="https://www.weforum.org/videos/bionic-reading-could-help-you-become-a-faster-and-more-effective-reader/"
+                    target="_blank"
+                    rel="noreferrer"
+                  >
                     Bionic text
+                    <NewTabArrow />
                   </a>{" "}
                   a strategy I discovered in an #adhd channel of one of my
                   Slack groups
