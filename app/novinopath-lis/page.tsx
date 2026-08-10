@@ -239,13 +239,11 @@ export default function NovinoPathLIS() {
                         the legibility that is the entire point.
                       - Give it a caption. It is the one image on the page
                         doing explanatory rather than illustrative work. */}
-                <div className="project-shot">
-                  <div
-                    className="placeholder-media"
-                    data-placeholder-for="/images/placeholder-novinopath-domain-diagram.png"
-                    aria-hidden="true"
-                  />
-                </div>
+                <div
+                  className="placeholder-media"
+                  data-placeholder-for="/images/placeholder-novinopath-domain-diagram.png"
+                  aria-hidden="true"
+                />
 
                 <hr className="project-rule" />
 
@@ -341,10 +339,8 @@ export default function NovinoPathLIS() {
                 {OUTCOMES.map((outcome) => (
                   <div className="card" key={outcome.marker}>
                     <div className="card-media">
-                      <div className="card-data-wrapper">
-                        <div className="display-callout light">
-                          {outcome.marker}
-                        </div>
+                      <div className="display-callout light">
+                        {outcome.marker}
                       </div>
                     </div>
                     <div className="card-info text-card">
@@ -362,19 +358,17 @@ export default function NovinoPathLIS() {
       <FadeIn>
         <section className="project-section showcase-section">
           <div className="container-1232">
-            <div className="container-680">
-              <div className="heading-and-body-container">
-                <h2>Reflection</h2>
-                <p>
-                  Placeholder reflection on what this work required that the
-                  earlier projects did not — a first sentence naming the
-                  difference in domain or scale.
-                </p>
-                <p>
-                  A second placeholder sentence on what would be done
-                  differently, and a third on where the product goes next.
-                </p>
-              </div>
+            <div className="heading-and-body-container">
+              <h2>Reflection</h2>
+              <p>
+                Placeholder reflection on what this work required that the
+                earlier projects did not — a first sentence naming the
+                difference in domain or scale.
+              </p>
+              <p>
+                A second placeholder sentence on what would be done
+                differently, and a third on where the product goes next.
+              </p>
             </div>
           </div>
         </section>

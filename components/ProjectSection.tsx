@@ -236,14 +236,9 @@ export default function ProjectSection({
             <div className="container-680 project-features">
               {features.map((feature) => (
                 <div className="project-feature" key={feature.title}>
-                  <div className="eyebrow-and-headline-container">
-                    {/* Name and badge on one row, badge flush right — the same
-                        shape as the project label above, so the two levels read
-                        as one pattern at two scales. */}
-                    <div className="feature-label">
-                      <h3>{feature.title}</h3>
-                      <Tag tag={feature.tag} />
-                    </div>
+                  <div className="feature-label">
+                    <h3>{feature.title}</h3>
+                    <Tag tag={feature.tag} />
                   </div>
                   <p>{feature.body}</p>
                   <ShotPlaceholder
