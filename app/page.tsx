@@ -5,6 +5,7 @@ import HeroTitle from "@/components/HeroTitle";
 import type { HiLottieHandle } from "@/components/HiLottie";
 import ProjectCard from "@/components/ProjectCard";
 import FadeIn from "@/components/FadeIn";
+import NewTabArrow from "@/components/NewTabArrow";
 
 export default function Home() {
   const hiLottieRef = useRef<HiLottieHandle>(null);
@@ -40,6 +41,7 @@ export default function Home() {
                     rel="noreferrer"
                   >
                     <strong>codes</strong>
+                    <NewTabArrow />
                   </a>
                   {", "}
                   specializing in B2B enterprise products

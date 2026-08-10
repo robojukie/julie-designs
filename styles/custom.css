@@ -2734,3 +2734,21 @@ a.social-link:not(.brand):hover {
 .project > .project-run {
   width: 100%;
 }
+
+/* ---------------------------------------------------------------------------
+   35. New-tab arrow  — NEW, NOT IN THE EXPORT
+--------------------------------------------------------------------------- */
+/* The arrow sits inside the <a>, so section 15's dotted ::after — which spans
+   left:0 to right:0 of the anchor — runs under it as well as the word, and
+   currentColor carries both the link's #ed6b6b and its peach hover. */
+.new-tab-arrow {
+  width: 0.51em;
+  height: 0.51em;
+  margin-left: 2px;
+  vertical-align: middle;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
