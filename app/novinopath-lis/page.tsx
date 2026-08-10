@@ -1,21 +1,3 @@
-/* NOT a case study, and the structure is the argument for that.
-
-   vac-redesign, bank-green-gpe and brainsprout each walk a process arc —
-   research, goals, iterations, outcome — because their job is to show how the
-   work was done. Anyone reaching this page has already read one of those. What
-   they can't see from them is the shape and complexity of the most recent work,
-   so this page is organised by PROJECT instead: product context, then one
-   numbered section per project — before/after, then the individual features it
-   shipped or reworked, anchored by its own prototype — then outcomes. No
-   research phase and no goal arc; the before/after pairs are evidence rather
-   than a narrative the page is walking through.
-
-   Project, then feature, and not the other way round: "Consult Review" is a
-   body of work that touched a notification system, a consult document review
-   page and a set of worklists. Those surfaces are the features.
-
-   Everything below is placeholder copy and placeholder media — the shell exists
-   so the structure can be reviewed before the content is written. */
 import type { Metadata } from "next";
 import CaseStudyBanner from "@/components/CaseStudyBanner";
 import CaseStudyHero from "@/components/CaseStudyHero";
