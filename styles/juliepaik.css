@@ -1539,36 +1539,34 @@ figure {
   display: block;
 }
 
+/* A small uppercase label that sits above something — a heading, a value, or a
+   row of chips. It never owns layout: the parent decides how wide it is and
+   what sits beside it. The export shipped this as `width: 100%; display: flex`,
+   which two call sites then had to undo (.feature-label .eyebrow and
+   .project-nav-label both reset the width so a sibling could share the row).
+   As a block with no width of its own, it shrinks to its text as a flex item
+   and fills the line as a block child, which is what every call site wanted.
+
+   The .green modifier is gone. It set `color` to --text-colors--text-primary,
+   the same value the base already sets, so it was only distinguishable at
+   <=991px where it swapped in the larger --text-size--label-mobile. That made
+   the hero role labels 18px while every other eyebrow was 16px, for no reason
+   the markup could explain.
+
+   There is no .eyebrow.light either. The global .light already recolours text
+   for a dark section, the same way it does for .callout and .card-description;
+   all the eyebrow rule added was a 4px margin, which made the label sit closer
+   to its heading on dark sections than on light ones for no stated reason. */
 .eyebrow {
-  width: 100%;
+  color: var(--text-colors--text-primary);
+  display: block;
   font-family: var(--text-body-font);
-  color: var(--text-colors--text-primary);
   font-size: var(--text-size--eyebrow-desktop);
-  line-height: var(--text-height--eyebrow-desktop-height);
   font-weight: var(--text-weightt--eyebrow-500);
-  text-transform: uppercase;
-  margin-top: 0;
-  margin-bottom: 8px;
-  text-decoration: none;
-  display: flex;
-}
-
-.eyebrow.green {
-  color: var(--text-colors--text-primary);
-  font-size: var(--text-size--eyebrow-desktop);
   line-height: var(--text-height--eyebrow-desktop-height);
-  -webkit-text-stroke-color: var(--text-colors--text-primary);
-  margin-bottom: 8px;
-}
-
-.eyebrow.light {
-  margin-bottom: 4px;
-}
-
-.eyebrow.light.phrase {
-  letter-spacing: 1.2px;
-  text-transform: none;
-  font-weight: 300;
+  margin: 0 0 8px;
+  text-decoration: none;
+  text-transform: uppercase;
 }
 
 .caption {
@@ -2557,26 +2555,6 @@ figure {
   display: flex;
 }
 
-.container-eyebrow-and-heading {
-  grid-row-gap: 0px;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-items: flex-start;
-  width: 100%;
-  text-decoration: none;
-  display: flex;
-}
-
-.wrapper-heading-and-blurb {
-  grid-row-gap: 16px;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-items: flex-start;
-  width: 100%;
-  text-decoration: none;
-  display: flex;
-}
-
 .card-media {
   grid-row-gap: 10px;
   flex-direction: column;
@@ -3479,13 +3457,6 @@ figure {
       height: 100%;
       margin-top: 0;
       margin-bottom: 0;
-  }
-
-  .eyebrow.phrase {
-      font-size: var(--text-size--body-desktop-1-25);
-      line-height: var(--text-height--body-desktop-height-1-8);
-      letter-spacing: 0;
-      text-transform: none;
   }
 
   .screenshot-shadow {
@@ -4583,19 +4554,13 @@ figure {
       max-height: 100%;
   }
 
+  /* The mobile tokens currently carry the same 1rem size as the desktop pair
+     and differ only in leading, but both are named here so the step stays
+     retunable from tokens.css rather than needing this rule edited. The
+     font-weight the export repeated was the same token as the base. */
   .eyebrow {
       font-size: var(--text-size--eyebrow-mobile);
       line-height: var(--text-height--eyebrow-mobile-height);
-      font-weight: var(--text-weightt--eyebrow-500);
-  }
-
-  .eyebrow.green {
-      font-size: var(--text-size--label-mobile);
-      line-height: var(--text-height--label-mobile-height);
-  }
-
-  .eyebrow.light.phrase {
-      text-transform: none;
   }
 
   .caption {
@@ -4955,19 +4920,6 @@ figure {
       align-items: flex-start;
       height: auto;
       padding-bottom: 0;
-  }
-
-  .container-eyebrow-and-heading {
-      color: var(--text--light);
-      justify-content: center;
-      align-items: flex-start;
-  }
-
-  .wrapper-heading-and-blurb {
-      justify-content: center;
-      align-items: flex-start;
-      width: 100%;
-      height: auto;
   }
 
   .card-media {

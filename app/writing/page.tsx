@@ -37,7 +37,7 @@ export default function Writing() {
       </div>
       <div className="section about">
         <div className="subsection">
-          <div className="container-800">
+          <div className="container-1232">
             <MediumFeed />
           </div>
         </div>

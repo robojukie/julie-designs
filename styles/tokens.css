@@ -57,16 +57,49 @@
   --text-size--body-mobile: 1.125rem;
   --accents--bold--accent-heading: var(--color--pink--color);
   --accents--bold--accent-hover: var(--color--peach--600);
-  --width--container-680: 680px;
-  --width--container-800: 800px;
+  /* MEASURE SCALE — a 12-column grid of 56px columns and 24px gutters.
+
+       --measure-col     56px   one column
+       --measure-gutter  24px   between columns
+       --measure-text   696px   9 columns — running copy
+       --measure-page   936px  12 columns — the ceiling for all content
+
+     Every width on the site is a column count, so nothing is a chosen number:
+       12 col  936   page column
+        9 col  696   text
+        6 col  456   two-up
+        4 col  296   three-up in column
+     Full-bleed backdrops are the only exception; they take the viewport.
+
+     696 for text runs ~57-74 characters per line at body size. The gutter
+     matches --gutter's 24px floor, so grid gaps and page gutters agree. */
+  --measure-col: 56px;
+  --measure-gutter: 24px;
+  --measure-text: 696px;
+  --measure-page: 936px;
+
+  /* Shim for the frozen stylesheet, which names these 36 times and cannot be
+     edited (scripts/check-frozen-stylesheet.mjs). The numbers in the names are
+     the export's — nothing renders at 680, 800, 1224 or 1232 any more. New work
+     reads --measure-text and --measure-page; these exist only to carry the
+     frozen rules over to them. */
+  --width--container-680: var(--measure-text);
+  --width--container-800: var(--measure-page);
+  --width--container-1232: var(--measure-page);
+  --width--container-1224: var(--measure-page);
+
   --light: var(--accents--bold--secondary-brand-color);
   --nav-link-color: #9c9c9c;
   --text-size--nav-link-p-text: .9rem;
   --text-height--nav-link-height: 1.1rem;
   --accents--bold--main-brand-color: #a7b5a2;
   --accents--bold--secondary-brand-color: #ab91b4;
-  --width--container-1232: 1232px;
-  --width--container-1224: 1224px;
+  /* Single horizontal page gutter. Consumed by section 17 of styles/custom.css,
+     which neutralises the six disagreeing per-wrapper gutters in juliepaik.css.
+     The clamp hits 24px at a 480px viewport and 104px at 2080px, so it lands on
+     the export's own mobile and large-desktop endpoints and only replaces the
+     stepped values in between. */
+  --gutter: clamp(24px, 5vw, 104px);
   --text--farewell: 2rem;
   --translucent-white: #ffffffde;
   --divider: var(--shadow-color);

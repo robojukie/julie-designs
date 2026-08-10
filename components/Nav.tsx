@@ -98,6 +98,21 @@ export default function Nav() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  /* Publish the hidden state so anything else pinned below the navbar can move
+     with it. The navbar keeps its 60px slot in the sticky stack and only
+     TRANSLATES out of view, so a second sticky element offset by that 60px
+     would otherwise hang below an empty band once the nav slid away.
+
+     A data attribute on <html> rather than context or a store: the only
+     consumer is CSS, this runs on every scroll direction change, and
+     re-rendering this subtree to move an unrelated element elsewhere on the
+     page would be the expensive way to do it. See .project-nav in
+     styles/custom.css. */
+  useEffect(() => {
+    document.documentElement.dataset.navHidden = hidden ? "true" : "false";
+  }, [hidden]);
+
+
   /* Keep `#projects-list` in the URL only while the work section is actually
      the section being viewed.
 

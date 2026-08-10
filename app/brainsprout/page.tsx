@@ -50,7 +50,7 @@ export default function BrainSprout() {
               <div className="container-6-column">
                 <div className="list-card">
                   <div className="card-info text-card">
-                    <h2 className="eyebrow">Problem</h2>
+                    <p className="eyebrow">Problem</p>
                     <h2>
                       Learners struggle to achieve their goals effectively
                       with current online tools
@@ -68,7 +68,7 @@ export default function BrainSprout() {
                 </div>
                 <div className="list-card">
                   <div className="card-info text-card">
-                    <h2 className="eyebrow">Solution</h2>
+                    <p className="eyebrow">Solution</p>
                     <h2>
                       Prioritize features that help lower barriers for people
                       to achieve their goals
@@ -94,7 +94,7 @@ export default function BrainSprout() {
             <div className="container-680">
               <div className="container-title-and-list">
                 <div className="eyebrow-and-headline-container">
-                  <h2 className="eyebrow">Discovery</h2>
+                  <p className="eyebrow">Discovery</p>
                   <h2>Diving deep into research</h2>
                   <div className="body-text-container">
                     <div className="container-quote">
@@ -127,22 +127,26 @@ export default function BrainSprout() {
                     Widening inequality in education extends into adulthood
                   </h3>
                 </div>
-                <div className="image-wrapper-small">
-                  <ZoomableImage
-                    src="/images/NYT-image.png"
-                    alt="Image from The New York Times showing school children standing on different platform levels to depict educational inequality"
-                    width={708}
-                    height={385}
-                    style={{ width: "100%", height: "auto" }}
-                  />
-                  <div className="image-caption-wrapper">
-                    Image source:{" "}
-                    <a
-                      href="https://www.nytimes.com/2016/08/28/opinion/sunday/the-good-news-about-educational-inequality.html"
-                      className="link-accent-bold"
-                    >
-                      NYT
-                    </a>
+                <div className="captioned-image image-wrapper-small">
+                  <div className="image-wrapper">
+                    <ZoomableImage
+                      src="/images/NYT-image.png"
+                      alt="Image from The New York Times showing school children standing on different platform levels to depict educational inequality"
+                      width={708}
+                      height={385}
+                      style={{ width: "100%", height: "auto" }}
+                    />
+                  </div>
+                  <div className="caption-wrapper">
+                    <p className="caption">
+                      Image source:{" "}
+                      <a
+                        href="https://www.nytimes.com/2016/08/28/opinion/sunday/the-good-news-about-educational-inequality.html"
+                        className="link-accent-bold"
+                      >
+                        NYT
+                      </a>
+                    </p>
                   </div>
                 </div>
                 <div className="body-text-container">
@@ -365,7 +369,7 @@ export default function BrainSprout() {
             <div className="container-680">
               <div className="content-container">
                 <div className="eyebrow-and-headline-container">
-                  <h2 className="eyebrow">Ideation</h2>
+                  <p className="eyebrow">Ideation</p>
                   <h2>To retain information, we need to stay engaged</h2>
                 </div>
                 <div className="body-text-container">
@@ -452,7 +456,7 @@ export default function BrainSprout() {
               <div className="content-container">
                 <div className="container-title-and-list">
                   <div className="eyebrow-and-headline-container">
-                    <h2 className="eyebrow">design</h2>
+                    <p className="eyebrow">Design</p>
                     <h2>Refining 5 ideas with testing</h2>
                   </div>
                   <div className="body-text-container">
@@ -891,7 +895,7 @@ export default function BrainSprout() {
           <div className="container-1232 full">
             <div className="container-title-and-list">
               <div className="eyebrow-and-headline-container">
-                <h2 className="eyebrow">Final designs</h2>
+                <p className="eyebrow">Final designs</p>
                 <h2>Putting it all together in high fidelity</h2>
               </div>
             </div>
@@ -1162,7 +1166,7 @@ export default function BrainSprout() {
             <div className="container-680">
               <div className="container-title-and-list">
                 <div className="heading-container">
-                  <h2 className="eyebrow">Conclusion</h2>
+                  <p className="eyebrow">Conclusion</p>
                 </div>
                 <div className="heading-container">
                   <h2>Final thoughts and future visions</h2>

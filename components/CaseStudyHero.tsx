@@ -26,21 +26,30 @@ export default function CaseStudyHero({
             <p className="tagline-text">{tagline}</p>
           </div>
         </div>
-        <div className="horizontal-container">
-          <div className="grid-left-top-content">
-            {description && <div className="w-richtext">{description}</div>}
-            <div className="column-role">
-              <div className="project-role-details">
-                {roles.map((role) => (
-                  <div className="project-role" key={role.label}>
-                    <div className="eyebrow green">{role.label}</div>
-                    <p>{role.value}</p>
+        {/* Skipped entirely when there is nothing to put in it. The four case
+            studies all pass roles, so their render is unchanged; the NovinoPath
+            showcase passes none — its facts live in the context columns further
+            down — and without this guard the empty .grid-left-top-content and
+            its .column-role child still cost ~92px of blank hero. */}
+        {(description || roles.length > 0) && (
+          <div className="horizontal-container">
+            <div className="grid-left-top-content">
+              {description && <div className="w-richtext">{description}</div>}
+              {roles.length > 0 && (
+                <div className="column-role">
+                  <div className="project-role-details">
+                    {roles.map((role) => (
+                      <div className="project-role" key={role.label}>
+                        <p className="eyebrow">{role.label}</p>
+                        <p>{role.value}</p>
+                      </div>
+                    ))}
                   </div>
-                ))}
-              </div>
+                </div>
+              )}
             </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );

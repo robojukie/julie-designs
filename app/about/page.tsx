@@ -12,38 +12,40 @@ export default function About() {
   return (
     <FadeIn className="home">
       <div className="hero-section page-header-section about">
-        <div className="container-680">
-          <div className="about-hero-grid">
-            <h1 className="hero-title-text main-page compact" data-graphic-text>
-              Who am I?
-            </h1>
-            <div className="about-hero-image">
-              <Image
-                src="/images/Me-on-laptop.svg"
-                alt="Girl with dark hair sitting on beanbag chair with laptop next to small side table with steaming green cup. Image adapted from catalyststuff on Freepik"
-                width={344}
-                height={407}
-                className="about-portrait"
-                priority
-              />
-            </div>
-            <div className="main-text">
-              <p>
-                Hi, I&apos;m Julie (she/her), a Brooklyn-based product designer
-                who {"{codes}"}. Currently, I&apos;m on a happiness journey,
-                inspired by the{" "}
-                <a
-                  href="https://www.coursera.org/learn/the-science-of-well-being"
-                  className="inline-link"
-                >
-                  Science of Well-Being
-                </a>
-                , and learning about the human brain. My goal is to{" "}
-                <strong>
-                  joyfully shape the human experience through design
-                </strong>
-                .
-              </p>
+        <div className="container-1232">
+          <div className="container-680">
+            <div className="about-hero-grid">
+              <h1 className="hero-title-text main-page compact" data-graphic-text>
+                Who am I?
+              </h1>
+              <div className="about-hero-image">
+                <Image
+                  src="/images/Me-on-laptop.svg"
+                  alt="Girl with dark hair sitting on beanbag chair with laptop next to small side table with steaming green cup. Image adapted from catalyststuff on Freepik"
+                  width={344}
+                  height={407}
+                  className="about-portrait"
+                  priority
+                />
+              </div>
+              <div className="main-text">
+                <p>
+                  Hi, I&apos;m Julie (she/her), a Brooklyn-based product designer
+                  who {"{codes}"}. Currently, I&apos;m on a happiness journey,
+                  inspired by the{" "}
+                  <a
+                    href="https://www.coursera.org/learn/the-science-of-well-being"
+                    className="inline-link"
+                  >
+                    Science of Well-Being
+                  </a>
+                  , and learning about the human brain. My goal is to{" "}
+                  <strong>
+                    joyfully shape the human experience through design
+                  </strong>
+                  .
+                </p>
+              </div>
             </div>
           </div>
         </div>

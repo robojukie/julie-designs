@@ -5,7 +5,7 @@
    Loads AFTER styles/juliepaik.css (the full verbatim port) so it can override.
    Nothing here should duplicate a rule that exists in the export; if a rule
    turns out to be in juliepaik.webflow.css, delete it here and let the port
-   own it. Verify with: node scripts/audit-css-coverage.js */
+   own it. Verify with: node scripts/check-frozen-stylesheet.mjs */
 
 /* ---------------------------------------------------------------------------
    1. Case-study background
@@ -77,6 +77,51 @@
 .fade-in-up {
   opacity: 0;
   animation: fadeInUp 0.4s ease forwards;
+}
+
+/* The page-level reveal, for components/FadeIn.tsx. Ports the IX2 "fade in
+   description" / "fade in work" / "fade about" / "fade writing" action lists:
+   opacity 0 -> 1, 500ms delay, 500ms duration.
+
+   HERE FOR THE SAME REASON AS THE KEYFRAMES ABOVE, learned twice. FadeIn was a
+   motion.div with `initial={{ opacity: 0 }}`, which server-renders as
+   `style="opacity: 0"` and is only ever undone by JavaScript: React hydrates,
+   Motion starts a rAF loop, the element fades in. Three ways that fails —
+   a background tab, where Chromium suspends rAF entirely and the content stays
+   invisible until the tab is focused; anything rendering without a frame loop,
+   like headless screenshot and link-preview services; and JS being slow,
+   blocked or erroring, after which the content never appears at all despite
+   being present in the HTML.
+
+   A CSS animation runs off the document timeline rather than rAF, so a hidden
+   tab advances it instead of freezing it, and it needs no JavaScript to
+   finish. `both` holds opacity 0 through the delay so the reveal still starts
+   from nothing.
+
+   The note explaining this used to live only in the comment above — next to
+   the one animation it had been applied to, in a stylesheet no one writing a
+   React component would open. Both were authored in the same initial commit
+   and still didn't meet. It is repeated in components/FadeIn.tsx for that
+   reason. */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.fade-in {
+  animation: fadeIn 0.5s ease 0.5s both;
+}
+
+/* No animation, and no `both` holding it invisible first — the content is
+   simply there. */
+@media (prefers-reduced-motion: reduce) {
+  .fade-in {
+    animation: none;
+  }
 }
 
 /* ---------------------------------------------------------------------------
@@ -775,27 +820,1917 @@ a.social-link:not(.brand):hover {
     gap: 32px;
   }
 
-  /* Apply side padding on the section (outside .container-680) so the hero
-     paragraph is constrained to the same width as the sub-680 paragraphs,
-     which get their padding from .section.about (also outside container-680).
-     Padding on .about-hero-grid would narrow the paragraph by 32px because
-     .container-680 has already capped width at 680. */
-  .hero-section.page-header-section.about {
-    padding-left: 16px;
-    padding-right: 16px;
-  }
-
   .about-hero-image img {
     max-height: 200px;
   }
 }
 
-/* Below 767, .section.about drops to 0 but .subsection picks up 24px sides
-   (juliepaik.css:7317), so paragraphs below the hero shift to 24px. Match
-   that here — the hero has no .subsection wrapper to inherit from. */
+/* Side padding on the section (outside .container-680) so the hero paragraph
+   is constrained to the same width as the sub-680 paragraphs, which get their
+   padding from .section.about / .subsection (also outside container-680).
+   Padding on .about-hero-grid would narrow the paragraph by 32px because
+   .container-680 has already capped width at 680.
+
+   This used to be two breakpoints of hardcoded values (16px at <=991, 24px at
+   <=767) chosen to match what .section.about and .subsection did at those
+   widths. Both of those now take --gutter unconditionally (section 17), so
+   this follows the token instead and the media queries are gone with it. */
+.hero-section.page-header-section.about {
+  padding-left: var(--gutter);
+  padding-right: var(--gutter);
+}
+
+/* ---------------------------------------------------------------------------
+   17. One horizontal gutter  — supersedes the export's per-wrapper gutters
+
+   The export gives every page-level wrapper its own horizontal padding and
+   none of them agree. Worst case: .project-section is `padding: 88px 104px`
+   at base but `padding: 60px 0` at max-width 991px, so 104px of gutter
+   vanishes at one breakpoint and case-study content goes flush against both
+   screen edges. Bare .container-1232 (one with no gutter-supplying ancestor)
+   is 0 at three of the five breakpoints and flush too. The nav shell uses a
+   sixth set of values, so above 991px the nav and the content under it don't
+   share a left edge either.
+
+   32 horizontal-padding declarations across juliepaik.css drive this, spread
+   over five media queries. We don't rewrite them one at a time: custom.css
+   loads after juliepaik.css and media queries add no specificity, so a single
+   unconditional rule here at matching specificity beats every in-media
+   declaration for that selector by source order alone, at every breakpoint at
+   once. Specificity is matched per selector — (0,1,0) for the single-class
+   wrappers, (0,2,0) for .project-section.fixed, (0,3,0) for the nav shell —
+   because a mismatch either loses to a compound rule or silently outranks
+   something it shouldn't. Physical padding-left/padding-right, not
+   padding-inline, to match the physical declarations being replaced.
+
+   The single value is --gutter (styles/tokens.css). Vertical padding, type and
+   everything else is left exactly as the export has it.
+
+   The target, uniformly, at every wrapper and every width:
+
+       content left edge = max(--gutter, (100vw - 1232px) / 2)
+
+   i.e. gutter-bound while the viewport is narrow, centring-bound once 1232px
+   of content fits with room to spare.
+
+   WRAPPERS BEYOND THE FIVE THE AUDIT NAMED, all required to hit that:
+
+   (a) .project-section-hero is a sixth wrapper with the identical bug —
+       104px at base, 0 at 767, 24px at 479 — and it wraps the hero of every
+       case study, including the top of /vac-redesign. Fixing the five and not
+       this one leaves the hero and the section directly beneath it on
+       different left edges between 768 and 991px.
+
+   (b) .project-narrow-margin-section and .project-narrow-margin-section-dark
+       are a seventh and eighth, same family, same `104px -> 0` collapse (the
+       dark one hits 0 at 991, juliepaik.css:5005). They are what actually
+       wraps the .container-1232 instances on /vac-redesign that the audit
+       listed as having "no gutter-supplying ancestor" — they do have one, it
+       just isn't among the five. Without the gutter here the dark sections
+       still go flush at 991. Their narrower measure (max-width 1232
+       INCLUDING the gutter, so ~1024px of content) is left alone — that is a
+       deliberate "narrow margin" and belongs to the content-measure work.
+
+   (b2) .container-1232-absolute is a ninth, and the odd one out: it is
+       position:absolute with left/right pinned, not in flow. Same stepped
+       gutter (104 -> 0 at 991 -> 24 at 767) and the same
+       `width: 1232px; max-width: 100%` inversion as .container-1232. It owns
+       its gutter outright — its parent .sticky-section supplies none — so it
+       is treated as a top-level container: gutter padding plus the
+       `+ 2 * --gutter` cap. Absolute positioning doesn't change the maths;
+       with left/right pinned and margin auto it centres exactly as an
+       in-flow block would. Used once, on /bank-green-gpe. See section 19.
+
+   (c) These wrappers NEST: .container-1232 sits inside .project-section
+       (vac-redesign), inside .project-subsection (brainsprout), inside
+       .project-section-hero (every case-study hero) and inside the
+       narrow-margin pair. Across the seven rendered pages, all 72
+       .container-1232 outside the nav and footer have a gutter-owning
+       ancestor. So the container is NEVER the outermost wrapper of its stack
+       in the markup as it stands today, and it does not get the gutter by
+       default — it is zeroed instead. A bare `padding: 0` and not merely the
+       absence of a rule, because juliepaik.css:5642 puts 24px back at <=767.
+
+       THE GUTTER IS OPT-IN FOR THIS CLASS. A .container-1232 that really is
+       the top of its stack takes the modifier .top-level-gutter at the call
+       site. That is the deliberate choice over deriving it in CSS from an
+       ancestor list: an ancestor list has to be re-audited every time a new
+       section wrapper appears, and it fails silently and invisibly when it
+       isn't — either doubling the gutter or dropping it, both of which look
+       like a design decision rather than a bug. The modifier is legible in
+       the JSX and wrong in an obvious way if it is wrong.
+
+       There are currently ZERO call sites carrying it. That is the correct
+       count, not an oversight: the only .container-1232 anywhere without a
+       gutter-owning ancestor is a .container-1232.full inside .subsection-last
+       on the accessibility page, and .full keeps `padding: 0` from the
+       export's own (0,2,0) rule, taking its 16px offset from .subsection-last.
+       Adding the modifier there would stack a gutter on top of that 16px. The
+       class exists for the next top-level container, not for a current one.
+
+   WHY max-width IS `1232px + 2 * --gutter` ON THE GUTTER-OWNING WRAPPERS:
+   they are border-box, so the cap has to cover the padding for 1232px of
+   *content* to survive. .container-1232 pays no gutter of its own, so it keeps
+   the plain 1232px — its ancestor's padding is outside its box. The two have
+   to move together: a container with the bigger cap and no padding would put
+   its text a gutter further OUT than everything else, and one with the plain
+   cap and padding a gutter further IN. .top-level-gutter takes the bigger cap
+   because it does pay its own.
+
+   .container-1232 was `width: 1232px; max-width: 100%`, which with `width`
+   above the viewport makes the box exactly as wide as the window whenever the
+   window is under 1232px — that is why the zero-gutter cases went flush rather
+   than merely tight. Inverted to `width: 100%; max-width: <cap>` so it can
+   never exceed its own box.
+
+   NAV: capped to the same measure as content, deliberately — it was 1440px
+   against content's 1232px, so even at equal gutter their left edges differed
+   by up to 104px on wide screens. A nav that doesn't start where the page
+   starts reads as a misalignment on every page at every scroll position, and
+   there is nothing in the nav wide enough to need the extra 208px. The cap is
+   the same `1232px + 2 * --gutter` expression, so the brand mark lands on the
+   content's left edge exactly.
+
+   KNOWN SIDE EFFECT, ACCEPTED: at 768-991px the export narrowed
+   .container-1232 to 680px (`width: var(--width--container-680)`,
+   juliepaik.css:4471). Inverting width/max-width here removes that cap, so the
+   tablet measure widens to the full column. This is intentional: with the cap
+   in place the first paragraph of a case study sat ~105px inside the nav's
+   left edge on tablet, which is the exact misalignment this section is meant
+   to remove. It also can't be preserved and fixed at once. The narrower tablet
+   measure is part of the separate five-content-measures problem
+   (.container-680 / .container-800 / .container-1232 / .subsection /
+   .project-subsection all resolving inside one wrapper) and belongs to that
+   work, not here.
+--------------------------------------------------------------------------- */
+.project-section,
+.project-section-hero,
+.project-narrow-margin-section,
+.project-narrow-margin-section-dark,
+.project-subsection,
+.subsection,
+.container-1232-absolute {
+  padding-left: var(--gutter);
+  padding-right: var(--gutter);
+}
+
+/* Opted out by default — see (c). Explicit 0 rather than no rule at all,
+   because juliepaik.css:5642 sets 24px at <=767 and would otherwise win. */
+.container-1232 {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+/* Opt in at the call site: <div className="container-1232 top-level-gutter">.
+   (0,2,0), so it beats the zeroing rule above without needing source order,
+   and beats `.container-1232.full`'s `padding: 0` on order if both ever land
+   on one element. */
+.container-1232.top-level-gutter {
+  max-width: calc(var(--width--container-1232) + 2 * var(--gutter));
+  padding-left: var(--gutter);
+  padding-right: var(--gutter);
+}
+
+/* (0,2,0), to match what these are replacing. .section.about is the outer
+   gutter on /about; .subsection above is the one on / and on /about below the
+   hero. Both had to come along: leaving them on their hardcoded 24px while the
+   nav follows the ramp puts the nav 13.6px outside the body text at 767px, a
+   misalignment that did not exist before this section. */
+.project-section.fixed,
+.section.about {
+  padding-left: var(--gutter);
+  padding-right: var(--gutter);
+}
+
+/* The gutter-owning wrappers that also carry a measure. .project-section,
+   .project-section-hero, .section.about and the narrow-margin pair are
+   full-bleed or already capped by the export, and keep whatever max-width they
+   have — they paint the case-study background bands, which must reach the
+   screen edge. */
+.project-subsection,
+.subsection,
+.container-1232-absolute {
+  width: 100%;
+  max-width: calc(var(--width--container-1232) + 2 * var(--gutter));
+}
+
+/* Plain 1232 — this one pays no gutter, so nothing has to be added back. */
+.container-1232 {
+  width: 100%;
+  max-width: var(--width--container-1232);
+}
+
+.container-1232.full.container-nav {
+  max-width: calc(var(--width--container-1232) + 2 * var(--gutter));
+  padding-left: var(--gutter);
+  padding-right: var(--gutter);
+}
+
+/* Nesting neutraliser, now needed for .subsection only. .container-1232 used
+   to need one too; making its gutter opt-in removed that, which is most of the
+   argument for opt-in — this list no longer has to enumerate every wrapper a
+   container might turn up inside.
+
+   .subsection can't take the same treatment: unlike .container-1232 it IS the
+   outermost wrapper on / (where its parent .section pays nothing), and it is
+   nested on /about (inside .section.about, which does pay). It genuinely
+   depends on context, so context is what decides it.
+
+   :where() contributes no specificity, so this lands at (0,1,0) — the same as
+   the .subsection rules above — and wins on source order rather than by
+   outranking them. Plain .section is deliberately absent from the list: it
+   supplies no padding of its own, so neutralising .subsection under it would
+   leave the home page with no gutter at all. */
+:where(
+    .project-section,
+    .project-section-hero,
+    .project-narrow-margin-section,
+    .project-narrow-margin-section-dark,
+    .project-subsection,
+    .section.about
+  )
+  .subsection {
+  max-width: var(--width--container-1232);
+  padding-left: 0;
+  padding-right: 0;
+}
+
+/* Home's hero is the one place that stays media-scoped. Its column is
+   .horizontal-container-right-to-top — a 1224px measure with its own 40px
+   padding, a different geometry from everything above and part of the
+   content-measure work, so it is left alone. But below 767 that wrapper drops
+   its padding and .hero-text-container takes over with a flat 24px
+   (juliepaik.css:5910 and :6668). Left as-is, the home hero copy would sit
+   13.6px inside the nav at 767 — an alignment that was correct before this
+   section and would have been broken by it. Scoped to the same breakpoint the
+   export uses, so nothing above 767 moves; one rule covers the 479 block too,
+   since that range is inside this one and this file loads later. */
 @media screen and (max-width: 767px) {
-  .hero-section.page-header-section.about {
-    padding-left: 24px;
-    padding-right: 24px;
+  .hero-text-container {
+    padding-left: var(--gutter);
+    padding-right: var(--gutter);
   }
+}
+
+/* ---------------------------------------------------------------------------
+   18. Blue bullet list — suppress the UA marker
+
+   .list-item-colored-bullet draws its bullet as a background-image
+   (Bullet.svg, 12px, with padding-left: 30px to clear it — juliepaik.css:2652).
+   Nothing ever turned off the real list marker, so every item renders TWO
+   bullets: the blue square from the background image, and a UA disc.
+
+   The disc isn't merely redundant, it breaks the gutter. .blue-bullet-list is
+   `padding-left: 0` (juliepaik.css:2647) and markers are list-style-position:
+   outside, so the disc is painted outside the <li>'s content box — to the LEFT
+   of the list, and therefore to the left of the section's gutter. On
+   /bank-green-gpe "Next steps" at a 500px viewport the section pads to 25px,
+   the blue square sits at 28px, and the disc sits at ~10px, close enough to
+   the screen edge to read as content that has escaped the gutter. It is the
+   leftmost painted thing in that whole section.
+
+   The markup already assumes this rule exists: both call sites carry
+   `role="list"` on the <ul>, which is the standard counter to Safari
+   VoiceOver dropping list semantics when list-style is none. The role is
+   there, the list-style never made it across from Webflow.
+
+   Set on the list rather than the item because list-style-type inherits, so
+   one declaration covers every current and future child. Affects
+   /bank-green-gpe ("Next steps") and /vac-redesign (three items).
+--------------------------------------------------------------------------- */
+.blue-bullet-list {
+  list-style: none;
+}
+
+/* ---------------------------------------------------------------------------
+   19. Bank Green sticky section — align with the page column
+--------------------------------------------------------------------------- */
+/* The overlay is a flex column with align-items: flex-start, so a bare <h2> or
+   <p> shrink-wraps to its own text instead of starting on the column's edge. */
+.container-1232-absolute {
+  align-items: stretch;
+}
+
+/* ---------------------------------------------------------------------------
+   20. Case-study hero — stop the stacked grid forcing a 480px floor
+
+   Below 992 the hero's .container-stacking collapses to a single column
+   (`grid-template-columns: 1fr`, juliepaik.css:5071). `1fr` is
+   `minmax(auto, 1fr)`, and that `auto` floor is the largest automatic minimum
+   among the items in the track — which is content-derived, not the track's
+   share of the container. Two items push it up:
+
+     .drawing-frame        max-width: 480px  (juliepaik.css:5250)
+     .grid-left-top-content min-width: 400px (juliepaik.css:5220)
+
+   The image in .drawing-frame has a min-content contribution larger than the
+   column, clamped by that max-width to a hard 480px floor. So between roughly
+   480 and 530px of viewport the track resolves to 480px inside a ~417px
+   content box, and .grid-left-top-content — max-width: 100% of a 480px grid
+   area — stretches to 480 with it. The title, the tagline paragraph and the
+   role list all inherit the overflow, and the page scrolls sideways by ~63px.
+   Below 480 it disappears because juliepaik.css:6816 drops the min-width to 0;
+   above ~530 the container is finally wide enough to contain the floor. A
+   narrow window, which is why it reads as an odd one-off rather than a
+   breakpoint problem.
+
+   min-width: 0 on the items opts out of the automatic minimum, so the track
+   is sized by the container as `1fr` already intends. This is the standard
+   remedy for grid and flex items refusing to shrink; nothing here sets a
+   width, so the single column still fills whatever the gutter leaves it.
+
+   Scoped to the collapsed single-column range. Above 992 the grid is
+   `.5fr 1fr` and the two floors are load-bearing — they are what stops the
+   text column and the drawing from collapsing into each other.
+
+   NOT caused by the gutter work in section 17: the hero's content box is
+   417px at 480 either way. Before, .project-section-hero paid 0 and
+   .container-1232 paid 24 a side; now the hero pays the gutter's 24 and the
+   container pays 0. Same 48px total, same overflow. It was simply never
+   noticed at this width.
+--------------------------------------------------------------------------- */
+@media screen and (max-width: 991px) {
+  .container-stacking > * {
+    min-width: 0;
+  }
+}
+
+/* Second, independent floor inside the same hero, and the one that was still
+   visible after the track was fixed: the drawing's own wrapper.
+
+     .card-image-wrapper.vac-intro-drawing-wrapper
+       width: 100%; min-width: 480px           (juliepaik.css:2917)
+       max-width: 90vw       at <=767          (juliepaik.css:6045)
+       min-width: 0          at <=479          (juliepaik.css:6782)
+
+   The export clearly meant the 90vw to cap it — but min-width beats max-width
+   in the CSS cascade unconditionally, so the wrapper stays 480px wide inside a
+   432px frame and, being a centred flex item, bleeds ~24px past the gutter on
+   BOTH sides. The 90vw never gets a chance to apply. The <=479 rule is the
+   author having hit this and patched only the bottom of the range, which is
+   why the seam sits at exactly 480.
+
+   Zeroing the floor at <=991 lets `width: 100%` and the existing max-width do
+   what they were written to do. Nothing else changes: above 533 or so the
+   frame is already wider than 480, so the floor never bound there, and at 900
+   or 991 the drawing still sits centred at its 480px cap inside the wider
+   column, which is the intended tablet treatment.
+
+   Worth noting the 90vw is only coincidentally right — with --gutter at 5vw a
+   side, the content box IS 90vw, but only while the clamp is in its ramp
+   (480-2080px). Below 480 the gutter is pinned at 24px and the two part ways.
+   It does no harm today because `width: 100%` resolves smaller in that range,
+   so it is left alone rather than converted; flagging it as a latent trap if
+   the gutter's ramp ever moves.
+
+   Unconditional, not scoped to <=991, because the 480px floor is on the base
+   rule and so bites in the two-column range too. At 992 the grid wants
+   510 (the text column's own floor) + 24 gap + 480 = 1014 inside an 893px
+   content box, and the drawing hangs 121px past the right gutter; at 1100 it
+   is still 24px over. It only comes right around 1127, where 1fr finally
+   exceeds 480 on its own.
+
+   Removing this floor everywhere lets the drawing's track take its `1fr`
+   share, which is what resolves the two-column overflow — and it costs
+   nothing above 1127, where that share is already the larger value: at 1512
+   the track is 1232 - 510 - 24 = 698px either way, measured identical before
+   and after. The text column's 510px floor (juliepaik.css:3048) is left
+   alone deliberately: it IS binding at 1512, and dropping it would renegotiate
+   the .5fr/1fr split and visibly narrow the hero copy on desktop, which is a
+   layout change nobody asked for rather than an overflow fix. */
+.card-image-wrapper.vac-intro-drawing-wrapper {
+  min-width: 0;
+}
+
+/* ---------------------------------------------------------------------------
+   21. Tablet — left-align the capped blocks instead of centring them
+   NEW BEHAVIOUR, NOT IN THE EXPORT, and a direct consequence of section 17.
+
+   Case-study sections hold blocks with their own max-width — 680 on the
+   .card-info family, 480 on ._2-x-1-grid, 800 on .top-content. On desktop
+   those sit centred inside the 1232 column, which is a deliberate reading
+   measure and stays exactly as it is.
+
+   Section 17 removed the export's 768-991 cap that squeezed .container-1232 to
+   680 (it had to: with the cap, case-study copy sat ~105px inside the nav's
+   left edge on tablet). The cap was also, incidentally, what made these blocks
+   LOOK flush there: a 680-wide block inside a 680-wide column fills it
+   exactly. With the column now the full gutter-to-gutter width — 810px at a
+   900px viewport — the same blocks float in the middle of it. At 900 the
+   section's prose starts at the 45px gutter while a ._2-x-1-grid starts at
+   210 and a .card-info at 120. Several different offsets inside one section,
+   which reads as the gutter being broken rather than as a measure.
+
+   Mobile and desktop were never affected: below 768 the column is narrower
+   than the caps so they never bind, and above 991 the centring is the design.
+
+   Two mechanisms do the centring, and both need turning off — they are not
+   the same thing and neither one alone is enough:
+
+     1. .horizontal-container is `justify-content: center` (a flex parent
+        centring a capped flex child) — this is the 480 and 460 cases.
+     2. .card-info / .card-info-centered centre themselves with auto left and
+        right margins — this is the 680 cases. `margin-right: auto` is kept so
+        the block still stops at its cap rather than stretching to the column.
+
+   Only the horizontal offset changes; every cap keeps its width, so the
+   reading measure is untouched. Grids that are genuinely side-by-side at this
+   width (._3-x-1-card-grid, three tracks across) are left alone — their items
+   are meant to sit at different offsets.
+--------------------------------------------------------------------------- */
+@media screen and (max-width: 991px) {
+  .container-1232 .horizontal-container {
+    justify-content: flex-start;
+  }
+
+  .card-info,
+  .card-info-centered {
+    margin-left: 0;
+    margin-right: auto;
+  }
+
+  /* A third mechanism — .card-media flipped to `align-items: center` at <=991
+     (juliepaik.css:4975), which on a column flex is the HORIZONTAL axis, so
+     every image wrapper inside a card is centred rather than left-aligned —
+     lives in section 22 as `.comparison .card-media`. It belongs with the rest
+     of the comparison-pair contract rather than here, and it is deliberately
+     NOT applied to ._3-x-1-card-grid, where three tracks across want their
+     images centred in their own column. */
+}
+
+/* ---------------------------------------------------------------------------
+   22. .comparison — the screen-comparison pair
+   NEW BEHAVIOUR, NOT IN THE EXPORT.
+
+   One opt-in container class for every before/after screen pair, replacing the
+   per-legacy-class rules this section used to carry. The export spreads these
+   pairs across two different grid classes — ._2-x-1-grid on /vac-redesign and
+   ._2-x-1-grid-real on /bank-green-gpe — and neither is a reliable signal:
+   three call sites using those same classes hold text cards, not images
+   (bank-green's "Consumer campaigns" and "Asynchronous actions", vac's
+   "-20 steps"). Keying off the legacy class would style those by accident and
+   would still need a second selector for the other page. `.comparison` is
+   added at the call site, so it says what the markup means and the text-card
+   grids simply don't get it.
+
+   The rules live on the container, not on the images, because every one of
+   them is about the RELATIONSHIP between the two halves — how the tracks
+   divide, what happens when they stack, where the captions start. An image
+   class could not express any of that, and --pair-aspect has to sit on the
+   grid element regardless.
+
+   THE CONTRACT
+     side by side  ->  the SAME two columns as every other pair on the page,
+                       both images one height, tops aligned, captions aligned
+     stacked       ->  each image the full width of the column, left-aligned,
+                       its own natural height
+
+   SIDE BY SIDE — THE COLUMNS NEVER MOVE. Every pair on a page divides its
+   space the same way, so the right-hand image begins at the same x in every
+   pair, and reading down the page there is one unbroken vertical line. This
+   is the rule the previous version of this section got backwards: it sized
+   each pair's tracks in proportion to that pair's own aspect ratios, which
+   bought equal heights within a pair at the cost of the alignment between
+   pairs. Six pairs on /vac-redesign put their right-hand image at six
+   different offsets, spread across 113px.
+
+   Equal tracks, so HEIGHT is what gives. A pair's shared height is the tallest
+   both images can be while each still fits its track, which is the track
+   divided by the LARGER of the two aspect ratios. CSS cannot read an image's
+   aspect, so each pair declares that one number as --pair-aspect at the call
+   site, next to the width/height props it is derived from. The wider-aspect
+   image then fills its track exactly; its partner is narrower and sits at its
+   track's left edge, with the slack on the right. Never centred, never
+   letterboxed — a picture always fills its own frame, and it is the frame that
+   changes shape.
+
+   One number per pair rather than two, and it is derived rather than measured:
+   at any viewport the tracks are a share of the content column, so the pair
+   holds its proportion of the screen without a breakpoint to tune.
+
+   A pair may opt out with .natural-height. Only one does — "Simplifying
+   substitute assignment", a 440x746 portrait against a 772x416 landscape. It
+   is a flow diagram, not a screen comparison, and a shared height would render
+   the portrait at roughly a third of its track. It keeps the equal tracks and
+   takes its natural heights.
+
+   STACKED: the column is the shared measure, so width parity is the goal and
+   height parity is not — the images differ in height by their own aspect
+   ratios, which is correct. --pair-aspect is switched off, and each image
+   takes the full column.
+
+   Multi-image rows that are NOT comparisons keep their own behaviour — a
+   ._3-x-1-card-grid row of three may legitimately want differing sizes, and
+   nothing here reaches it.
+--------------------------------------------------------------------------- */
+
+/* Both halves hug a common top edge. .captioned-image is a column flex at
+   `justify-content: space-between`, so unequal content pushed the spare height
+   between image and caption instead of leaving it at the bottom — at 1200 the
+   two images started 20px apart and the captions with them. */
+.comparison .captioned-image {
+  justify-content: flex-start;
+}
+
+/* .image-wrapper's centring — the thing that used to offset the two halves of
+   a pair from each other — is now handled for every captioned figure, not just
+   comparison ones, by section 28. Nothing comparison-specific is left to say
+   about it. */
+
+/* NOTHING BETWEEN THE FRAME AND THE IMAGE. Every half of every pair is now
+   .captioned-image > .image-wrapper > img, with no intermediate wrapper — which
+   is what lets the frame's height reach the image at all. Four halves used to
+   carry one: two an .image-container-left-align (20px of vertical margin, so
+   that half stood 40px taller and started 20px lower than its partner), two a
+   vestigial Webflow lightbox <a>. Both are gone from the markup, and with them
+   the rules that used to neutralise them.
+
+   .card-image-wrapper survives only outside .comparison, so the two rules below
+   are the last of that family here — kept because .natural-height's pair still
+   uses .media-card. */
+.comparison .card-image-wrapper {
+  justify-content: flex-start;
+  width: 100%;
+  max-width: 100%;
+}
+
+.comparison .card-media {
+  align-items: flex-start;
+}
+
+/* The caption's 10px inset used to be zeroed here, for comparison pairs only.
+   It applies to every captioned figure now — section 28. */
+
+/* No height cap anywhere, at any width. The export sizes these by cap alone —
+   .process-image at 440/480, .image-max300h at 800 wide and 300 tall — with no
+   width, so an image rendered at whatever intrinsic width the srcset picked and
+   merely got clamped. On a wide screen a 440px-capped image sat in a 604px
+   track looking undersized while on a phone the same image filled the column
+   and looked right: proportionally LARGEST at the smallest viewport, which is
+   backwards.
+
+   The 300px height cap is the specific thing that has to go. Under this
+   section's contract the pair's height is derived from the track and the
+   images' own aspect ratios; a fixed 300 fought that, and where it won it
+   forced a box whose shape did not match the picture. That is what letterboxed
+   the Design iterations pair — 42-73px of blank down the left of every one of
+   them at 1440, with the caption still flush at the frame's edge — and it left
+   the .image-max300h pairs 85-113px short of their own right edge. Height is
+   not something to cap here; it is the output. */
+.comparison img {
+  max-width: 100%;
+  max-height: none;
+
+  /* The frame the image is given already carries the image's own aspect ratio,
+     so `contain` resolves to an exact fill and nothing is cropped, stretched or
+     padded. It is here as a guarantee rather than a fit: if a frame ever does
+     disagree with its picture, the picture stays undistorted and anchors left
+     — never centred, which is what made a disagreement read as a broken
+     margin rather than as a rendering artefact. */
+  object-fit: contain;
+  object-position: left center;
+}
+
+@media screen and (max-width: 991px) {
+  /* Stacked: the column is the shared measure. --pair-aspect is off, so each
+     frame takes the column's width and its own natural height. */
+  .comparison .image-wrapper {
+    aspect-ratio: auto;
+  }
+
+  .comparison img {
+    width: 100%;
+    height: auto;
+  }
+
+  /* .card-image-wrapper._2-x-1-image-fixed-height-wrapper is a literal
+     `height: 300px` (juliepaik.css:2925). No comparison pair uses that wrapper
+     any more — section 28 moved them all onto .image-wrapper — but the class
+     survives elsewhere, so the rule stays scoped and harmless. */
+  .comparison .card-image-wrapper {
+    height: auto;
+  }
+
+  /* The grid's own cap. ._2-x-1-grid is `max-width: 480px` below 992, so once
+     stacked the pair sat in a 480px column no matter how much room the section
+     had: 100% of the content column at 375, but only 59% of it at 900 — again
+     proportionally biggest on the smallest screen. The column, so a stacked
+     pair lands on the same figure measure as every lone figure — see section
+     24. */
+  .comparison {
+    max-width: 100%;
+  }
+}
+
+@media screen and (min-width: 992px) {
+  /* The same two columns for every pair on the page. Not per-pair, not derived
+     from the images — that is the whole point of this rule. */
+  .comparison {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  /* The pair's shared height, expressed as a shape on the frame rather than a
+     length: the frame is one track wide, so `aspect-ratio` makes it
+     track / --pair-aspect tall, and both frames in the pair resolve to the same
+     number without either of them naming it. Responsive for free.
+
+     The image then takes that height and whatever width its own aspect implies
+     — so the image whose aspect IS --pair-aspect fills its track exactly, and
+     its partner comes up short on the right, at its track's left edge. */
+  /* Scoped through .captioned-image so these outrank section 28's
+     fill-the-frame rule, which now applies at every width rather than only
+     below 992 and would otherwise win on source order. */
+  .comparison .captioned-image .image-wrapper {
+    aspect-ratio: var(--pair-aspect);
+    width: 100%;
+  }
+
+  .comparison .captioned-image .image-wrapper > img {
+    height: 100%;
+    width: auto;
+  }
+
+  /* The opt-out: equal tracks, but each image keeps its natural height. For a
+     pair whose two images are not the same KIND of picture, a shared height is
+     not a thing worth having. */
+  .comparison.natural-height .captioned-image .image-wrapper {
+    aspect-ratio: auto;
+  }
+
+  .comparison.natural-height .captioned-image .image-wrapper > img {
+    width: 100%;
+    height: auto;
+  }
+
+  /* `1fr` is `minmax(auto, 1fr)`, and that auto floor takes each item's
+     content-derived minimum — which the image caps pin at 480px. Two 480px
+     floors plus the gap need 984px, more than the 879px column at a 992px
+     viewport, and the right-hand image hung about 105px past the gutter. */
+  .comparison > * {
+    min-width: 0;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   23. NovinoPath showcase  — NEW, NOT IN THE EXPORT
+
+   /novinopath-lis is the one project page that isn't a case study: it's
+   organised by feature area rather than by process, so it needs a few shapes
+   the ported case-study stylesheet has no equivalent for — the opening block,
+   the prototype embed, and the in-page TOC. See app/novinopath-lis/page.tsx.
+
+   Horizontal padding is NOT set anywhere in this section. Section 17 gives
+   every page wrapper `padding-left/right: var(--gutter)`, and this page's
+   sections are ordinary .project-section / .container-1232 stacks, so they
+   inherit that for free. Only vertical rhythm is tuned here.
+
+   Every value below resolves to an EXISTING token. No new custom properties
+   are declared here: the brief asked for none, and the two things that might
+   have wanted one (the placeholder grey, the embed height) are answered by
+   --color--neutral--warm--400 and a plain aspect-ratio instead.
+
+   The section paddings deliberately match .project-section's own 88px/104px →
+   40px/24px ramp (juliepaik.css) rather than picking new numbers, so the page
+   stays on the same vertical rhythm as the rest of the site at every
+   breakpoint.
+--------------------------------------------------------------------------- */
+
+/* -- Hero spacing when the hero is title-only ---------------------------- */
+
+/* MEASURED: 276px of empty between the tagline and the "Overview" label. It is
+   three separate paddings stacking, none of them wrong on their own:
+
+     .content-title      margin-bottom  60px
+     .project-section-hero padding-bottom 88px
+     .project-section    padding-top    88px
+
+   All three exist to make room for something this page doesn't have. The case
+   studies put a description paragraph and a role list in the hero's second
+   row, and .project-section-hero is justify-content: space-between — it is
+   built as a full slide with content top and bottom. The showcase hero is a
+   title and a tagline, full stop, so the three gaps land end to end with
+   nothing between them.
+
+   Keyed off :has() rather than a class on the page, so it is the ABSENCE of
+   the second row that tightens the spacing — CaseStudyHero only renders
+   .horizontal-container when it has a description or roles to put in it. Any
+   future title-only hero gets this automatically, and the four case studies,
+   which all pass roles, are untouched.
+
+   min-height goes too: the responsive rules set 560px at <=991 and 85vh below
+   that, and with one child in a space-between column that height becomes gap
+   under the tagline again. */
+.project-section-hero:not(:has(.horizontal-container)) {
+  min-height: 0;
+  padding-bottom: 24px;
+}
+
+.project-section-hero:not(:has(.horizontal-container)) .content-title {
+  margin-bottom: 0;
+}
+
+/* The other half of the same gap. Scoped to the page's first section rather
+   than to .showcase-section, which every feature section also carries — those
+   follow another section and want the full 88px.
+
+   24 + 24 rather than the 40 + 48 this started at. The tagline and the
+   "Overview" label are two halves of one thought — the title block naming the
+   product, then the paragraph explaining it — and the opening block's own
+   internal rhythm is 24–32px. At 88px of separation the hero read as a
+   detached slide rather than as the top of the page it introduces. Still ~2×
+   the internal gap, which is enough to mark a boundary. */
+.project-section.opening-section {
+  padding-top: 24px;
+}
+
+/* -- Opening block: overview, rule, context columns ---------------------- */
+
+/* One block, one measure. The overview prose, the rule and the columns all sit
+   inside .container-800 and share a left edge — the rule is what separates the
+   two halves, so no second container width is introduced to do it.
+
+   This replaces an earlier full-width four-up band. That band ran to 1232
+   while every paragraph sits at 800, giving the first two screens two
+   competing measures, and its one-line cells couldn't hold a value longer than
+   a job title without breaking the row's baseline. */
+
+.project-overview {
+  align-items: flex-start;
+  display: flex;
+  flex-direction: column;
+  /* Wider than .heading-and-body-container's 8px: this gap separates the
+     label from the prose and the prose from the rule, which are section-level
+     transitions rather than heading-to-body. */
+  gap: 24px;
+  width: 100%;
+}
+
+.project-overview-body {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin: 0;
+  /* .eyebrow above is max-width:680px, but the prose keeps the full measure —
+     it is the page's main column, not a label. */
+  width: 100%;
+}
+
+.project-overview-body p {
+  margin: 0;
+}
+
+.project-rule {
+  background-color: var(--divider);
+  border: 0;
+  height: 1px;
+  margin: 8px 0;
+  width: 100%;
+}
+
+/* A <dl>, so the facts stay a label/value set for a screen reader rather than
+   loose paragraphs.
+
+   grid-auto-flow: column gives exactly one equal track per child, so the block
+   holds its shape at three columns or four without naming a count.
+   `repeat(auto-fit, minmax(0, 1fr))` was tried first and is the wrong tool: a
+   0 minimum gives the browser no width to fit against, so it laid out 25
+   candidate tracks and collapsed 22 of them. The result LOOKED right at three
+   children — which is exactly why it's worth not shipping. */
+.context-columns {
+  display: grid;
+  gap: 32px;
+  grid-auto-columns: 1fr;
+  grid-auto-flow: column;
+  margin: 0;
+  width: 100%;
+}
+
+.context-column {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Clears the UA's 40px dd indent, which would otherwise push every value out
+   of line with its own label. */
+.context-column-item {
+  font-family: var(--text-body-font);
+  font-size: var(--text--body-text-sm);
+  font-weight: var(--text-weightt--body-300);
+  line-height: var(--text-height--body-mobile-height);
+  margin: 0 0 4px;
+}
+
+.context-column-item:last-child {
+  margin-bottom: 0;
+}
+
+/* Columns become rows before they become unreadably narrow. At 767 a
+   three-column grid gives each column ~200px, which is where a two-word value
+   starts wrapping mid-phrase. */
+@media screen and (max-width: 767px) {
+  .context-columns {
+    gap: 24px;
+    grid-auto-flow: row;
+  }
+}
+
+/* -- In-page TOC --------------------------------------------------------- */
+
+/* .container-1232 stacks its children on a 32px row-gap, which is the internal
+   rhythm of the opening block — the same distance that separates the overview
+   label from its prose. At that spacing the TOC reads as a fourth context
+   column group rather than as a separate device, since the page now opens on
+   three consecutive eyebrow-labelled stacks. The extra margin is what makes it
+   land as its own thing. */
+.project-toc-block {
+  margin-top: 24px;
+}
+
+.project-toc {
+  align-items: flex-start;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+}
+
+.project-toc-list {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* The export puts margin-bottom: 4px on every li, which breaks the rules into
+   detached segments. */
+.project-toc-list li {
+  margin: 0;
+}
+
+.project-toc-link {
+  align-items: baseline;
+  color: var(--text-colors--text-primary);
+  display: flex;
+  gap: 12px;
+  padding: 14px 0;
+  text-decoration: none;
+  transition: background-color 0.2s ease;
+  width: 100%;
+}
+
+/* Restates the base color to beat the global `a:hover` in juliepaik.css, which
+   is (0,1,1) and would turn the row coral against its own tint. */
+.project-toc-link:hover,
+.project-toc-link:focus-visible {
+  color: var(--text-colors--text-primary);
+}
+
+/* A tap latches :hover on touch, which would leave the tint stuck on. */
+@media (hover: hover) {
+  .project-toc-link:hover {
+    background-color: var(--surface);
+  }
+}
+
+.project-toc-link:focus-visible {
+  background-color: var(--surface);
+}
+
+.project-toc-n,
+.project-toc-name {
+  flex: none;
+}
+
+.project-toc-n {
+  font-variant-numeric: tabular-nums;
+  opacity: 0.6;
+}
+
+/* translateY lifts the leader off the baseline it is aligned to, down onto the
+   descender line where a printed leader sits. */
+.project-toc-leader {
+  flex: 1 1 auto;
+  height: 2px;
+  transform: translateY(-4px);
+  background-image: radial-gradient(
+    circle,
+    var(--nav-link-color) 30%,
+    transparent 30%
+  );
+  background-size: 5px 5px;
+  background-repeat: repeat-x;
+}
+
+/* -- Showcase sections --------------------------------------------------- */
+
+/* .project-section is built for a SLIDE: `height: 810px` with
+   `justify-content: space-between`, so a header pins to the top and a footer to
+   the bottom of a full-height panel.
+
+   Neither suits this page. Its sections are stacks of prose and one artefact,
+   of genuinely different lengths — measured at 1280x900, the intro, outcomes
+   and reflection sections each rendered 810px tall around ~350px of content,
+   and space-between then flung the TOC 400px clear of the paragraph above it.
+
+   So: no floor, and children packed from the top with an even gap. Two
+   declarations undone; the other seven — ground, colour, type, z-index,
+   position, the flex column, the centred cross-axis, and now the shared
+   --gutter from section 17 — are inherited unchanged, which is the whole
+   reason to stay on this base rather than fork a second section primitive.
+   Section 17 targets `.project-section` by name: a fork would have opted this
+   page OUT of the gutter unification without anyone noticing.
+
+   TWO classes in the selector, and one is not optional. A single
+   `.showcase-section` at (0,1,0) was tried and beats `.project-section`'s own
+   `min-height: 85vh` at <=767 on source order — but not the compound
+   modifiers, which sit at (0,2,0): `.project-section.dark { min-height:
+   560px }` at that breakpoint reimposed a floor on the outcomes section, and
+   `.blue-accent` would do the same. Matching (0,2,0) covers that whole tier
+   with one rule instead of one rule per modifier.
+
+   `.hug-height` is nevertheless GONE from the markup, and that is the change
+   worth having: it was only ever there to soften a height this rule removes
+   outright, and carrying it meant also cancelling its 85vh and 560px floors in
+   a separate media query. One class fewer on every section, one rule fewer
+   here, and no breakpoint to keep in sync. */
+.project-section.showcase-section {
+  gap: 32px;
+  height: auto;
+  justify-content: flex-start;
+  min-height: 0;
+}
+
+.feature-prototype {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+}
+
+/* 16:10 matches the aspect the app's own screens are captured at, so swapping
+   the placeholder for a real screenshot won't reflow the page. */
+.feature-embed,
+.placeholder-media {
+  aspect-ratio: 16 / 10;
+  border: 0;
+  border-radius: var(--radius-md);
+  display: block;
+  width: 100%;
+}
+
+/* Stands in for the brief's Tailwind `bg-gray-100`; there is no Tailwind in
+   this project, so the flat neutral already in the token set does the job. */
+.placeholder-media {
+  background-color: var(--color--neutral--warm--400);
+}
+
+/* Sits inside .heading-and-body-container, whose 8px row-gap is tuned for a
+   heading against its body. The link is a separate move from the paragraph
+   above it and needs more air than that. */
+.feature-prototype-link {
+  margin: 8px 0 0;
+}
+
+/* The rule that closes the opening block and opens the feature run.
+   .container-1232's 32px row-gap on its own puts the rule nearer the menu
+   above than the section below, which reads as underlining the menu rather
+   than dividing the page. */
+.projects-start-rule {
+  margin-top: 32px;
+}
+
+/* -- Feature label and work-type tag ------------------------------------- */
+
+/* The label row: "FEATURE: CONSULT REVIEW" on the left, its pill flush right.
+   Wraps rather than overflowing when the feature name runs long on a narrow
+   column. The eyebrow shrinks to its text on its own now that the base rule
+   sets no width, so only the label's own bottom margin needs cancelling. */
+.feature-label {
+  align-items: baseline;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 12px;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.feature-label .eyebrow {
+  margin-bottom: 0;
+}
+
+/* Below 767px the nav shows numbers with no names, so this prefix is the only
+   place a bare "02" can be resolved. */
+.project-label-n {
+  margin-right: 7px;
+  font-variant-numeric: tabular-nums;
+  opacity: 0.6;
+}
+
+/* -- Project state ------------------------------------------------------- */
+
+/* A different question from the work-type tag below, at a different level, so
+   it is deliberately a different object: filled rather than outlined, and one
+   per project rather than one per feature. Making them look alike would invite
+   reading them as one row of the same kind of thing.
+
+   Shipped is the only one that gets colour. State is read for triage — a
+   reader scanning wants "what actually exists" — and giving all three an
+   equal-weight treatment would flatten exactly the distinction they are here
+   to draw. The other two sit on the page's own neutrals. */
+.project-state {
+  border-radius: 130px;
+  font-family: var(--text-body-font);
+  font-size: var(--text-size--nav-link-p-text);
+  font-weight: var(--text-weightt--eyebrow-500);
+  line-height: var(--text-height--nav-link-height);
+  padding: 5px 11px;
+  white-space: nowrap;
+}
+
+/* 4.83:1 — the same ink/ground pair the New feature tag uses, measured. */
+.project-state-shipped {
+  background-color: var(--background-color--background-brain-sprout);
+  color: var(--accents--bold--main-brand-dark);
+}
+
+.project-state-building {
+  background-color: var(--color--neutral--warm--400);
+  color: var(--text-colors--muted-dark-blue);
+}
+
+/* Outlined rather than filled: an approved concept is the one state where the
+   thing does not exist yet, and an unfilled pill reads as exactly that without
+   needing a word to explain it. */
+.project-state-concept {
+  border: 1px solid var(--color--beige--600);
+  color: var(--text-colors--muted-dark-blue);
+  padding: 4px 10px;
+}
+
+/* -- Project context columns --------------------------------------------- */
+
+/* User roles and screen count, below the description — the same shape the
+   opening block uses for Timeline / My Role / Team, one level down. The
+   .container-800 above already stacks its children on a 32px gap; this only
+   adds the small step that separates the facts from the prose they follow. */
+.project-context {
+  margin-top: 8px;
+  width: 100%;
+}
+
+/* Same pill idiom as the export's .badge on the home-page thumbnails, but
+   static rather than position:absolute — that rule exists to float a badge
+   over an image and can't be reused inline. Outlined: the border is what makes
+   it read as a tag on a tinted page, where a fill alone is easy to mistake for
+   a highlight behind the words. */
+.feature-tag {
+  border: 1px solid currentColor;
+  border-radius: 130px;
+  font-family: var(--text-body-font);
+  font-size: var(--text-size--nav-link-p-text);
+  font-weight: var(--text-weightt--eyebrow-500);
+  line-height: var(--text-height--nav-link-height);
+  padding: 4px 10px;
+  white-space: nowrap;
+}
+
+/* ONE ink, TWO grounds. --accents--bold--main-brand-dark clears AA on both
+   fills (4.83:1 on the green, 4.99:1 on the yellow), so the two tags read as
+   members of one set and only the ground tells them apart. `currentColor` on
+   the border above then follows for free.
+
+   The obvious bright accents were the first choice and had to go — measured
+   against the same grounds:
+
+     --accents--bold--green #43a363 on the green   2.58:1  FAIL
+     --accents--bold--blue  #52afcf on the blue    2.12:1  FAIL
+
+   Both are unreadable for anyone with low vision, and a tag whose whole job is
+   to be glanced at is the wrong place to spend that. */
+.feature-tag-new {
+  background-color: var(--background-color--background-brain-sprout);
+  color: var(--accents--bold--main-brand-dark);
+}
+
+/* #e8f0c7 — the only yellow in the token set. It is named for Bank Green
+   because that is the page it was introduced on, not because it is a green;
+   it reads as a pale chartreuse and is the right ground here. */
+.feature-tag-redesign {
+  background-color: var(--background-color--background-accent-bankgreen);
+  color: var(--accents--bold--main-brand-dark);
+}
+
+/* ---------------------------------------------------------------------------
+   24. Flush image captions  — the remaining, non-comparison ones
+
+   The export insets every caption 10px from its own image's left edge with
+   `.caption-wrapper { padding: 0 10px }`. Section 22 already removes that for
+   comparison pairs — `.comparison .caption-wrapper` — which is where it was
+   most visible. This unscopes it.
+
+   The 10px reads as a mistake rather than as a margin wherever it survives:
+   the caption is not in a card, so there is no box for the inset to belong to,
+   just a caption that fails to line up with the thing it captions on a site
+   whose whole layout is now one gutter.
+
+   Placed AFTER section 22 so the two agree rather than fight; the scoped rule
+   there becomes redundant but stays, because it documents the contract that
+   `.comparison` promises and deleting it would make that contract depend on
+   this rule staying put.
+
+   Lives in custom.css rather than being edited out of juliepaik.css, because
+   that file is frozen (scripts/check-frozen-stylesheet.mjs) and this is an
+   addition, not a deletion.
+--------------------------------------------------------------------------- */
+.caption-wrapper {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+/* -- Feature before/after ------------------------------------------------ */
+
+/* Nothing here. The pair uses `._2-x-1-grid comparison` from section 22, which
+   is the site's contract for exactly this shape:
+
+       side by side  ->  equal heights, tops aligned, captions aligned
+       stacked       ->  equal widths, both flush to the gutter
+
+   An earlier version of this page carried its own `.feature-beforeafter` grid
+   — a 2-up with align-items:start and a 767 stack. It looked right and was a
+   second, weaker implementation of the same idea: no aspect-proportional
+   tracks, no width parity when stacked, and its own breakpoint to keep in sync
+   with the one in section 22. Deleted in favour of the real thing.
+
+   No --cols: both halves are .placeholder-media at a shared 16:10, so the even
+   split already yields equal heights. When real screenshots land, set --cols
+   at the call site from their width/height props — see the comments on the
+   vac-redesign pairs. */
+
+/* -- Feature parts ------------------------------------------------------- */
+
+/* The screens inside one feature area. Gap is larger than the block-internal
+   32px so consecutive parts read as siblings of each other rather than as one
+   continuous run of text and images. */
+.project-features {
+  display: flex;
+  flex-direction: column;
+  gap: 56px;
+  width: 100%;
+}
+
+.project-feature {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+}
+
+.project-feature p {
+  margin: 0;
+}
+
+/* -- Sticky feature-area indicator --------------------------------------- */
+
+.project-run {
+  position: relative;
+}
+
+/* Must equal SectionNav's NAVBAR_HEIGHT + SCROLL_SLACK (60 + 24), or a #hash
+   from outside the page lands somewhere a tab click doesn't. */
+.project-run .project-section {
+  scroll-margin-top: 84px;
+}
+
+/* -- Prototype stub routes ----------------------------------------------- */
+
+/* app/prototype/*: a single centred heading, vertically centred in whatever is
+   left between the shared navbar and footer. */
+.prototype-stub {
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  min-height: 60vh;
+  padding: 88px 24px;
+  text-align: center;
+}
+
+/* ---------------------------------------------------------------------------
+   25. Eyebrow modifiers  — NEW, NOT IN THE EXPORT
+
+   The base .eyebrow lives in juliepaik.css because the export owns it. These
+   two are ours, and they exist to replace names that described where a label
+   first appeared rather than what it was:
+
+   .project-overview-label was one declaration applied to one element on the
+   NovinoPath page, and .project-nav-label repeated the same declaration for
+   the chip bar. Both meant "this label is subordinate to the text beside it",
+   so that is what the class is now called. Both of those names are gone; the
+   nav's own label carries .sectionnav-label for the parts that really are
+   about the nav — its spacing, and disappearing on mobile.
+
+   The export's answer to the same question was .eyebrow.green, which set the
+   colour it was already inheriting. Muting is the distinction it never made.
+--------------------------------------------------------------------------- */
+
+/* Keeps "Overview" or "3 projects" reading as a label rather than as a heading
+   competing with the section headings below it. 7.06:1 on the case-study
+   ground, so it is quiet without dropping under AA. */
+.eyebrow.muted {
+  color: var(--text-colors--muted-dark-blue);
+}
+
+/* ---------------------------------------------------------------------------
+   26. Section label  — NEW, NOT IN THE EXPORT
+
+   "A little more about my process..." on the VAC page. This was written as
+   `.eyebrow.light.phrase`, and every one of those three modifiers was spent
+   undoing the eyebrow: .phrase turned off the uppercasing, dropped the weight
+   to 300, and at >=1440 replaced the font-size and line-height outright. What
+   was left of .eyebrow was its position above a heading.
+
+   So it is a sentence, and it is set as one. The old rule left it at
+   `line-height: 1rem` on a 1rem font below 1440 — 1.0 leading on copy that
+   wraps to two lines at tablet width — because it was inheriting a label's
+   leading. Pair with .light on dark sections, the way .callout does.
+--------------------------------------------------------------------------- */
+.section-label {
+  font-family: var(--text-body-font);
+  font-size: var(--text-size--body-desktop-1-25);
+  font-weight: var(--text-weightt--body-300);
+  letter-spacing: 1.2px;
+  line-height: var(--text-height--body-desktop-height-1-8);
+  margin: 0 0 8px;
+}
+
+@media screen and (max-width: 991px) {
+  .section-label {
+    font-size: var(--text-size--body-mobile);
+    line-height: var(--text-height--body-mobile-height);
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   27. Stacked two-column blocks keep the column's left edge
+   NEW BEHAVIOUR, NOT IN THE EXPORT, and the same argument as section 21.
+
+   The .grid-2-col-first / .grid-2-col-last pair is /brainsprout's
+   image-beside-text block: two columns on desktop, one below 992. It carries
+   `max-width: 680px`, and both wrappers it is used inside —
+   .container-1232.full and .content-container — are column flexes at
+   `align-items: center`. So once stacked it floats in the middle of the
+   content column while the section's own prose, which is ALSO 680 wide, starts
+   at the gutter. At a 900px viewport that is prose at 45 and image at 102.5:
+   two different left edges for two blocks of identical width, seventeen times
+   down one page.
+
+   All of the selectors are needed. The block appears as `.grid-2-col-first`
+   alone, as `.grid-long-text .grid-2-col-first`, and as `.grid-long-text`
+   carrying the cap itself, depending on the call site — measured, not assumed,
+   and keying off only one of them left six of the seventeen still centred.
+
+   .container-680 is in the list because it is the OTHER 680-wide block in
+   those same sections: the running prose. Left-aligning only the figures moved
+   the mismatch rather than removing it — figure on the gutter at 45, the
+   paragraph above it still floating at 102.5. Both are the same measure and
+   both belong on the same edge.
+
+   It is the one selector here that has to be scoped by parent. .container-680
+   is the whole of /about, where a centred narrow measure IS the page — an
+   unscoped rule shifted all thirteen of its figures 57.5px left, which the
+   before/after measurements caught. The two parents named are the ones that
+   centre, and /about's .container-680 sits under neither.
+
+   Section 21 turned off the two centring mechanisms it found — `justify-content`
+   on .horizontal-container and the auto margins on .card-info. This is the
+   third, and it needs its own rule because the free space here belongs to the
+   parent's cross axis, which neither of those touch.
+
+   align-self on the block rather than align-items on the two wrappers: the
+   wrappers hold other children (headings, quote blocks, full-bleed figures)
+   that are either full width already or deliberately centred, and there is no
+   reason to disturb them to move this one thing. Above 992 the block is wider
+   than 680 and fills its wrapper, so the rule has nothing to do there — but it
+   is scoped anyway, so desktop cannot be affected by a later cap change.
+
+   The image and its adjacent text column both sit inside .grid-long-text, so
+   moving the block moves the pair together and their relationship is
+   unchanged. Only the offset from the gutter changes.
+--------------------------------------------------------------------------- */
+@media screen and (max-width: 991px) {
+  .grid-long-text,
+  .grid-2-col-first,
+  .grid-2-col-last,
+  .container-1232.full > .container-680,
+  .content-container > .container-680 {
+    align-self: flex-start;
+  }
+
+  /* .subsection-last pays 24px a side of its own, inside a .container-1232.full
+     that already pays the gutter (section 17). Two of /brainsprout's figures
+     live in it and sat 24px inside every other figure on the page — the same
+     one-section-disagrees-with-the-rest problem, one level further out. */
+  .subsection-last {
+    padding-left: 0;
+    padding-right: 0;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   28. One structure for every captioned figure
+   NEW BEHAVIOUR, NOT IN THE EXPORT.
+
+   The export grew three different ways to put a caption under a picture:
+
+     .captioned-image  > .image-wrapper + .caption-wrapper > .caption-title/.caption
+     .media-card       > .card-media    + .card-info       > .card-description-title/.card-description
+     .image-wrapper-*  >  <img>         + .image-caption-wrapper > .image-caption
+
+   Same job, three vocabularies, and they did not agree: .caption-wrapper's
+   `padding-left: 10px` (juliepaik.css:3227) set its text 10px inside the image
+   above it, while .card-info's text sat flush. Two before/after flow-chart
+   pairs on /vac-redesign — "Attendance check flow update" and "Flow 3: Assign
+   teachers" — are the same component built both ways, with captions at two
+   different offsets on one page.
+
+   The markup is now .captioned-image + .image-wrapper + .caption-wrapper
+   everywhere, so the rules below are the whole contract and there is one place
+   to change it. .card-info keeps its OTHER job — the text-card body used by
+   .card-info.text-card and by the side-panel lists — which is why it could not
+   simply be renamed.
+
+   THE CONTRACT
+     a figure is left-aligned, and its caption starts on the image's left edge
+
+   .comparison (section 22) still owns what a PAIR does — how the tracks
+   divide, what happens when they stack. This section owns what a single figure
+   does, and applies whether or not the figure is half of a pair.
+--------------------------------------------------------------------------- */
+
+/* Left-aligned is the default. .image-wrapper is `justify-content/align-items:
+   center` in the export and re-asserts it at <=767 (juliepaik.css:3530), which
+   is what centred the picture inside its own box; .captioned-image scopes the
+   correction to figures, leaving .image-wrapper's other call sites alone. */
+.captioned-image .image-wrapper {
+  justify-content: flex-start;
+  align-items: flex-start;
+}
+
+/* .captioned-image is a flex item inside .vertical-container, which is
+   `align-items: flex-start`, so it would shrink to its content instead of
+   taking the column. Its width is the measure the caption aligns to, so it has
+   to be the column's. */
+.captioned-image {
+  width: 100%;
+}
+
+/* Dark sections. .card-description/.card-description-title carried a .light
+   modifier for the three Design iterations sections; .caption/.caption-title
+   never needed one until those sections moved onto them. */
+.caption.light,
+.caption-title.light {
+  color: var(--text-colors--text-light);
+}
+
+/* .caption-title already steps down to the mobile size (juliepaik.css:6149)
+   and .caption never did, so a converted caption's body text would sit a step
+   larger than its own title below 768. Match the title. */
+@media screen and (max-width: 767px) {
+  .caption {
+    font-size: var(--text-size--caption-mobile);
+    line-height: var(--text-height--caption-mobile-height);
+  }
+}
+
+/* THE CONTENT COLUMN IS THE FIGURE MEASURE, at every width.
+
+   The export capped figures at 800 — .image-wrapper and .image-wrapper-800
+   both — inside a 1232 column. Nothing chose that number; it is what the
+   Webflow export carried, and it costs 432px of the column standing empty
+   beside every lone figure while a comparison pair right above it spans the
+   whole 1232. Two figure widths down one page, on desktop.
+
+   Following the column instead gives one figure measure everywhere, and it is
+   continuous: the column runs 1232 at 1440, 975 at 1100, 877.8 at 992 and
+   876.9 at 991, so a figure that tracks it has nothing to jump over when the
+   layout reflows. The earlier 800→877 jump at the breakpoint was an artefact
+   of the cap applying above 992 and being released below it, not of filling
+   the column — remove the cap at both ends and the discontinuity goes with it.
+
+   It also shows the work bigger, which for a case study is the point: the
+   dashboards are 1512px natively and were rendering at 53%.
+
+   Body copy keeps its own narrower measure. A reading measure and a figure
+   measure are different things, and widening prose to match would cost line
+   length to buy an alignment nobody reads as alignment. */
+.captioned-image .image-wrapper {
+  max-width: 100%;
+}
+
+/* .image-wrapper-800 is a literal `width: 800px`, so it needs the width
+   changed rather than a cap lifted. Same family, same argument: these are the
+   lone figures on /vac-redesign — the starting-point and redesign screens, the
+   attendance flow, the redesigned attendance screen. */
+.image-wrapper-800 {
+  width: 100%;
+}
+
+/* .image-800w is the bordered frame inside one of them. It carries its own
+   `max-width: 800px`, and below 992 an `align-items: center` that centres the
+   picture inside the frame — which put the redesigned attendance screen 39.5px
+   in from both gutters while every figure around it sat flush. */
+.image-800w {
+  max-width: 100%;
+  align-items: flex-start;
+}
+
+/* Releasing the frame is only half of it. Outside .comparison nothing states a
+   width on the image, and the image classes carry caps of their own measured
+   against something other than the column: .image-max300h is `max-width: 800px`
+   and .image-pc is `max-width: 85vw` below 768 — a share of the VIEWPORT, which
+   left 4.5px of stray inset on each side at 480 that no other figure had.
+
+   The frame is the measure; a cap measured against anything else does not
+   belong between it and the image. .diagram and the .comparison rules above are
+   the deliberate exceptions and outrank this. */
+.captioned-image .image-wrapper > img {
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+}
+
+@media screen and (max-width: 991px) {
+
+  /* ...except that filling the column is exactly wrong for .natural-height.
+     Its two images are a 440x746 portrait and a 772x416 landscape, and a
+     portrait that fills the column is enormous: at a 991px viewport the
+     portrait went from 426 wide and 723 tall just before the pair stacked to
+     877 wide and 1486 tall just after — nearly double, and taller than the
+     screen it was on. Stacking should never make a picture bigger than it ever
+     was on desktop.
+
+     The cap is the desktop track: half of the 1232 column, less the grid's
+     24px gap. At that width the pair renders at exactly the size it has at
+     1440 — its largest on desktop — so the stacked images can equal their
+     desktop maximum and never pass it. Both halves take the same cap, so they
+     keep equal widths, and once the column itself falls below the cap they go
+     back to filling it and shrinking with it.
+
+     Scoped to .natural-height. The same argument technically covers the
+     landscape pairs, but a landscape screenshot filling the column does not
+     read as oversized, and there the even gutters matter more. */
+  .comparison.natural-height .captioned-image .image-wrapper > img {
+    max-width: calc((var(--width--container-1232) - 24px) / 2);
+  }
+
+  /* .right-middle-half-width-container used to be corrected here: a shrink-to-
+     fit flex item that, once stacked, wrapped tightly around its figure so a
+     centred figure centred inside THAT rather than inside the column — the
+     employee task list sat 72px from the left gutter with 325px of space on
+     its right. .split replaced the wrapper and its last call site with it
+     (section 29); a stated track is the same fix, at both ends of the
+     breakpoint rather than one. */
+}
+
+/* .diagram — an illustration rather than a screen capture.
+   Two figures on /vac-redesign: the organisation drawing and the employee task
+   list. A screenshot can fill whatever it is given, but these stop being
+   readable past a point and stop looking deliberate below one, so they hold a
+   single size — 480, or the column when the column is smaller than that.
+
+   min(), not min-width: a bare `min-width: 480px` is what the drawing carried
+   before, and at a 480px viewport it forced 480 into a 417px column and bled
+   31.5px past the gutter on both sides.
+
+   Both call sites pair it with .captioned-image.centered, which is what makes
+   the leftover space split evenly rather than falling on one side. */
+.image-wrapper.diagram {
+  overflow: visible;
+}
+
+/* Only once stacked. On desktop each of these two sits in a column of its own —
+   since section 29, the same one: the 678 wide track of a .split, which at 680
+   native is very nearly the size both were drawn at. Applying the 480 at every
+   width shrank them to 480 on desktop, which is a change to a layout nobody
+   asked to change. What was asked for is that they behave alike when their
+   two-column layouts collapse.
+
+   Scoped through .captioned-image so it outranks the fill-the-frame rule above,
+   which matches at the same specificity and would otherwise win on source
+   order. */
+@media screen and (max-width: 991px) {
+  .captioned-image .image-wrapper.diagram > img {
+    width: min(480px, 100%);
+    max-width: 100%;
+    height: auto;
+  }
+}
+
+/* The legacy cap the drawing still carries — 480 on .drawing-frame — fights the
+   rule above once stacked, and .diagram is the single place a figure's size is
+   decided. The task list had the same problem through .image-4-col-wrapper
+   (`max-width: 462px`, juliepaik.css:2984), a four-column Webflow measure that
+   held it 216px short of the track section 29 gives it. That class came off the
+   markup rather than being neutralised here, so only .drawing-frame is left.
+   It is the same kind of class and could go the same way — its 480 lives at
+   juliepaik.css:5250 and nothing but width and centring is on it — but that is
+   the hero, and taking it off is a change to a block this section is not
+   otherwise touching. */
+@media screen and (max-width: 991px) {
+  .drawing-frame {
+    max-width: 100%;
+  }
+}
+
+/* bank-green's before/after pair keeps the 12px radius .card-media.border-radius
+   gave it, which is not .image-wrapper's --radius-sm. */
+.image-wrapper.border-radius {
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+/* The opt-in exception: one figure — /vac-redesign's organisation drawing — is
+   meant to sit centred in its column, and its caption centred under it. Every
+   other figure on the site is left-aligned, so this is a modifier at the call
+   site rather than a default anything has to opt out of. */
+.captioned-image.centered {
+  align-items: center;
+}
+
+.captioned-image.centered .image-wrapper {
+  justify-content: center;
+}
+
+.caption.centered {
+  text-align: center;
+}
+
+/* ---------------------------------------------------------------------------
+   29. .split — the two-column section
+   NEW BEHAVIOUR, NOT IN THE EXPORT.
+
+   Ten blocks across /vac-redesign and /bank-green-gpe put a narrow column of
+   text beside a wider column of content — list-cards, a bullet list, a
+   drawing, a screenshot. The export builds them three different ways:
+
+     .container-stacking                                     (the overview)
+
+     .side-text-horizontal-container
+       > .left-middle-half-width-container
+       + .right-middle-half-width-container                   (six blocks)
+
+     .side-text-horizontal-container
+       > .slide-image-side-container
+       + .slide-text-side-container.stacking                  (three blocks)
+
+   and not one of them states both tracks. .side-text-horizontal-container
+   declares `grid-template-columns: 1fr 1fr` and then `display: flex`
+   (juliepaik.css:2778), so the grid line never applies and both children fall
+   back to `flex: 0 1 auto`. The left one asks for its 528px, the right asks
+   for its max-content, and whichever overflows gets shrunk. Every split on
+   these pages is therefore an accident of what the block happens to contain.
+   Measured at a 1512 viewport (column 1232), the ten produced seven:
+
+     510 / 698   overview — the organisation drawing
+     514 / 678   Potential improvements
+     514 / 678   Goals
+     528 /   0   Simplify workflows            <- see below
+     720 / 396   Home page redesign
+     720 / 396   Added table view
+     720 / 396   Updated teacher profile
+     528 / 390   Constraints
+     522 / 670   Reflections
+     448 / 744   Next steps (/bank-green-gpe)
+
+   They also drift with the viewport, because a content-derived width does:
+   the Goals pair is 514/678 at 1512, 417/519 at 1100 and 380/459 at 992.
+
+   THE CONTRACT
+     side by side  ->  one split, 514 + 40 + 678 = 1232, at every width above
+                       991 and in both directions
+     stacked       ->  one full-width column, 24px apart
+
+   WHY 514 / 678. It is where the two blocks that already read correctly —
+   Potential improvements and Goals — sit on desktop today, and it is 4px from
+   the overview's 510, so three of the ten barely move. The rounder-looking
+   alternative, 0.8fr, resolves to 530/662 at this column: 16px from what those
+   blocks show now and 20px from the overview, i.e. a change to the three that
+   were already right in order to reach a number nothing else refers to.
+
+   fr, NOT PIXELS. `514fr 678fr` against a 40px gap divides 1192px of free
+   space in exactly that ratio, which IS 514/678 once the column is 1232, and
+   holds the proportion at every narrower column (403/532 at a 1100 viewport)
+   rather than overflowing or drifting back to content.
+
+   .reversed — THE SAME TWO WIDTHS, SWAPPED. Home page redesign, Added table
+   view and Updated teacher profile put the screenshot on the left. The export
+   caps their text side at 396 (.slide-text-side-container, juliepaik.css:2734)
+   and gives the image side no width at all, so the pair runs 720/396 and
+   leaves 76px of the column standing empty. Reversed they run 678/514: the
+   column is full, every media edge on the page lands on one of two verticals,
+   and the three list-cards gain 118px — which is why those sections get
+   noticeably shorter.
+
+   WHAT THE STATED TRACK FIXES BY ITSELF. Simplify workflows' figure was
+   rendering 0x0 at every width above 991 — invisible, and the image never even
+   loaded. Section 24 gives .captioned-image `width: 100%`, and inside the
+   shrink-to-fit .right-middle-half-width-container that is a percentage of a
+   width which depends on the percentage; the cycle resolves to zero. A stated
+   track has no cycle. (It also retires the ≤991 `width: 100%` this file used
+   to give .right-middle-half-width-container, which existed so that a figure
+   centred in a tightly-wrapped column centred in the page instead.)
+
+   WHAT IT COSTS. Constraints' bullet list gains 288px and Next steps' loses
+   66px — the two lists that were sizing themselves. The left column's
+   `padding-right: 100px` goes with the wrapper that carried it: with a stated
+   track the space between the columns is the gap, not padding inside one of
+   them, so the text measure in those blocks widens from 414 to 514. And the
+   two vertical rhythms inside a column — 16px in the text half, 32px between
+   list-cards, 24px in the three stacking ones — become one 24px.
+
+   THE HEADING WRAPPERS. Constraints, Reflections and Next steps each wrapped a
+   single <h2> in four nested divs — .slide-left-header > .middle-aligner >
+   .container-eyebrow-and-heading > .wrapper-heading-and-blurb — none of which
+   sizes anything once the track is stated. .middle-aligner also centred that
+   heading vertically against the column beside it; both columns now start at
+   the same y, which is what `align-items: start` below says and what the
+   other seven blocks already did.
+--------------------------------------------------------------------------- */
+.split {
+  display: grid;
+  grid-template-columns: 514fr 678fr;
+  gap: 40px;
+  align-items: start;
+  width: 100%;
+}
+
+/* Media on the left. Markup order matches visual order in both directions, so
+   the stack below 992 needs no reordering and the media stays on top of its
+   text where it has always been. */
+.split.reversed {
+  grid-template-columns: 678fr 514fr;
+}
+
+/* A grid item's automatic minimum size is its content, so one wide screenshot
+   or one long unbroken word would push its track past the share above and put
+   the split back where it started. */
+.split > * {
+  min-width: 0;
+}
+
+/* A column of stacked things: heading and copy, list-cards, a bullet list.
+   Figures go into the track directly and keep the box section 28 gives them,
+   which is why this is a class at the call site rather than `.split > *`.
+
+   stretch, not flex-start: now that the track is stated, a shrink-to-fit child
+   would wrap tightly around its own text instead of filling the column it was
+   given. The list-cards were only ever full width because they were the thing
+   setting the width. */
+.split-col {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 24px;
+}
+
+/* Simplify workflows' task list is the one figure here narrower than its track:
+   .captioned-image is `width: 100%` (section 28) but .image-4-col-wrapper caps
+   it at 462, which in a 678 track leaves 216px on one side. .centered is an
+   instruction about the column, so it has to move the figure within the track
+   and not only its contents within the figure. */
+.split > .captioned-image.centered {
+  justify-self: center;
+}
+
+@media screen and (max-width: 991px) {
+  /* One column, both directions. 24px is the row gap the export already used
+     when these stacked, and it is now also the gap between things inside a
+     column — stacking stops being a different rhythm from not stacking. */
+  .split,
+  .split.reversed {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   29b. The 300px height cap, everywhere — completing section 28.
+
+   .image-max300h is `max-height: 300px` (juliepaik.css:3090). Section 22 took
+   it off, but only for .comparison, because that is where it was doing visible
+   damage at the time. The two before/after flow-chart pairs on /vac-redesign —
+   "Attendance check flow update" and "Flow 3: Assign teachers" — are
+   .vertical-container stacks rather than comparison pairs, so they kept it,
+   and they are the same component with the same classes rendering two
+   different ways. Measured at 1512:
+
+     Attendance  Before   1232x300 box, picture drawn 1123x300
+     Attendance  After    1232x300 box, picture drawn 1021x300
+     Flow 3      Before   1232x214 box, picture drawn 1232x214
+     Flow 3      After    1232x216 box, picture drawn 1232x215
+
+   The cap only bites where the aspect ratio is short enough to reach it. The
+   attendance charts are 3.74 and 3.40 wide-to-tall, so at 1232 they want 329
+   and 362 of height; the teacher-assignment charts are 5.77 and want 214. So
+   one pair fills the column and the other sits 109px and 211px short of its
+   own right edge — 102px short of each other — with the captions still flush
+   at 1232, which reads as two broken margins rather than as a size.
+
+   This is section 28's argument, applied to the last figures on the site still
+   sized by a number instead of by the column: height is the output, not an
+   input. Same specificity and selector as the fill-the-frame rule there, so it
+   is the source order that carries it.
+
+   IT COSTS RESOLUTION, and there is no fix here for that. Attendance-flow-
+   before.png and -after.png are 820px wide and that is the largest version
+   that exists — public/images has nothing bigger, and next/image will not
+   upscale past a source, so the `unoptimized` prop on those two call sites is
+   not what is holding them back either. At 1232 they now draw at 1.50x native.
+   Under the cap they were already drawing at 1.37x, so this is half a step
+   softer in exchange for two figures that agree with every other figure on the
+   page. A re-export at 2x is the only real repair. */
+.captioned-image .image-wrapper > img {
+  max-height: none;
+}
+
+
+/* ---------------------------------------------------------------------------
+   30. Two frozen literals that the measure scale can't reach
+   NEW BEHAVIOUR, NOT IN THE EXPORT.
+
+   The page measure moved from the export's inherited 1232 to the scale's 936
+   by repointing --width--container-1232 (see the MEASURE SCALE comment in
+   styles/tokens.css). Every rule that reads that token followed automatically.
+   Two did not, because the export wrote the number rather than the token:
+
+     .subsection                  max-width: 1232px  (juliepaik.css:1882)
+     .grid-with-heading-vertical  max-width: 1224px  (juliepaik.css:2685)
+
+   Left alone they would overhang the column by 296px and 288px — /about and
+   /writing's .subsection, and one grid on /brainsprout — which reads as three
+   blocks that failed to line up rather than as a deliberately wider measure.
+
+   .paragraph-home is deliberately NOT here. Its base is `max-width: 800px`, so
+   it is a text block that happens to carry a 1224 in the <=991 media query,
+   where the viewport is under 1224 anyway and the value never binds. It is not
+   part of the page measure and should not start following it.
+
+   juliepaik.css is frozen (scripts/check-frozen-stylesheet.mjs), so these are
+   overrides rather than edits at the source. */
+.subsection,
+.grid-with-heading-vertical {
+  max-width: var(--measure-page);
+}
+
+/* ---------------------------------------------------------------------------
+   31. Text blocks cap at the text measure, left-aligned in the column
+--------------------------------------------------------------------------- */
+/* Left-aligned, capped at the text measure. Blocks share the column's left
+   edge with full-width grids and figures; only the right edge is ragged. */
+.container-680,
+.top-content,
+.body-text-container,
+.heading-and-body-container,
+.section-heading-wrapper,
+.eyebrow-and-headline-container,
+.image-with-heading {
+  width: 100%;
+  max-width: var(--measure-text);
+  margin-left: 0;
+  margin-right: auto;
+  align-self: flex-start;
+}
+
+/* .container-680.home-subtitle takes its width from --width--container-800,
+   which the scale maps to the page column. It is running copy, so it belongs on
+   the text measure. Stated here for the class — the home and /writing intros —
+   rather than by re-mapping the token, which five case-study title classes also
+   read. On /writing the block is centred rather than flush left, so narrowing
+   it moves it in; that is the export's centring showing through, and it stays. */
+.container-680.home-subtitle {
+  width: 100%;
+  max-width: var(--measure-text);
+}
+
+/* Centred text needs the full column to centre against; capped at the text
+   measure it reads as centred-inside-a-left-aligned-box. The auto block
+   margins absorb the section's spare height, so the callout sits in the middle
+   while the eyebrow above it stays at the top. */
+.container-center {
+  max-width: var(--measure-page);
+  align-items: center;
+  margin-top: auto;
+  margin-bottom: auto;
+}
+
+/* ---------------------------------------------------------------------------
+   32. Grids split their tracks evenly
+--------------------------------------------------------------------------- */
+/* ._2-x-1-grid-real is display:flex despite the name, so its
+   grid-template-columns does nothing and children size from their own content.
+   flex-basis 0 makes the split even. */
+._2-x-1-grid-real > *,
+._3-x-1-text-grid > *,
+._3-x-1-card-grid > * {
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+/* ._3-x-1-card-grid shipped a 32px gap where every other grid uses 24, which
+   put its tracks 5px off the column. */
+._2-x-1-grid,
+._2-x-1-grid-real,
+._3-x-1-text-grid,
+._3-x-1-card-grid,
+.blog-cards-grid {
+  column-gap: var(--measure-gutter);
+  row-gap: var(--measure-gutter);
+}
+
+/* Desktop only: the export drops this to one column at <=767 and that stays. */
+@media screen and (min-width: 992px) {
+  .blog-cards-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   33. .key-point — numbered points, stacked
+--------------------------------------------------------------------------- */
+.key-points {
+  display: flex;
+  flex-direction: column;
+  gap: var(--measure-gutter);
+  width: 100%;
+}
+
+/* 24px padding + 192px rail = 3 columns; the remainder is 9 columns, so the
+   body lands on the text measure without stating it twice. */
+.key-point {
+  display: grid;
+  grid-template-columns: 192px 1fr;
+  column-gap: var(--measure-gutter);
+  align-items: start;
+  border-left: 1px solid var(--accents--bold--accent-deep-blue);
+  padding-left: var(--measure-gutter);
+}
+
+.key-point-number {
+  font-family: var(--heading-font);
+  font-size: var(--text-size--highlight-desktop);
+  line-height: var(--text-size--highlight-desktop-80-height);
+  font-weight: var(--text-weightt--display-weight);
+  margin: 0;
+}
+
+.key-point-body {
+  max-width: var(--measure-text);
+}
+
+.key-point-title {
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+/* Side by side, number above the body. Only viable when every point is short:
+   the track is 296px whatever the copy, so ~26 characters per line, which
+   reads as a card at 4-6 lines and as a ribbon past that. Roughly 150
+   characters per point is the ceiling. */
+.key-points.horizontal {
+  flex-direction: row;
+}
+
+.key-points.horizontal .key-point {
+  flex: 1 1 0;
+  min-width: 0;
+  grid-template-columns: 1fr;
+  row-gap: 16px;
+}
+
+.key-points.horizontal .key-point-body {
+  max-width: none;
+}
+
+@media screen and (max-width: 991px) {
+  .key-point {
+    grid-template-columns: 1fr;
+    row-gap: 8px;
+  }
+
+  .key-points.horizontal {
+    flex-direction: column;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   34. Section wrappers take the viewport
+--------------------------------------------------------------------------- */
+/* .project is align-items: center, so a flex item's cross size is fit-content.
+   Without a stated width these wrappers shrink-wrap the sections inside them
+   and centre the result, which stops a full-bleed background reaching the
+   viewport edge. */
+.project > .fade-in,
+.project > .project-run {
+  width: 100%;
 }

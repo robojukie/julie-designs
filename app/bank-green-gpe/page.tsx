@@ -61,28 +61,26 @@ export default function BankGreen() {
 
       <div className="project-section fixed">
         <div className="container-1232">
-          <div className="center-middle-aligner">
-            <div className="container-content-center">
-              <p className="paragraph-display-thin">
-                In order to speed up the bank rating process, engineers had
-                developed an AI chatbot tool to help the ratings team. However{" "}
-                <strong>no one was using the tool</strong>. With over 10,000
-                banks to rate an an average of 3.5 hours to complete a rating,
-                we needed an intuitive solution the raters could use.
-                <br />
-                <br />
-                To address this,{" "}
-                <strong>
-                  I led user research, updated flows, and collaborated closely
-                  with engineers
-                </strong>{" "}
-                to meet technical constraints and{" "}
-                <strong>speed up the process from 2.5 hours to 1 hour</strong>{" "}
-                to set the foundation for speeding up the process further with
-                AI.
-              </p>
-            </div>
-          </div>
+          <p className="paragraph-display-thin">
+            In order to speed up the bank rating process, engineers had
+            developed an AI chatbot tool to help the ratings team. However{" "}
+            <strong>no one was using the tool</strong>. With over 10,000
+            banks to rate an an average of 3.5 hours to complete a rating,
+            we needed an intuitive solution the raters could use.
+            <br />
+            <br />
+            To address this,{" "}
+            <strong>
+              I led user research, updated flows, and collaborated closely
+              with engineers
+            </strong>{" "}
+            to meet technical constraints and{" "}
+            <strong>speed up the process from 2.5 hours to 1 hour</strong>{" "}
+            to set the foundation for speeding up the process further with
+            AI.
+          </p>
+
+
         </div>
       </div>
 
@@ -99,18 +97,17 @@ export default function BankGreen() {
 
       <div className="project-section">
         <div className="container-1232">
-          <div className="container-800">
-            <div className="heading-and-body-container">
-              <h2>
-                Bank ratings power 2 strategies that pressure banks to defund
-                fossil fuels
-              </h2>
-              <p>
-                Our rating system scores banks on their sustainability by
-                looking at criteria like their policies and funded projects.
-              </p>
-            </div>
+          <div className="heading-and-body-container">
+            <h2>
+              Bank ratings power 2 strategies that pressure banks to defund
+              fossil fuels
+            </h2>
+            <p>
+              Our rating system scores banks on their sustainability by
+              looking at criteria like their policies and funded projects.
+            </p>
           </div>
+
           <div className="w-layout-grid _2-x-1-grid">
             <div className="card">
               <p className="display-callout">01</p>
@@ -148,16 +145,15 @@ export default function BankGreen() {
 
       <div className="project-section hug-height">
         <div className="container-1232">
-          <div className="container-800">
-            <div className="heading-and-body-container">
-              <h2>Raters use an inefficient bank rating process</h2>
-              <p>
-                Raters use 3 different tools to rate banks. The complete
-                rating and review process to rate a bank is error-prone and
-                takes around 3.5 hours
-              </p>
-            </div>
+          <div className="heading-and-body-container">
+            <h2>Raters use an inefficient bank rating process</h2>
+            <p>
+              Raters use 3 different tools to rate banks. The complete
+              rating and review process to rate a bank is error-prone and
+              takes around 3.5 hours
+            </p>
           </div>
+
           <div className="_3-x-1-card-grid">
             <div className="captioned-image">
               <div className="image-wrapper">
@@ -221,171 +217,163 @@ export default function BankGreen() {
               </div>
             </div>
           </div>
-          <div className="left-align-container">
-            <div className="container-680">
-              <p>
-                Multiple spreadsheets containing formulas and instructions are
-                duplicated for different bank regions,{" "}
-                <strong>
-                  making it difficult to track updates in methodology and
-                  instructions for different sets of banks
-                </strong>
-                . The complicated process makes it difficult to train new
-                raters.
-              </p>
-              <p>
-                Given that there are over 10,000 banks in just the
-                Anglosphere, we need a more efficient way to rate banks.
-              </p>
-            </div>
+          <div className="container-680">
+            <p>
+              Multiple spreadsheets containing formulas and instructions are
+              duplicated for different bank regions,{" "}
+              <strong>
+                making it difficult to track updates in methodology and
+                instructions for different sets of banks
+              </strong>
+              . The complicated process makes it difficult to train new
+              raters.
+            </p>
+            <p>
+              Given that there are over 10,000 banks in just the
+              Anglosphere, we need a more efficient way to rate banks.
+            </p>
           </div>
+
         </div>
       </div>
 
       <section className="project-section fixed">
         <div className="container-1232">
-          <div className="container-680">
-            <div className="middle-aligner">
-              <div className="heading-and-body-container">
-                <div className="eyebrow-and-headline-container">
-                  <h2 className="eyebrow">Problem statement</h2>
-                  <h2>
-                    How might we simplify and speed up the bank rating
-                    process?
-                  </h2>
-                </div>
-                <div>
-                  <p>We set some goals to address our problems:</p>
-                  <ul role="list">
-                    <li>
-                      Simplify process by having a single touchpoint to rate
-                      banks, track status, and store sources
-                    </li>
-                    <li>
-                      Reduce bank rating time by 80-90% (from 2.5 hours to
-                      &lt;30 min)
-                    </li>
-                    <li>
-                      Create self-explanatory process to reduce need for
-                      training new rater
-                    </li>
-                  </ul>
-                </div>
-              </div>
+          <div className="heading-and-body-container">
+            <div className="eyebrow-and-headline-container">
+              <p className="eyebrow">Problem statement</p>
+              <h2>
+                How might we simplify and speed up the bank rating
+                process?
+              </h2>
+            </div>
+            <div>
+              <p>We set some goals to address our problems:</p>
+              <ul role="list">
+                <li>
+                  Simplify process by having a single touchpoint to rate
+                  banks, track status, and store sources
+                </li>
+                <li>
+                  Reduce bank rating time by 80-90% (from 2.5 hours to
+                  &lt;30 min)
+                </li>
+                <li>
+                  Create self-explanatory process to reduce need for
+                  training new rater
+                </li>
+              </ul>
             </div>
           </div>
+
+
         </div>
       </section>
 
       <div className="project-section brainsprout">
         <div className="container-1232">
           <div className="eyebrow-and-headline-container">
-            <h2 className="eyebrow">Solution</h2>
+            <p className="eyebrow">Solution</p>
           </div>
-          <div className="horizontal-container">
-            <div className="center-section">
-              <div className="container-center">
-                <h2 className="callout">Green Policy Evaluator (GPE)</h2>
-                <p className="paragraph-centered">
-                  GPE is an AI tool used to research and rate banks,
-                  potentially qualifying them for the Bank Green Alliance
-                  accreditation
-                </p>
-              </div>
-            </div>
+          <div className="container-center">
+            <h2 className="callout">Green Policy Evaluator (GPE)</h2>
+            <p className="paragraph-centered">
+              GPE is an AI tool used to research and rate banks,
+              potentially qualifying them for the Bank Green Alliance
+              accreditation
+            </p>
           </div>
+
+
         </div>
       </div>
 
       <section className="project-section hug-height">
         <div className="container-1232">
-          <div className="container-680">
-            <div className="heading-and-body-container">
-              <div className="eyebrow-and-headline-container">
-                <h2 className="eyebrow">Process</h2>
-                <h2>Phase 1: Migrating from spreadsheet to a web-app</h2>
-              </div>
-              <div>
-                <p>
-                  <strong>
-                    Phase 1 violated several design heuristics, resulting in
-                    confusion from users
-                  </strong>
-                </p>
-                <p>
-                  This project started before design was brought in, driven by
-                  engineers. Engineers migrated segments of the spreadsheet
-                  process to a low-code frontend in Retool, which addressed
-                  some pain points. However, there were still many points of
-                  improvement:
-                </p>
-                <ul role="list">
-                  <li>
-                    Inconsistent application of visibility of system status
-                    (NNG heuristic 1)
-                  </li>
-                  <li>
-                    Included irrelevant information without clear visual
-                    hierarchy (NNG heuristic 8)
-                  </li>
-                  <li>
-                    No feedback to help users recognize and recover from
-                    errors (NNG heuristic 9)
-                  </li>
-                  <li>
-                    Lacked clear documentation, requiring a lot of
-                    hand-holding for new users (NNG heuristic 10)
-                  </li>
-                </ul>
-              </div>
+          <div className="heading-and-body-container">
+            <div className="eyebrow-and-headline-container">
+              <p className="eyebrow">Process</p>
+              <h2>Phase 1: Migrating from spreadsheet to a web-app</h2>
             </div>
-          </div>
-          <div className="container-800">
-            <div className="image-with-heading">
+            <div>
               <p>
-                <strong>Initial migration attempt</strong>
+                <strong>
+                  Phase 1 violated several design heuristics, resulting in
+                  confusion from users
+                </strong>
               </p>
-              <div className="image-wrapper">
-                <ZoomableImage
-                  src="/images/Annotation-v1.png"
-                  alt="Screenshot of page with annotations on the side"
-                  width={1648}
-                  height={1176}
-                  style={{ width: "100%", height: "auto" }}
-                />
-              </div>
+              <p>
+                This project started before design was brought in, driven by
+                engineers. Engineers migrated segments of the spreadsheet
+                process to a low-code frontend in Retool, which addressed
+                some pain points. However, there were still many points of
+                improvement:
+              </p>
+              <ul role="list">
+                <li>
+                  Inconsistent application of visibility of system status
+                  (NNG heuristic 1)
+                </li>
+                <li>
+                  Included irrelevant information without clear visual
+                  hierarchy (NNG heuristic 8)
+                </li>
+                <li>
+                  No feedback to help users recognize and recover from
+                  errors (NNG heuristic 9)
+                </li>
+                <li>
+                  Lacked clear documentation, requiring a lot of
+                  hand-holding for new users (NNG heuristic 10)
+                </li>
+              </ul>
             </div>
           </div>
+
+          <div className="image-with-heading">
+            <p>
+              <strong>Initial migration attempt</strong>
+            </p>
+            <div className="image-wrapper">
+              <ZoomableImage
+                src="/images/Annotation-v1.png"
+                alt="Screenshot of page with annotations on the side"
+                width={1648}
+                height={1176}
+                style={{ width: "100%", height: "auto" }}
+              />
+            </div>
+          </div>
+
         </div>
       </section>
 
       <section className="project-section hug-height">
         <div className="container-1232">
-          <div className="container-680">
-            <div className="heading-and-body-container">
-              <h3>Phase 1 research, evaluation, and redesign</h3>
-              <p>
-                As design joined in later in the process, I had to
-                collaborate heavily to ensure that feedback was implemented
-                properly.
-              </p>
-            </div>
+          <div className="heading-and-body-container">
+            <h3>Phase 1 research, evaluation, and redesign</h3>
+            <p>
+              As design joined in later in the process, I had to
+              collaborate heavily to ensure that feedback was implemented
+              properly.
+            </p>
           </div>
-          <div className="container-800">
-            <div className="image-with-heading">
-              <p>
-                <strong>Phase 1 evaluation and iterations</strong>
-              </p>
-              <div className="captioned-image">
-                <div className="image-wrapper">
-                  <ZoomableImage
-                    src="/images/Annotation-v2.png"
-                    alt="Image of webpage with annotations on the side"
-                    width={1649}
-                    height={1112}
-                    style={{ width: "100%", height: "auto" }}
-                  />
-                </div>
+
+          <div className="image-with-heading">
+            <p>
+              <strong>Phase 1 evaluation and iterations</strong>
+            </p>
+            <div className="captioned-image">
+              <div className="image-wrapper">
+                <ZoomableImage
+                  src="/images/Annotation-v2.png"
+                  alt="Image of webpage with annotations on the side"
+                  width={1649}
+                  height={1112}
+                  style={{ width: "100%", height: "auto" }}
+                />
+              </div>
+              <div className="caption-wrapper">
                 <p className="caption">
                   Feedback to use visual hierarchy to show association
                   between database tool and relevant criteria section
@@ -394,7 +382,8 @@ export default function BankGreen() {
               </div>
             </div>
           </div>
-          <div className="container-800">
+
+          <div className="container-680">
             <div className="captioned-image">
               <div className="image-wrapper">
                 <ZoomableImage
@@ -405,11 +394,13 @@ export default function BankGreen() {
                   style={{ width: "100%", height: "auto" }}
                 />
               </div>
-              <p className="caption">
-                Reduced horizontal form navigation, however there were
-                continued struggles to get design updates fully into
-                development
-              </p>
+              <div className="caption-wrapper">
+                <p className="caption">
+                  Reduced horizontal form navigation, however there were
+                  continued struggles to get design updates fully into
+                  development
+                </p>
+              </div>
             </div>
           </div>
         </div>
@@ -417,132 +408,142 @@ export default function BankGreen() {
 
       <div className="project-section hug-height">
         <div className="container-1232">
+          {/* The last 800px measure on this page: .section-heading-wrapper puts
+              this heading 120px wider than its own body copy. It can NOT be
+              swapped for .container-680 — that class is `display: flex;
+              flex-direction: column; align-items: center`, which shrink-wraps
+              AND centres a bare block child, so the heading lands centred at
+              its text width. .container-680 only works for children that carry
+              `width: 100%`. Left at 800 until the .measure/.stack pair lands. */}
           <div className="section-heading-wrapper">
             <h3>Before and after redesign</h3>
           </div>
-          <div className="container-800">
-            <div className="w-layout-grid _2-x-1-grid-real">
-              <div className="media-card">
-                <div className="card-media border-radius">
-                  <ZoomableImage
-                    src="/images/image-frame-large.png"
-                    alt="Screenshot of an app created in Retool showing a data table on top half of screen and form section on bottom half of screen"
-                    width={797}
-                    height={703}
-                    loading="eager"
-                    className="one-third-image"
-                    style={{ height: "auto" }}
-                  />
-                </div>
-                <div className="card-info">
-                  <h3 className="card-description-title">
-                    <strong className="card-description-title">Engineer version</strong>
-                  </h3>
-                  <p className="card-description">
-                    The initial iterations left important information out of
-                    the initial viewport, and had a lot of visual clutter
-                  </p>
-                </div>
+          {/* Same .comparison contract as /vac-redesign's pairs, on this
+              page's own grid class. --pair-aspect: both images are 797x703,
+              so the two aspects are the same 1.134 and each fills its track
+              exactly. Declared rather than left to default, because the
+              default is no shared height at all. */}
+          <div
+            className="w-layout-grid _2-x-1-grid-real comparison"
+            style={{ "--pair-aspect": "1.134" } as React.CSSProperties}
+          >
+            <div className="captioned-image">
+              <div className="image-wrapper border-radius">
+                <ZoomableImage
+                  src="/images/image-frame-large.png"
+                  alt="Screenshot of an app created in Retool showing a data table on top half of screen and form section on bottom half of screen"
+                  width={797}
+                  height={703}
+                  loading="eager"
+                  sizes="(max-width: 991px) 100vw, 456px"
+                  className="one-third-image"
+                />
               </div>
-              <div className="media-card">
-                <div className="card-media border-radius">
-                  <ZoomableImage
-                    src="/images/image-frame-large-1.png"
-                    alt="A screenshot of a website page with a green background."
-                    width={797}
-                    height={703}
-                    loading="eager"
-                    className="one-third-image"
-                    style={{ height: "auto" }}
-                  />
-                </div>
-                <div className="card-info">
-                  <h3 className="card-description-title">
-                    <strong className="card-description-title">Redesign</strong>
-                  </h3>
-                  <p className="card-description">
-                    I interviewed 3 raters and discussed with team members to
-                    clarify and simplify the interface
-                  </p>
-                </div>
+              <div className="caption-wrapper">
+                <h3 className="caption-title">
+                  <strong className="caption-title">Engineer version</strong>
+                </h3>
+                <p className="caption">
+                  The initial iterations left important information out of
+                  the initial viewport, and had a lot of visual clutter
+                </p>
+              </div>
+            </div>
+            <div className="captioned-image">
+              <div className="image-wrapper border-radius">
+                <ZoomableImage
+                  src="/images/image-frame-large-1.png"
+                  alt="A screenshot of a website page with a green background."
+                  width={797}
+                  height={703}
+                  loading="eager"
+                  sizes="(max-width: 991px) 100vw, 456px"
+                  className="one-third-image"
+                />
+              </div>
+              <div className="caption-wrapper">
+                <h3 className="caption-title">
+                  <strong className="caption-title">Redesign</strong>
+                </h3>
+                <p className="caption">
+                  I interviewed 3 raters and discussed with team members to
+                  clarify and simplify the interface
+                </p>
               </div>
             </div>
           </div>
-          <div className="container-680">
-            <div className="body-text-container">
-              <p>
-                The redesign, based on user feedback and design evaluation,
-                improves visual hierarchy, reduces visual clutter, and
-                increases users&apos; efficiency of use.
-              </p>
-              <p>
-                <strong>Implemented improvements:</strong>
-              </p>
-              <p>Help and documentation</p>
-              <ul role="list">
-                <li>
-                  Moved instructions into prominent area for new raters to
-                  view when needed
-                </li>
-              </ul>
-              <p>Visibility of system status</p>
-              <ul role="list">
-                <li>
-                  Keep action buttons fixed at bottom - previously, users
-                  would miss the save button and lose changes
-                </li>
-              </ul>
-              <p>Aesthetic and minimalist design</p>
-              <ul role="list">
-                <li>
-                  Used navigation to display relevant bank information,
-                  eliminating unnecessary table view while a user rates banks
-                </li>
-                <li>
-                  Consolidated horizontal tabs and corresponding summary items
-                  into a vertical navigation style list of rating criteria
-                </li>
-              </ul>
-              <p>Help users recognize, diagnose, and recover from errors</p>
-              <ul role="list">
-                <li>
-                  Added error messages and alerts to inform users of ways to
-                  recover
-                </li>
-              </ul>
-            </div>
+          <div className="body-text-container">
+            <p>
+              The redesign, based on user feedback and design evaluation,
+              improves visual hierarchy, reduces visual clutter, and
+              increases users&apos; efficiency of use.
+            </p>
+            <p>
+              <strong>Implemented improvements:</strong>
+            </p>
+            <p>Help and documentation</p>
+            <ul role="list">
+              <li>
+                Moved instructions into prominent area for new raters to
+                view when needed
+              </li>
+            </ul>
+            <p>Visibility of system status</p>
+            <ul role="list">
+              <li>
+                Keep action buttons fixed at bottom - previously, users
+                would miss the save button and lose changes
+              </li>
+            </ul>
+            <p>Aesthetic and minimalist design</p>
+            <ul role="list">
+              <li>
+                Used navigation to display relevant bank information,
+                eliminating unnecessary table view while a user rates banks
+              </li>
+              <li>
+                Consolidated horizontal tabs and corresponding summary items
+                into a vertical navigation style list of rating criteria
+              </li>
+            </ul>
+            <p>Help users recognize, diagnose, and recover from errors</p>
+            <ul role="list">
+              <li>
+                Added error messages and alerts to inform users of ways to
+                recover
+              </li>
+            </ul>
           </div>
+
         </div>
       </div>
 
       <div className="project-section">
         <div className="container-1232">
-          <div className="container-800">
-            <div className="heading-and-body-container">
-              <h3>Phase 1 redesign outcomes</h3>
-              <ul role="list">
-                <li>
-                  Built foundation for moving process to a single platform for
-                  full bank rating cycle
-                </li>
-                <li>Reduced rating time from 2.5 to 1 hour</li>
-                <li>Eliminated calculation and formula errors</li>
-                <li>
-                  Saved experienced raters time by reducing need for training
-                  (dependency)
-                </li>
-              </ul>
-            </div>
+          <div className="heading-and-body-container">
+            <h3>Phase 1 redesign outcomes</h3>
+            <ul role="list">
+              <li>
+                Built foundation for moving process to a single platform for
+                full bank rating cycle
+              </li>
+              <li>Reduced rating time from 2.5 to 1 hour</li>
+              <li>Eliminated calculation and formula errors</li>
+              <li>
+                Saved experienced raters time by reducing need for training
+                (dependency)
+              </li>
+            </ul>
           </div>
-          <div className="container-800">
-            <div className="heading-and-body-container">
-              <h3>Persisting issues after redesign</h3>
-              <ul role="list">
-                <li>Raters still have to use 2 tools</li>
-                <li>Goal is &lt;30 min, currently at 1 hour</li>
-              </ul>
-            </div>
+
+          <div className="heading-and-body-container">
+            <h3>Persisting issues after redesign</h3>
+            <ul role="list">
+              <li>Raters still have to use 2 tools</li>
+              <li>Goal is &lt;30 min, currently at 1 hour</li>
+            </ul>
           </div>
+
         </div>
       </div>
 
@@ -557,13 +558,16 @@ export default function BankGreen() {
         />
         <div className="full-overlay" />
         <div className="container-1232-absolute">
-          <div className="middle-aligner">
-            <h2>User flows and technical constraints inform error handling</h2>
-            <p>
-              I started my process by drawing out user flows and getting
-              feedback from users and engineers.
-            </p>
-          </div>
+          {/* Same centre-940 structure as the overview block at the top of the
+              page, so both land on one left edge — see section 19 of
+              styles/custom.css. */}
+          <h2>User flows and technical constraints inform error handling</h2>
+          <p>
+            I started my process by drawing out user flows and getting
+            feedback from users and engineers.
+          </p>
+
+
         </div>
       </div>
 
@@ -613,10 +617,10 @@ export default function BankGreen() {
 
       <section className="project-section hug-height">
         <div className="container-1232">
-          <div className="container-800">
+          <div className="container-680">
             <div className="heading-and-body-container">
               <div className="eyebrow-and-headline-container">
-                <h2 className="eyebrow">Designs</h2>
+                <p className="eyebrow">Designs</p>
                 <h2>Translating engineering and user feedback to designs</h2>
               </div>
               <p>
@@ -651,120 +655,72 @@ export default function BankGreen() {
               </div>
             </div>
           </div>
-          <div className="container-800">
-            <div className="image-with-heading">
-              <p>
-                Document processing errors are backend heavy and include
-                errors like unreadable formats and failure to store to Azure.
-                These errors might occur 5-10 minutes after a user attempts to
-                upload a document.
-              </p>
-              <p>
-                To address these, I used a persistent alert, along with an
-                alerts page to track a history of failed uploads and actions
-                to recover from errors after leaving and returning to app.
-              </p>
-              <div className="image-wrapper">
-                <ZoomableImage
-                  src="/images/Asynchronous-flow.png"
-                  alt="Flow chart of webpages leading to another"
-                  width={10564}
-                  height={4870}
-                  style={{ width: "100%", height: "auto" }}
-                />
-              </div>
+          <div className="image-with-heading">
+            <p>
+              Document processing errors are backend heavy and include
+              errors like unreadable formats and failure to store to Azure.
+              These errors might occur 5-10 minutes after a user attempts to
+              upload a document.
+            </p>
+            <p>
+              To address these, I used a persistent alert, along with an
+              alerts page to track a history of failed uploads and actions
+              to recover from errors after leaving and returning to app.
+            </p>
+            <div className="image-wrapper">
+              <ZoomableImage
+                src="/images/Asynchronous-flow.png"
+                alt="Flow chart of webpages leading to another"
+                width={10564}
+                height={4870}
+                style={{ width: "100%", height: "auto" }}
+              />
             </div>
           </div>
+
         </div>
       </section>
 
       <div className="project-section dark">
         <div className="container-1232">
           <div className="top-content">
-            <div className="slide-header">
-              <h2 className="light">Outcomes</h2>
-            </div>
+            <h2 className="light">Outcomes</h2>
+
           </div>
-          <div className="horizontal-middle-container">
-            <div className="_3-x-1-text-grid">
-              <div className="card">
-                <div className="card-media">
-                  <div className="card-data-wrapper">
-                    <div className="display-callout light">01</div>
-                  </div>
-                </div>
-                <div className="card-info text-card">
-                  <p className="light">
-                    <strong className="list-card-title light">
-                      Reduced rating time
-                    </strong>
-                  </p>
-                  <p className="light">
-                    Raters reported spending about 1 hour to fully rate a
-                    bank, down from 2.5 hours (the final goal being 20-30
-                    minutes). Save an extra ~5-10 minutes with new upload
-                  </p>
+          <div className="key-points">
+              <div className="key-point">
+                <p className="key-point-number light">01</p>
+                <div className="key-point-body">
+                  <p className="key-point-title light">Reduced rating time</p>
+                <p className="light">Raters reported spending about 1 hour to fully rate a bank, down from 2.5 hours (the final goal being 20-30 minutes). Save an extra ~5-10 minutes with new upload</p>
                 </div>
               </div>
-              <div className="card">
-                <div className="card-media">
-                  <div className="card-data-wrapper">
-                    <div className="display-callout light">02</div>
-                  </div>
-                </div>
-                <div className="card-info text-card">
-                  <p className="list-card-title">
-                    <strong className="list-card-title light">
-                      Reduced from 3 tools to 1
-                    </strong>
-                  </p>
-                  <p className="light">
-                    Increase efficiency of use - the upload document feature
-                    eliminated the use of a third-party tool used to track
-                    sources, eliminating confusion and reducing time raters
-                    spent on remembering different logins and tools
-                  </p>
+              <div className="key-point">
+                <p className="key-point-number light">02</p>
+                <div className="key-point-body">
+                  <p className="key-point-title light">Reduced from 3 tools to 1</p>
+                <p className="light">Increase efficiency of use - the upload document feature eliminated the use of a third-party tool used to track sources, eliminating confusion and reducing time raters spent on remembering different logins and tools</p>
                 </div>
               </div>
-              <div className="card">
-                <div className="card-media">
-                  <div className="card-data-wrapper">
-                    <div className="display-callout light">03</div>
-                  </div>
-                </div>
-                <div className="card-info text-card">
-                  <p className="light">
-                    <strong className="list-card-title light">
-                      Positive user feedback
-                    </strong>
-                  </p>
-                  <p className="light">
-                    New raters had fewer questions when rating a bank for the
-                    first time. Users mentioned the new interface was easier
-                    to use
-                  </p>
+              <div className="key-point">
+                <p className="key-point-number light">03</p>
+                <div className="key-point-body">
+                  <p className="key-point-title light">Positive user feedback</p>
+                <p className="light">New raters had fewer questions when rating a bank for the first time. Users mentioned the new interface was easier to use</p>
                 </div>
               </div>
-            </div>
           </div>
+
         </div>
       </div>
 
       <div className="project-section fixed dark">
         <div className="container-1232">
-          <div className="side-text-horizontal-container">
-            <div className="left-middle-half-width-container">
-              <div className="slide-left-header">
-                <div className="middle-aligner">
-                  <div className="container-eyebrow-and-heading">
-                    <div className="wrapper-heading-and-blurb">
-                      <h2 className="light">Next steps</h2>
-                    </div>
-                  </div>
-                </div>
-              </div>
+          <div className="split">
+            <div className="split-col">
+              <h2 className="light">Next steps</h2>
             </div>
-            <div className="right-middle-half-width-container">
+            <div className="split-col">
               <ul role="list" className="blue-bullet-list">
                 <li className="list-item-colored-bullet top-align">
                   The next phase will use AI to parse uploaded documents to
@@ -779,69 +735,33 @@ export default function BankGreen() {
       <div className="project-section hug-height dark">
         <div className="container-1232">
           <div className="top-content">
-            <div className="slide-header">
-              <h2 className="light">Key learnings</h2>
-            </div>
+            <h2 className="light">Key learnings</h2>
+
           </div>
-          <div className="horizontal-middle-container">
-            <div className="_3-x-1-text-grid">
-              <div className="card">
-                <div className="card-media">
-                  <div className="card-data-wrapper">
-                    <div className="display-callout light">01</div>
-                  </div>
-                </div>
-                <div className="card-info text-card">
-                  <p className="list-card-title light">
-                    New design constraints
-                  </p>
-                  <p className="light">
-                    Designing for Retool was a new experience. I learned to
-                    ask about Retool&rsquo;s limitations, which informed my
-                    decisions when it came to flows such as auto-save
-                  </p>
+          <div className="key-points">
+              <div className="key-point">
+                <p className="key-point-number light">01</p>
+                <div className="key-point-body">
+                  <p className="key-point-title light">New design constraints</p>
+                <p className="light">Designing for Retool was a new experience. I learned to ask about Retool&rsquo;s limitations, which informed my decisions when it came to flows such as auto-save</p>
                 </div>
               </div>
-              <div className="card">
-                <div className="card-media">
-                  <div className="card-data-wrapper">
-                    <div className="display-callout light">02</div>
-                  </div>
-                </div>
-                <div className="card-info text-card">
-                  <p className="list-card-title light">Unique challenges</p>
-                  <p className="light">
-                    Something I enjoy about designing for Bank Green is the
-                    opportunity to be creative when solving problems, since
-                    there often isn&rsquo;t direct precedent for me to get
-                    inspiration from. I enjoyed learning about the unique role
-                    of the rater and being able to improve their daily
-                    workflow.
-                  </p>
+              <div className="key-point">
+                <p className="key-point-number light">02</p>
+                <div className="key-point-body">
+                  <p className="key-point-title light">Unique challenges</p>
+                <p className="light">Something I enjoy about designing for Bank Green is the opportunity to be creative when solving problems, since there often isn&rsquo;t direct precedent for me to get inspiration from. I enjoyed learning about the unique role of the rater and being able to improve their daily workflow.</p>
                 </div>
               </div>
-              <div className="card">
-                <div className="card-media">
-                  <div className="card-data-wrapper">
-                    <div className="display-callout light">03</div>
-                  </div>
-                </div>
-                <div className="card-info text-card">
-                  <p className="list-card-title light">
-                    Engineer-driven process
-                  </p>
-                  <p className="light">
-                    Being part of a product and engineering team that&rsquo;s
-                    led by an engineer means that it&rsquo;s extremely
-                    critical for me as a designer to stay proactive when
-                    asking questions, planning ahead, and communicating with
-                    the team, otherwise users and I may find unexpected,
-                    confusing changes pop up!
-                  </p>
+              <div className="key-point">
+                <p className="key-point-number light">03</p>
+                <div className="key-point-body">
+                  <p className="key-point-title light">Engineer-driven process</p>
+                <p className="light">Being part of a product and engineering team that&rsquo;s led by an engineer means that it&rsquo;s extremely critical for me as a designer to stay proactive when asking questions, planning ahead, and communicating with the team, otherwise users and I may find unexpected, confusing changes pop up!</p>
                 </div>
               </div>
-            </div>
           </div>
+
         </div>
       </div>
     </div>
