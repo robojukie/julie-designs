@@ -1103,49 +1103,11 @@ a.social-link:not(.brand):hover {
 }
 
 /* ---------------------------------------------------------------------------
-   19. Bank Green sticky section — align with the page's centred 940 measure
-   NEW BEHAVIOUR, NOT IN THE EXPORT. The original had this wrong; this is a
-   deliberate change, not a port fidelity fix.
-
-   /bank-green-gpe states its overview ("In order to speed up the bank rating
-   process…") as a 940px column centred inside the 1232 track with the text
-   left-aligned:
-
-       .container-1232 > .center-middle-aligner > .container-content-center
-
-   The sticky "User flows and technical constraints inform error handling"
-   block said the same thing a different way — .middle-aligner, which is
-   full-width and flush-left inside its wrapper's padding. Two blocks of
-   left-aligned prose on one page, on two different left edges, 42px apart at
-   every viewport from 1232 up. Read as a wobble rather than as a distinction,
-   because there is no distinction being drawn.
-
-   Fixed in the markup, not with a CSS special case: the sticky block now uses
-   the same .center-middle-aligner > .container-content-center pair as the
-   overview. One structure, one measure, and the next centred block on the page
-   copies a pattern that already exists rather than inventing a third.
-
-   The other half is in section 17 — .container-1232-absolute keeps its own
-   104px padding at base and 0 at 991 in the export, so even with matching
-   inner structure the two would only have agreed above 1232. Giving it
-   --gutter and the shared cap makes the outer track resolve identically to
-   .container-1232's, and the 940 column then centres to the same pixel at
-   every width. Nothing here sets text-align: both were already left-aligned;
-   only the box they sat in differed.
-
-   The one rule this section does need: .container-content-center is
-   `align-items: center`, which in a flex column makes each child shrink to
-   fit its own text and sit centred in the 940. The overview never showed this
-   because its single child, .paragraph-display-thin, is width:100% and so
-   fills the column regardless. The sticky block's bare <h2> and <p> are not,
-   so they shrink-wrapped and centred — 51.9px in from the column edge at
-   every width above 992, which is worse than the 42px the original was off
-   by. Stretch puts the children back on the column's own left edge, matching
-   the overview exactly. Scoped to this wrapper: .container-content-center is
-   used elsewhere with genuinely centred children, and this is not a claim
-   about that class in general.
+   19. Bank Green sticky section — align with the page column
 --------------------------------------------------------------------------- */
-.container-1232-absolute .container-content-center {
+/* The overlay is a flex column with align-items: flex-start, so a bare <h2> or
+   <p> shrink-wraps to its own text instead of starting on the column's edge. */
+.container-1232-absolute {
   align-items: stretch;
 }
 
@@ -2660,12 +2622,25 @@ a.social-link:not(.brand):hover {
 .top-content,
 .body-text-container,
 .heading-and-body-container,
-.section-heading-wrapper {
+.section-heading-wrapper,
+.eyebrow-and-headline-container,
+.image-with-heading {
   width: 100%;
   max-width: var(--measure-text);
   margin-left: 0;
   margin-right: auto;
   align-self: flex-start;
+}
+
+/* Centred text needs the full column to centre against; capped at the text
+   measure it reads as centred-inside-a-left-aligned-box. The auto block
+   margins absorb the section's spare height, so the callout sits in the middle
+   while the eyebrow above it stays at the top. */
+.container-center {
+  max-width: var(--measure-page);
+  align-items: center;
+  margin-top: auto;
+  margin-bottom: auto;
 }
 
 /* ---------------------------------------------------------------------------
