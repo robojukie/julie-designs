@@ -173,22 +173,26 @@ export default function BrainSproutAccessibility() {
               <div className="heading-container h4-container">
                 <h3>Widening inequality in education extends into adulthood</h3>
               </div>
-              <div className="image-wrapper-small">
-                <ZoomableImage
-                  src="/images/NYT-image.png"
-                  alt="Image from The New York Times showing school children standing on different platform levels to depict educational inequality"
-                  width={708}
-                  height={385}
-                  style={{ width: "100%", height: "auto" }}
-                />
-                <div className="image-caption-wrapper">
-                  Image source:{" "}
-                  <a
-                    href="https://www.nytimes.com/2016/08/28/opinion/sunday/the-good-news-about-educational-inequality.html"
-                    className="link image-caption"
-                  >
-                    NYT
-                  </a>
+              <div className="captioned-image image-wrapper-small">
+                <div className="image-wrapper">
+                  <ZoomableImage
+                    src="/images/NYT-image.png"
+                    alt="Image from The New York Times showing school children standing on different platform levels to depict educational inequality"
+                    width={708}
+                    height={385}
+                    style={{ width: "100%", height: "auto" }}
+                  />
+                </div>
+                <div className="caption-wrapper">
+                  <p className="caption">
+                    Image source:{" "}
+                    <a
+                      href="https://www.nytimes.com/2016/08/28/opinion/sunday/the-good-news-about-educational-inequality.html"
+                      className="link image-caption"
+                    >
+                      NYT
+                    </a>
+                  </p>
                 </div>
               </div>
               <div className="body-text-container">
@@ -474,7 +478,7 @@ export default function BrainSproutAccessibility() {
               </div>
             </div>
           </div>
-          <div className="container-800">
+          <div className="container-680">
             <div className="grid-with-heading">
               <div className="heading-container h4-container">
                 <h4>

@@ -1,21 +1,3 @@
-/* NOT a case study, and the structure is the argument for that.
-
-   vac-redesign, bank-green-gpe and brainsprout each walk a process arc —
-   research, goals, iterations, outcome — because their job is to show how the
-   work was done. Anyone reaching this page has already read one of those. What
-   they can't see from them is the shape and complexity of the most recent work,
-   so this page is organised by PROJECT instead: product context, then one
-   numbered section per project — before/after, then the individual features it
-   shipped or reworked, anchored by its own prototype — then outcomes. No
-   research phase and no goal arc; the before/after pairs are evidence rather
-   than a narrative the page is walking through.
-
-   Project, then feature, and not the other way round: "Consult Review" is a
-   body of work that touched a notification system, a consult document review
-   page and a set of worklists. Those surfaces are the features.
-
-   Everything below is placeholder copy and placeholder media — the shell exists
-   so the structure can be reviewed before the content is written. */
 import type { Metadata } from "next";
 import CaseStudyBanner from "@/components/CaseStudyBanner";
 import CaseStudyHero from "@/components/CaseStudyHero";
@@ -225,10 +207,10 @@ export default function NovinoPathLIS() {
         <section className="project-section showcase-section opening-section">
           <div className="container-1232">
             {/* The opening block: overview prose, the product shot, a rule,
-                then the context columns. Everything shares .container-800's
+                then the context columns. Everything shares .container-680's
                 measure so the page opens on one left edge — the rule does the
                 separating rather than a change of container width. */}
-            <div className="container-800">
+            <div className="container-680">
               <div className="project-overview">
                 <p className="eyebrow muted">Overview</p>
 
@@ -257,13 +239,11 @@ export default function NovinoPathLIS() {
                         the legibility that is the entire point.
                       - Give it a caption. It is the one image on the page
                         doing explanatory rather than illustrative work. */}
-                <div className="project-shot">
-                  <div
-                    className="placeholder-media"
-                    data-placeholder-for="/images/placeholder-novinopath-domain-diagram.png"
-                    aria-hidden="true"
-                  />
-                </div>
+                <div
+                  className="placeholder-media"
+                  data-placeholder-for="/images/placeholder-novinopath-domain-diagram.png"
+                  aria-hidden="true"
+                />
 
                 <hr className="project-rule" />
 
@@ -293,7 +273,7 @@ export default function NovinoPathLIS() {
 
             {/* In-page menu. Plain anchors — no JS, no scroll-spy — so it works
                 on first paint and degrades to nothing worse than a jump. */}
-            <div className="container-800 project-toc-block">
+            <div className="container-680 project-toc-block">
               <nav id="projects-toc" className="project-toc" aria-label="Projects">
                 <p className="eyebrow">Projects</p>
                 {/* role="list" alongside <ol>: .project-toc-list is
@@ -320,7 +300,7 @@ export default function NovinoPathLIS() {
                 without a mark the first project's label reads as a fourth
                 entry in the menu directly above it. Same rule as the one
                 inside the overview block, so the two boundaries match. */}
-            <div className="container-800 projects-start-rule">
+            <div className="container-680 projects-start-rule">
               <hr className="project-rule" />
             </div>
           </div>
@@ -359,10 +339,8 @@ export default function NovinoPathLIS() {
                 {OUTCOMES.map((outcome) => (
                   <div className="card" key={outcome.marker}>
                     <div className="card-media">
-                      <div className="card-data-wrapper">
-                        <div className="display-callout light">
-                          {outcome.marker}
-                        </div>
+                      <div className="display-callout light">
+                        {outcome.marker}
                       </div>
                     </div>
                     <div className="card-info text-card">
@@ -380,19 +358,17 @@ export default function NovinoPathLIS() {
       <FadeIn>
         <section className="project-section showcase-section">
           <div className="container-1232">
-            <div className="container-800">
-              <div className="heading-and-body-container">
-                <h2>Reflection</h2>
-                <p>
-                  Placeholder reflection on what this work required that the
-                  earlier projects did not — a first sentence naming the
-                  difference in domain or scale.
-                </p>
-                <p>
-                  A second placeholder sentence on what would be done
-                  differently, and a third on where the product goes next.
-                </p>
-              </div>
+            <div className="heading-and-body-container">
+              <h2>Reflection</h2>
+              <p>
+                Placeholder reflection on what this work required that the
+                earlier projects did not — a first sentence naming the
+                difference in domain or scale.
+              </p>
+              <p>
+                A second placeholder sentence on what would be done
+                differently, and a third on where the product goes next.
+              </p>
             </div>
           </div>
         </section>

@@ -138,7 +138,19 @@ export const surfaces = {
   surface: "var(--surface)",
 } as const;
 
+/* The measure scale. Prefer these over the widthContainer* aliases below —
+   see the comment on --measure-text in styles/tokens.css. */
+export const measures = {
+  col: "var(--measure-col)",
+  gutter: "var(--measure-gutter)",
+  text: "var(--measure-text)",
+  page: "var(--measure-page)",
+} as const;
+
 export const widths = {
+  /* Legacy names from the Webflow export, kept so the frozen stylesheet and the
+     .container-* classes keep resolving. 680 aliases the text measure; 1232 and
+     1224 both alias the page measure. */
   widthContainer680: "var(--width--container-680)",
   widthContainer800: "var(--width--container-800)",
   widthContainer1232: "var(--width--container-1232)",
@@ -183,6 +195,7 @@ export const theme = {
   accents,
   textColors,
   surfaces,
+  measures,
   widths,
   spacing,
   radii,
