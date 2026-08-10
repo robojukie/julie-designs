@@ -2752,3 +2752,72 @@ a.social-link:not(.brand):hover {
   stroke-linecap: round;
   stroke-linejoin: round;
 }
+
+/* ---------------------------------------------------------------------------
+   36. One left edge per page
+--------------------------------------------------------------------------- */
+/* Prose caps at the same 696 measure as the headings above it. The export set
+   680, 16px short, which reads as a ragged right edge everywhere and fed the
+   shrink-wrap below. Scoped to 768 so the export's `max-width: 100%` still
+   owns the phone range. */
+@media screen and (min-width: 768px) {
+  p {
+    max-width: var(--measure-text);
+  }
+}
+
+/* .container-680 is align-items: center, so any child narrower than the column
+   sits centred in it. Above 1920 the export drops .main-text to `width: auto`,
+   which shrink-wraps it to its paragraphs and hands that centring something to
+   act on: /about's prose landed 8px right of every heading. */
+@media screen and (min-width: 1920px) {
+  .main-text {
+    width: 100%;
+  }
+}
+
+/* Home's hero row reserves its 80px column-gap for .captioned-image-home,
+   which renders 0 wide — it holds only the transparent image credit. Text 836
+   + gap 80 overflows the 856 content box, and a centred flex line that
+   overflows spills equally both ways, so the copy came to rest 10px inside the
+   column instead of on its edge. */
+@media screen and (min-width: 992px) {
+  .horizontal-container-right-to-top.home {
+    justify-content: flex-start;
+    column-gap: 0;
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  /* That padding was also the hero's only gutter — .hero-section pays none
+     (juliepaik.css:906). It moves out to the section, where .work-wrapper
+     already keeps the same 24px, so the measure inside stays on the column
+     edge and the row still can't touch the viewport. */
+  .hero-section.page-header-section {
+    padding-left: 24px;
+    padding-right: 24px;
+  }
+
+  /* Cards keep their 384 cap and give up the centring, so the pair spans the
+     column and its outer edges land on the nav line. */
+  .container-projects-pair {
+    justify-content: space-between;
+  }
+
+  .container-projects-pair > .container-project-link {
+    margin-left: 0;
+    margin-right: 0;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   37. One page gradient at every width
+--------------------------------------------------------------------------- */
+/* The export ships four ramps for .body and two of them barely move: 768-991
+   and below 479 both end on #fffdfb, brighter than the #fdfcfc they start
+   from, so a phone renders the page flat white. Unscoped and late, so it takes
+   all four breakpoints; .body:has(.project) in section 1 is more specific and
+   keeps the case-study pages flat. */
+.body {
+  background-image: linear-gradient(#fdfcfc, #fbf6f0 42%, #f8f4f1);
+}
