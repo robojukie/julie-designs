@@ -78,16 +78,22 @@
   --measure-text: 696px;
   --measure-page: 936px;
 
+  /* Shim for the frozen stylesheet, which names these 36 times and cannot be
+     edited (scripts/check-frozen-stylesheet.mjs). The numbers in the names are
+     the export's — nothing renders at 680, 800, 1224 or 1232 any more. New work
+     reads --measure-text and --measure-page; these exist only to carry the
+     frozen rules over to them. */
   --width--container-680: var(--measure-text);
   --width--container-800: var(--measure-page);
+  --width--container-1232: var(--measure-page);
+  --width--container-1224: var(--measure-page);
+
   --light: var(--accents--bold--secondary-brand-color);
   --nav-link-color: #9c9c9c;
   --text-size--nav-link-p-text: .9rem;
   --text-height--nav-link-height: 1.1rem;
   --accents--bold--main-brand-color: #a7b5a2;
   --accents--bold--secondary-brand-color: #ab91b4;
-  --width--container-1232: var(--measure-page);
-  --width--container-1224: var(--measure-page);
   /* Single horizontal page gutter. Consumed by section 17 of styles/custom.css,
      which neutralises the six disagreeing per-wrapper gutters in juliepaik.css.
      The clamp hits 24px at a 480px viewport and 104px at 2080px, so it lands on

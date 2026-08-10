@@ -70,7 +70,7 @@ export default function Home() {
       </div>
       <FadeIn id="projects-list" className="work home-content">
         <div className="work-wrapper">
-          <div className="container-1224">
+          <div className="container-1232">
             <div className="project-grid">
               <div className="container-projects-pair">
                 <ProjectCard

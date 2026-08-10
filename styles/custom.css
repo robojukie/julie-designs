@@ -2559,18 +2559,17 @@ a.social-link:not(.brand):hover {
    30. Two frozen literals that the measure scale can't reach
    NEW BEHAVIOUR, NOT IN THE EXPORT.
 
-   The page measure moved from the export's inherited 1232 to 1280 by
-   repointing --width--container-1232 (see the MEASURE SCALE comment in
+   The page measure moved from the export's inherited 1232 to the scale's 936
+   by repointing --width--container-1232 (see the MEASURE SCALE comment in
    styles/tokens.css). Every rule that reads that token followed automatically.
    Two did not, because the export wrote the number rather than the token:
 
      .subsection                  max-width: 1232px  (juliepaik.css:1882)
      .grid-with-heading-vertical  max-width: 1224px  (juliepaik.css:2685)
 
-   Left alone they would sit 48px and 56px inside a page that had moved out
-   from under them — /about and /writing's .subsection, and one grid on
-   /brainsprout — which reads as three blocks that failed to line up rather
-   than as a deliberately narrower measure.
+   Left alone they would overhang the column by 296px and 288px — /about and
+   /writing's .subsection, and one grid on /brainsprout — which reads as three
+   blocks that failed to line up rather than as a deliberately wider measure.
 
    .paragraph-home is deliberately NOT here. Its base is `max-width: 800px`, so
    it is a text block that happens to carry a 1224 in the <=991 media query,
@@ -2601,6 +2600,17 @@ a.social-link:not(.brand):hover {
   margin-left: 0;
   margin-right: auto;
   align-self: flex-start;
+}
+
+/* .container-680.home-subtitle takes its width from --width--container-800,
+   which the scale maps to the page column. It is running copy, so it belongs on
+   the text measure. Stated here for the class — the home and /writing intros —
+   rather than by re-mapping the token, which five case-study title classes also
+   read. On /writing the block is centred rather than flush left, so narrowing
+   it moves it in; that is the export's centring showing through, and it stays. */
+.container-680.home-subtitle {
+  width: 100%;
+  max-width: var(--measure-text);
 }
 
 /* Centred text needs the full column to centre against; capped at the text
