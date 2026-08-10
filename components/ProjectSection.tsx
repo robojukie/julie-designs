@@ -69,10 +69,12 @@ export const pad = (n: number) => String(n).padStart(2, "0");
 
 type ProjectSectionProps = {
   id: string;
-  /* The project's NAME — "Consult Review", not "Project 01 of 03: Consult
-     Review". The prefix is added below so one string can serve the section
-     label, the sticky nav and the in-page menu. */
+  /* The project's NAME — "Consult Review", not "01 Consult Review". The prefix
+     is added below so one string can serve the section label and the nav. */
   name: string;
+  /* 1-based position in the run. Below 767px the nav shows numbers with no
+     names, so the prefix this renders is the only place "02" resolves. */
+  number: number;
   state: ProjectState;
   /* Who the work serves. Text rather than a badge: these are several values per
      project and they'd overflow a pill row, and unlike state they are read once
@@ -135,6 +137,7 @@ function ShotPlaceholder({ src, alt }: { src: string; alt: string }) {
 export default function ProjectSection({
   id,
   name,
+  number,
   state,
   audiences,
   heading,
@@ -161,16 +164,10 @@ export default function ProjectSection({
             <div className="heading-and-body-container">
               <div className="eyebrow-and-headline-container">
                 <div className="feature-label">
-                  {/* The NAME only. "Project 01 of 03: Consult Review" was
-                      here until the chip bar went in above it, and then the
-                      two said the same thing 88px apart at the moment a reader
-                      arrived — the bar carries position now, so this doesn't
-                      need to.
-
-                      A <p>, not an <h2>. This is a kicker on the heading below
-                      it; as a heading it put two h2s in every section and
-                      heading navigation heard them as siblings. */}
-                  <p className="eyebrow">{name}</p>
+                  <p className="eyebrow">
+                    <span className="project-label-n">{pad(number)}</span>
+                    {name}
+                  </p>
                   <StateTag state={state} />
                 </div>
                 <h2>{heading}</h2>

@@ -21,7 +21,7 @@ import CaseStudyBanner from "@/components/CaseStudyBanner";
 import CaseStudyHero from "@/components/CaseStudyHero";
 import ContextColumns from "@/components/ContextColumns";
 import FadeIn from "@/components/FadeIn";
-import ProjectNav from "@/components/ProjectNav";
+import SectionNav from "@/components/SectionNav";
 import ProjectSection, {
   pad,
   type ProjectFeature,
@@ -247,15 +247,7 @@ export default function NovinoPathLIS() {
                   </p>
                 </div>
 
-                {/* An ORIENTATION DIAGRAM, not a product screenshot. Pathology
-                    lab workflow is a domain almost no reader arrives knowing,
-                    and this is what lets them follow the feature sections at
-                    all — how a case moves from accessioning to a signed-out
-                    report, and which surfaces sit where in that path. It is
-                    the most load-bearing element in the opening, not a
-                    decorative hero.
-
-                    Three consequences when the real asset lands:
+                {/* Three consequences when the real asset lands:
                       - Use ZoomableImage, not a plain <Image>. A diagram dense
                         enough to explain a domain is dense enough to need
                         reading at full size.
@@ -302,12 +294,8 @@ export default function NovinoPathLIS() {
             {/* In-page menu. Plain anchors — no JS, no scroll-spy — so it works
                 on first paint and degrades to nothing worse than a jump. */}
             <div className="container-800 project-toc-block">
-              <nav className="project-toc" aria-label="Projects">
-                {/* The count in the label, and a number on every entry. Between
-                    them the reader knows how many projects there are before
-                    they start, and the sticky bar then keeps them oriented once
-                    they have scrolled past this. */}
-                <p className="eyebrow">{PROJECTS.length} projects</p>
+              <nav id="projects-toc" className="project-toc" aria-label="Projects">
+                <p className="eyebrow">Projects</p>
                 {/* role="list" alongside <ol>: .project-toc-list is
                     list-style: none, and Safari drops list semantics from a
                     list with no marker unless the role is restated. Same
@@ -315,8 +303,10 @@ export default function NovinoPathLIS() {
                 <ol className="project-toc-list" role="list">
                   {PROJECTS.map((project, index) => (
                     <li key={project.id}>
-                      <a className="inline-link" href={`#${project.id}`}>
-                        {pad(index + 1)} {project.name}
+                      <a className="project-toc-link" href={`#${project.id}`}>
+                        <span className="project-toc-n">{pad(index + 1)}</span>
+                        <span className="project-toc-name">{project.name}</span>
+                        <span className="project-toc-leader" aria-hidden="true" />
                       </a>
                     </li>
                   ))}
@@ -337,28 +327,18 @@ export default function NovinoPathLIS() {
         </section>
       </FadeIn>
 
-      {/* .project-run is what scopes the sticky nav: it spans exactly the three
-          project sections, so the bar pins under the navbar on entry and leaves
-          with the last section's bottom edge, with no scroll listener deciding
-          when to show it. */}
-      {/* .project-run no longer scopes a sticky bar — each project's own label
-          pins itself now (see .project-sticky-label). Kept because it still
-          groups the run for the eye and gives anything added here later a
-          container that spans exactly the three projects.
-
-          components/ProjectNav.tsx is the indicator-bar version, left in the
-          tree rather than deleted: restoring it is an import and two lines
-          here. It was dropped because it duplicated the label it sat above and
-          was the heaviest object on a deliberately quiet page. */}
       <div className="project-run">
-        {/* First, so keyboard order reaches the section nav before the sections
-            it navigates. */}
-        <ProjectNav
-          projects={PROJECTS.map((p) => ({ id: p.id, label: p.name }))}
+        {/* Renders only a fixed capsule, nothing in the flow. First so keyboard
+            order reaches it before the sections it navigates. */}
+        <SectionNav
+          items={PROJECTS.map((p) => ({ id: p.id, label: p.name }))}
+          label="Project"
+          numbered
+          appearAfterId="projects-toc"
         />
 
-        {PROJECTS.map((project) => (
-          <ProjectSection key={project.id} {...project} />
+        {PROJECTS.map((project, index) => (
+          <ProjectSection key={project.id} number={index + 1} {...project} />
         ))}
       </div>
 

@@ -1,0 +1,197 @@
+/* Section nav — components/SectionNav.tsx. One capsule fixed to the bottom
+   edge, driven by two values the component writes per frame:
+
+     --sectionnav-in     0..1  fades and lifts it in
+     --sectionnav-width  px    page column width, contracting to content width */
+
+.sectionnav-float {
+  --sectionnav-kicker-size: 10px;
+  --sectionnav-kicker-gap: 2px;
+  --sectionnav-tab-pad-y: 8px;
+
+  position: fixed;
+  right: 0;
+  bottom: 24px;
+  left: 0;
+  z-index: 900;
+  padding-inline: var(--gutter);
+
+  opacity: var(--sectionnav-in, 0);
+  transform: translateY(calc(12px * (1 - var(--sectionnav-in, 0))));
+  pointer-events: none;
+}
+
+.sectionnav-float[data-shown] {
+  pointer-events: auto;
+}
+
+.sectionnav-floatbar {
+  display: flex;
+  align-items: center;
+  width: var(--sectionnav-width, 100%);
+  max-width: 100%;
+  margin-inline: auto;
+  padding: 8px;
+  border-radius: 999px;
+  background-color: rgb(253 253 253 / 0.94);
+  box-shadow: 0 6px 24px rgb(0 0 0 / 0.1);
+  -webkit-backdrop-filter: blur(18px);
+  backdrop-filter: blur(18px);
+}
+
+.sectionnav-list {
+  display: flex;
+  gap: 0px;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* margin: the export puts margin-bottom on every li, which sits under the flex
+   line and adds height. */
+.sectionnav-list > li {
+  flex: 1 1 auto;
+  min-width: max-content;
+  margin: 0;
+}
+
+.sectionnav-tab {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--sectionnav-kicker-gap);
+  padding: var(--sectionnav-tab-pad-y) 16px;
+  border-radius: 999px;
+  text-decoration: none;
+  white-space: nowrap;
+
+  font-family: var(--text-body-font);
+  font-size: var(--text-size--nav-link-p-text);
+  line-height: var(--text-height--nav-link-height);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: normal;
+
+  color: var(--text-colors--text-primary);
+  transition: background-color 0.2s ease;
+}
+
+/* Only the selected tab carries a kicker, so the rest reserve the same room
+   above their names or the row would not line up. */
+.sectionnav-tab:not([data-active]) {
+  padding-top: calc(
+    var(--sectionnav-tab-pad-y) + var(--sectionnav-kicker-size) +
+      var(--sectionnav-kicker-gap)
+  );
+}
+
+.sectionnav-tab[data-active] {
+  background-color: var(--color--peach--300);
+}
+
+/* Restates the base color to beat the global `a:hover` in juliepaik.css, which
+   is (0,1,1). Outside the hover query on purpose — a tap latches :hover, so
+   this is needed most where there is no hovering pointer. */
+.sectionnav-tab:hover,
+.sectionnav-tab:focus-visible {
+  color: var(--text-colors--text-primary);
+}
+
+.sectionnav-tab:not([data-active]):focus-visible {
+  background-color: color-mix(
+    in srgb,
+    var(--color--peach--300) 50%,
+    transparent
+  );
+}
+
+.sectionnav-tab[data-active]:focus-visible {
+  background-color: color-mix(
+    in srgb,
+    var(--color--peach--300) 88%,
+    var(--text-colors--text-primary)
+  );
+}
+
+/* A tap latches :hover on touch, which would leave the fill stuck on. */
+@media (hover: hover) {
+  .sectionnav-tab:not([data-active]):hover {
+    background-color: color-mix(
+      in srgb,
+      var(--color--peach--300) 50%,
+      transparent
+    );
+  }
+
+  .sectionnav-tab[data-active]:hover {
+    background-color: color-mix(
+      in srgb,
+      var(--color--peach--300) 88%,
+      var(--text-colors--text-primary)
+    );
+  }
+}
+
+.sectionnav-tab-main {
+  display: flex;
+  align-items: baseline;
+  gap: 7px;
+}
+
+.sectionnav-kicker {
+  font-size: var(--sectionnav-kicker-size);
+  line-height: 1;
+  letter-spacing: 0.14em;
+  font-weight: 600;
+}
+
+.sectionnav-n {
+  font-variant-numeric: tabular-nums;
+  opacity: 0.6;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sectionnav-float {
+    transform: none;
+  }
+}
+
+/* Numbers only. Phones in practice — every tablet is 768 or wider. */
+@media screen and (max-width: 767px) {
+  .sectionnav-name {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  /* The number is the whole visible label here, so it stops deferring. */
+  .sectionnav-n {
+    opacity: 1;
+  }
+
+  .sectionnav-tab {
+    padding-inline: 18px;
+  }
+
+  .sectionnav-float {
+    bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+  }
+}
+
+.sectionnav-status {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
