@@ -2737,9 +2737,32 @@ a.social-link:not(.brand):hover {
   margin-bottom: 8px;
 }
 
+/* Side by side, number above the body. Only viable when every point is short:
+   the track is 296px whatever the copy, so ~26 characters per line, which
+   reads as a card at 4-6 lines and as a ribbon past that. Roughly 150
+   characters per point is the ceiling. */
+.key-points.horizontal {
+  flex-direction: row;
+}
+
+.key-points.horizontal .key-point {
+  flex: 1 1 0;
+  min-width: 0;
+  grid-template-columns: 1fr;
+  row-gap: 16px;
+}
+
+.key-points.horizontal .key-point-body {
+  max-width: none;
+}
+
 @media screen and (max-width: 991px) {
   .key-point {
     grid-template-columns: 1fr;
     row-gap: 8px;
+  }
+
+  .key-points.horizontal {
+    flex-direction: column;
   }
 }
