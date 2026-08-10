@@ -2699,3 +2699,47 @@ a.social-link:not(.brand):hover {
   }
 }
 
+/* ---------------------------------------------------------------------------
+   33. .key-point — numbered points, stacked
+--------------------------------------------------------------------------- */
+.key-points {
+  display: flex;
+  flex-direction: column;
+  gap: var(--measure-gutter);
+  width: 100%;
+}
+
+/* 24px padding + 192px rail = 3 columns; the remainder is 9 columns, so the
+   body lands on the text measure without stating it twice. */
+.key-point {
+  display: grid;
+  grid-template-columns: 192px 1fr;
+  column-gap: var(--measure-gutter);
+  align-items: start;
+  border-left: 1px solid var(--accents--bold--accent-deep-blue);
+  padding-left: var(--measure-gutter);
+}
+
+.key-point-number {
+  font-family: var(--heading-font);
+  font-size: var(--text-size--highlight-desktop);
+  line-height: var(--text-size--highlight-desktop-80-height);
+  font-weight: var(--text-weightt--display-weight);
+  margin: 0;
+}
+
+.key-point-body {
+  max-width: var(--measure-text);
+}
+
+.key-point-title {
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+@media screen and (max-width: 991px) {
+  .key-point {
+    grid-template-columns: 1fr;
+    row-gap: 8px;
+  }
+}

@@ -708,65 +708,28 @@ export default function BankGreen() {
             </div>
           </div>
           <div className="horizontal-middle-container">
-            <div className="_3-x-1-text-grid">
-              <div className="card">
-                <div className="card-media">
-                  <div className="card-data-wrapper">
-                    <div className="display-callout light">01</div>
+            <div className="key-points">
+                <div className="key-point">
+                  <p className="key-point-number light">01</p>
+                  <div className="key-point-body">
+                    <p className="key-point-title light">Reduced rating time</p>
+                  <p className="light">Raters reported spending about 1 hour to fully rate a bank, down from 2.5 hours (the final goal being 20-30 minutes). Save an extra ~5-10 minutes with new upload</p>
                   </div>
                 </div>
-                <div className="card-info text-card">
-                  <p className="light">
-                    <strong className="list-card-title light">
-                      Reduced rating time
-                    </strong>
-                  </p>
-                  <p className="light">
-                    Raters reported spending about 1 hour to fully rate a
-                    bank, down from 2.5 hours (the final goal being 20-30
-                    minutes). Save an extra ~5-10 minutes with new upload
-                  </p>
-                </div>
-              </div>
-              <div className="card">
-                <div className="card-media">
-                  <div className="card-data-wrapper">
-                    <div className="display-callout light">02</div>
+                <div className="key-point">
+                  <p className="key-point-number light">02</p>
+                  <div className="key-point-body">
+                    <p className="key-point-title light">Reduced from 3 tools to 1</p>
+                  <p className="light">Increase efficiency of use - the upload document feature eliminated the use of a third-party tool used to track sources, eliminating confusion and reducing time raters spent on remembering different logins and tools</p>
                   </div>
                 </div>
-                <div className="card-info text-card">
-                  <p className="list-card-title">
-                    <strong className="list-card-title light">
-                      Reduced from 3 tools to 1
-                    </strong>
-                  </p>
-                  <p className="light">
-                    Increase efficiency of use - the upload document feature
-                    eliminated the use of a third-party tool used to track
-                    sources, eliminating confusion and reducing time raters
-                    spent on remembering different logins and tools
-                  </p>
-                </div>
-              </div>
-              <div className="card">
-                <div className="card-media">
-                  <div className="card-data-wrapper">
-                    <div className="display-callout light">03</div>
+                <div className="key-point">
+                  <p className="key-point-number light">03</p>
+                  <div className="key-point-body">
+                    <p className="key-point-title light">Positive user feedback</p>
+                  <p className="light">New raters had fewer questions when rating a bank for the first time. Users mentioned the new interface was easier to use</p>
                   </div>
                 </div>
-                <div className="card-info text-card">
-                  <p className="light">
-                    <strong className="list-card-title light">
-                      Positive user feedback
-                    </strong>
-                  </p>
-                  <p className="light">
-                    New raters had fewer questions when rating a bank for the
-                    first time. Users mentioned the new interface was easier
-                    to use
-                  </p>
-                </div>
-              </div>
             </div>
           </div>
         </div>
@@ -798,62 +761,28 @@ export default function BankGreen() {
             </div>
           </div>
           <div className="horizontal-middle-container">
-            <div className="_3-x-1-text-grid">
-              <div className="card">
-                <div className="card-media">
-                  <div className="card-data-wrapper">
-                    <div className="display-callout light">01</div>
+            <div className="key-points">
+                <div className="key-point">
+                  <p className="key-point-number light">01</p>
+                  <div className="key-point-body">
+                    <p className="key-point-title light">New design constraints</p>
+                  <p className="light">Designing for Retool was a new experience. I learned to ask about Retool&rsquo;s limitations, which informed my decisions when it came to flows such as auto-save</p>
                   </div>
                 </div>
-                <div className="card-info text-card">
-                  <p className="list-card-title light">
-                    New design constraints
-                  </p>
-                  <p className="light">
-                    Designing for Retool was a new experience. I learned to
-                    ask about Retool&rsquo;s limitations, which informed my
-                    decisions when it came to flows such as auto-save
-                  </p>
-                </div>
-              </div>
-              <div className="card">
-                <div className="card-media">
-                  <div className="card-data-wrapper">
-                    <div className="display-callout light">02</div>
+                <div className="key-point">
+                  <p className="key-point-number light">02</p>
+                  <div className="key-point-body">
+                    <p className="key-point-title light">Unique challenges</p>
+                  <p className="light">Something I enjoy about designing for Bank Green is the opportunity to be creative when solving problems, since there often isn&rsquo;t direct precedent for me to get inspiration from. I enjoyed learning about the unique role of the rater and being able to improve their daily workflow.</p>
                   </div>
                 </div>
-                <div className="card-info text-card">
-                  <p className="list-card-title light">Unique challenges</p>
-                  <p className="light">
-                    Something I enjoy about designing for Bank Green is the
-                    opportunity to be creative when solving problems, since
-                    there often isn&rsquo;t direct precedent for me to get
-                    inspiration from. I enjoyed learning about the unique role
-                    of the rater and being able to improve their daily
-                    workflow.
-                  </p>
-                </div>
-              </div>
-              <div className="card">
-                <div className="card-media">
-                  <div className="card-data-wrapper">
-                    <div className="display-callout light">03</div>
+                <div className="key-point">
+                  <p className="key-point-number light">03</p>
+                  <div className="key-point-body">
+                    <p className="key-point-title light">Engineer-driven process</p>
+                  <p className="light">Being part of a product and engineering team that&rsquo;s led by an engineer means that it&rsquo;s extremely critical for me as a designer to stay proactive when asking questions, planning ahead, and communicating with the team, otherwise users and I may find unexpected, confusing changes pop up!</p>
                   </div>
                 </div>
-                <div className="card-info text-card">
-                  <p className="list-card-title light">
-                    Engineer-driven process
-                  </p>
-                  <p className="light">
-                    Being part of a product and engineering team that&rsquo;s
-                    led by an engineer means that it&rsquo;s extremely
-                    critical for me as a designer to stay proactive when
-                    asking questions, planning ahead, and communicating with
-                    the team, otherwise users and I may find unexpected,
-                    confusing changes pop up!
-                  </p>
-                </div>
-              </div>
             </div>
           </div>
         </div>
