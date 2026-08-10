@@ -435,8 +435,8 @@ export default function BankGreen() {
                   width={797}
                   height={703}
                   loading="eager"
+                  sizes="(max-width: 991px) 100vw, 456px"
                   className="one-third-image"
-                  style={{ height: "auto" }}
                 />
               </div>
               <div className="caption-wrapper">
@@ -457,8 +457,8 @@ export default function BankGreen() {
                   width={797}
                   height={703}
                   loading="eager"
+                  sizes="(max-width: 991px) 100vw, 456px"
                   className="one-third-image"
-                  style={{ height: "auto" }}
                 />
               </div>
               <div className="caption-wrapper">
