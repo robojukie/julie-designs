@@ -1634,35 +1634,6 @@ a.social-link:not(.brand):hover {
   }
 }
 
-/* -- Opening orientation diagram ----------------------------------------- */
-
-/* NOT a product screenshot. This is the diagram that explains how a case moves
-   through a pathology lab, and it is what makes the feature sections legible
-   to a reader who has never seen this domain. See app/novinopath-lis/page.tsx.
-
-   Sits inside the overview block, between the prose and the rule, on the same
-   800px measure as everything around it.
-
-   Position and width are both deliberate. Between the prose and the rule
-   rather than after the rule, because the rule's job is to divide the block's
-   two halves — what this is, then who built it — and the diagram belongs to
-   the first: it is what the paragraph above just described. And at the text
-   measure rather than the container's, so the opening block keeps ONE left
-   edge and one right edge from the label down to the last context column.
-
-   An earlier version ran this full-width at 1232 and it was worse in both
-   respects. The wider box turned the block back into two competing measures,
-   which is the exact problem that retiring the old four-up strip had just
-   solved.
-
-   No aspect-ratio of its own. .placeholder-media's 16:10 is a stand-in until
-   the diagram exists, and the diagram's own ratio should win — explanatory
-   images are the ones where forcing a box costs the most, because a diagram
-   that has been letterboxed to fit is a diagram that can no longer be read. */
-.project-shot {
-  width: 100%;
-}
-
 /* -- In-page TOC --------------------------------------------------------- */
 
 /* .container-1232 stacks its children on a 32px row-gap, which is the internal
@@ -2740,4 +2711,16 @@ a.social-link:not(.brand):hover {
   .key-points.horizontal {
     flex-direction: column;
   }
+}
+
+/* ---------------------------------------------------------------------------
+   34. Section wrappers take the viewport
+--------------------------------------------------------------------------- */
+/* .project is align-items: center, so a flex item's cross size is fit-content.
+   Without a stated width these wrappers shrink-wrap the sections inside them
+   and centre the result, which stops a full-bleed background reaching the
+   viewport edge. */
+.project > .fade-in,
+.project > .project-run {
+  width: 100%;
 }
