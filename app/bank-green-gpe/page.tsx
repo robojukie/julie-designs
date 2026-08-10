@@ -431,59 +431,57 @@ export default function BankGreen() {
           <div className="section-heading-wrapper">
             <h3>Before and after redesign</h3>
           </div>
-          <div className="container-680">
-            {/* Same .comparison contract as /vac-redesign's pairs, on this
-                page's own grid class. --pair-aspect: both images are 797x703,
-                so the two aspects are the same 1.134 and each fills its track
-                exactly. Declared rather than left to default, because the
-                default is no shared height at all. */}
-            <div
-              className="w-layout-grid _2-x-1-grid-real comparison"
-              style={{ "--pair-aspect": "1.134" } as React.CSSProperties}
-            >
-              <div className="captioned-image">
-                <div className="image-wrapper border-radius">
-                  <ZoomableImage
-                    src="/images/image-frame-large.png"
-                    alt="Screenshot of an app created in Retool showing a data table on top half of screen and form section on bottom half of screen"
-                    width={797}
-                    height={703}
-                    loading="eager"
-                    className="one-third-image"
-                    style={{ height: "auto" }}
-                  />
-                </div>
-                <div className="caption-wrapper">
-                  <h3 className="caption-title">
-                    <strong className="caption-title">Engineer version</strong>
-                  </h3>
-                  <p className="caption">
-                    The initial iterations left important information out of
-                    the initial viewport, and had a lot of visual clutter
-                  </p>
-                </div>
+          {/* Same .comparison contract as /vac-redesign's pairs, on this
+              page's own grid class. --pair-aspect: both images are 797x703,
+              so the two aspects are the same 1.134 and each fills its track
+              exactly. Declared rather than left to default, because the
+              default is no shared height at all. */}
+          <div
+            className="w-layout-grid _2-x-1-grid-real comparison"
+            style={{ "--pair-aspect": "1.134" } as React.CSSProperties}
+          >
+            <div className="captioned-image">
+              <div className="image-wrapper border-radius">
+                <ZoomableImage
+                  src="/images/image-frame-large.png"
+                  alt="Screenshot of an app created in Retool showing a data table on top half of screen and form section on bottom half of screen"
+                  width={797}
+                  height={703}
+                  loading="eager"
+                  className="one-third-image"
+                  style={{ height: "auto" }}
+                />
               </div>
-              <div className="captioned-image">
-                <div className="image-wrapper border-radius">
-                  <ZoomableImage
-                    src="/images/image-frame-large-1.png"
-                    alt="A screenshot of a website page with a green background."
-                    width={797}
-                    height={703}
-                    loading="eager"
-                    className="one-third-image"
-                    style={{ height: "auto" }}
-                  />
-                </div>
-                <div className="caption-wrapper">
-                  <h3 className="caption-title">
-                    <strong className="caption-title">Redesign</strong>
-                  </h3>
-                  <p className="caption">
-                    I interviewed 3 raters and discussed with team members to
-                    clarify and simplify the interface
-                  </p>
-                </div>
+              <div className="caption-wrapper">
+                <h3 className="caption-title">
+                  <strong className="caption-title">Engineer version</strong>
+                </h3>
+                <p className="caption">
+                  The initial iterations left important information out of
+                  the initial viewport, and had a lot of visual clutter
+                </p>
+              </div>
+            </div>
+            <div className="captioned-image">
+              <div className="image-wrapper border-radius">
+                <ZoomableImage
+                  src="/images/image-frame-large-1.png"
+                  alt="A screenshot of a website page with a green background."
+                  width={797}
+                  height={703}
+                  loading="eager"
+                  className="one-third-image"
+                  style={{ height: "auto" }}
+                />
+              </div>
+              <div className="caption-wrapper">
+                <h3 className="caption-title">
+                  <strong className="caption-title">Redesign</strong>
+                </h3>
+                <p className="caption">
+                  I interviewed 3 raters and discussed with team members to
+                  clarify and simplify the interface
+                </p>
               </div>
             </div>
           </div>

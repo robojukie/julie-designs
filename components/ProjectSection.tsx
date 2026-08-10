@@ -160,7 +160,7 @@ export default function ProjectSection({
           the element that carries the section's padding. */}
       <section id={id} className="project-section showcase-section">
         <div className="container-1232">
-          <div className="container-800">
+          <div className="container-680">
             <div className="heading-and-body-container">
               <div className="eyebrow-and-headline-container">
                 <div className="feature-label">
@@ -211,39 +211,29 @@ export default function ProjectSection({
               question; this pair answers it in one glance, and the features
               below then show how. */}
           {beforeAfter && (
-            <div className="container-800">
-              {/* `_2-x-1-grid comparison` — the site's screen-comparison
-                  contract (custom.css §22), not a local grid. No --cols: both
-                  halves are placeholders at a shared 16:10, so the even split
-                  already gives equal heights. Real screenshots will need it at
-                  this call site, as the vac-redesign pairs do.
-
-                  .image-wrapper is load-bearing: §22's rules reach the image
-                  through it. */}
-              <div className="_2-x-1-grid comparison">
-                {[
-                  { label: "Before", shot: beforeAfter.before },
-                  { label: "After", shot: beforeAfter.after },
-                ].map(({ label, shot }) => (
-                  <div className="captioned-image" key={label}>
-                    <div className="image-wrapper">
-                      <ShotPlaceholder
-                        src={shot.screenshotSrc}
-                        alt={shot.screenshotAlt}
-                      />
-                    </div>
-                    <div className="caption-wrapper">
-                      <p className="caption-title">{label}</p>
-                      <p className="caption">{shot.caption}</p>
-                    </div>
+            <div className="_2-x-1-grid comparison">
+              {[
+                { label: "Before", shot: beforeAfter.before },
+                { label: "After", shot: beforeAfter.after },
+              ].map(({ label, shot }) => (
+                <div className="captioned-image" key={label}>
+                  <div className="image-wrapper">
+                    <ShotPlaceholder
+                      src={shot.screenshotSrc}
+                      alt={shot.screenshotAlt}
+                    />
                   </div>
-                ))}
-              </div>
+                  <div className="caption-wrapper">
+                    <p className="caption-title">{label}</p>
+                    <p className="caption">{shot.caption}</p>
+                  </div>
+                </div>
+              ))}
             </div>
           )}
 
           {features.length > 0 && (
-            <div className="container-800 project-features">
+            <div className="container-680 project-features">
               {features.map((feature) => (
                 <div className="project-feature" key={feature.title}>
                   <div className="eyebrow-and-headline-container">
@@ -266,7 +256,7 @@ export default function ProjectSection({
           )}
 
           {/* The scroll target, and the end of the section's evidence. */}
-          <div className="container-800" id={prototypeId}>
+          <div className="container-680" id={prototypeId}>
             <div className="feature-prototype">
               {figmaEmbedUrl ? (
                 <iframe

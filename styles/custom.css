@@ -2621,3 +2621,81 @@ a.social-link:not(.brand):hover {
   max-height: none;
 }
 
+
+/* ---------------------------------------------------------------------------
+   30. Two frozen literals that the measure scale can't reach
+   NEW BEHAVIOUR, NOT IN THE EXPORT.
+
+   The page measure moved from the export's inherited 1232 to 1280 by
+   repointing --width--container-1232 (see the MEASURE SCALE comment in
+   styles/tokens.css). Every rule that reads that token followed automatically.
+   Two did not, because the export wrote the number rather than the token:
+
+     .subsection                  max-width: 1232px  (juliepaik.css:1882)
+     .grid-with-heading-vertical  max-width: 1224px  (juliepaik.css:2685)
+
+   Left alone they would sit 48px and 56px inside a page that had moved out
+   from under them — /about and /writing's .subsection, and one grid on
+   /brainsprout — which reads as three blocks that failed to line up rather
+   than as a deliberately narrower measure.
+
+   .paragraph-home is deliberately NOT here. Its base is `max-width: 800px`, so
+   it is a text block that happens to carry a 1224 in the <=991 media query,
+   where the viewport is under 1224 anyway and the value never binds. It is not
+   part of the page measure and should not start following it.
+
+   juliepaik.css is frozen (scripts/check-frozen-stylesheet.mjs), so these are
+   overrides rather than edits at the source. */
+.subsection,
+.grid-with-heading-vertical {
+  max-width: var(--measure-page);
+}
+
+/* ---------------------------------------------------------------------------
+   31. Text blocks cap at the text measure, left-aligned in the column
+--------------------------------------------------------------------------- */
+/* Left-aligned, capped at the text measure. Blocks share the column's left
+   edge with full-width grids and figures; only the right edge is ragged. */
+.container-680,
+.top-content,
+.body-text-container,
+.heading-and-body-container,
+.section-heading-wrapper {
+  width: 100%;
+  max-width: var(--measure-text);
+  margin-left: 0;
+  margin-right: auto;
+  align-self: flex-start;
+}
+
+/* ---------------------------------------------------------------------------
+   32. Grids split their tracks evenly
+--------------------------------------------------------------------------- */
+/* ._2-x-1-grid-real is display:flex despite the name, so its
+   grid-template-columns does nothing and children size from their own content.
+   flex-basis 0 makes the split even. */
+._2-x-1-grid-real > *,
+._3-x-1-text-grid > *,
+._3-x-1-card-grid > * {
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+/* ._3-x-1-card-grid shipped a 32px gap where every other grid uses 24, which
+   put its tracks 5px off the column. */
+._2-x-1-grid,
+._2-x-1-grid-real,
+._3-x-1-text-grid,
+._3-x-1-card-grid,
+.blog-cards-grid {
+  column-gap: var(--measure-gutter);
+  row-gap: var(--measure-gutter);
+}
+
+/* Desktop only: the export drops this to one column at <=767 and that stays. */
+@media screen and (min-width: 992px) {
+  .blog-cards-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+

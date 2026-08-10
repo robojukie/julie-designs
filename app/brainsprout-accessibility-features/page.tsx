@@ -478,7 +478,7 @@ export default function BrainSproutAccessibility() {
               </div>
             </div>
           </div>
-          <div className="container-800">
+          <div className="container-680">
             <div className="grid-with-heading">
               <div className="heading-container h4-container">
                 <h4>

@@ -207,10 +207,10 @@ export default function NovinoPathLIS() {
         <section className="project-section showcase-section opening-section">
           <div className="container-1232">
             {/* The opening block: overview prose, the product shot, a rule,
-                then the context columns. Everything shares .container-800's
+                then the context columns. Everything shares .container-680's
                 measure so the page opens on one left edge — the rule does the
                 separating rather than a change of container width. */}
-            <div className="container-800">
+            <div className="container-680">
               <div className="project-overview">
                 <p className="eyebrow muted">Overview</p>
 
@@ -275,7 +275,7 @@ export default function NovinoPathLIS() {
 
             {/* In-page menu. Plain anchors — no JS, no scroll-spy — so it works
                 on first paint and degrades to nothing worse than a jump. */}
-            <div className="container-800 project-toc-block">
+            <div className="container-680 project-toc-block">
               <nav id="projects-toc" className="project-toc" aria-label="Projects">
                 <p className="eyebrow">Projects</p>
                 {/* role="list" alongside <ol>: .project-toc-list is
@@ -302,7 +302,7 @@ export default function NovinoPathLIS() {
                 without a mark the first project's label reads as a fourth
                 entry in the menu directly above it. Same rule as the one
                 inside the overview block, so the two boundaries match. */}
-            <div className="container-800 projects-start-rule">
+            <div className="container-680 projects-start-rule">
               <hr className="project-rule" />
             </div>
           </div>
@@ -362,7 +362,7 @@ export default function NovinoPathLIS() {
       <FadeIn>
         <section className="project-section showcase-section">
           <div className="container-1232">
-            <div className="container-800">
+            <div className="container-680">
               <div className="heading-and-body-container">
                 <h2>Reflection</h2>
                 <p>
