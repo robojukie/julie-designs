@@ -1709,15 +1709,73 @@ a.social-link:not(.brand):hover {
   width: 100%;
 }
 
-/* Wraps rather than scrolls: three short labels fit one line on desktop and
-   stack on their own below ~479px without any breakpoint of their own. */
 .project-toc-list {
   display: flex;
-  flex-wrap: wrap;
-  gap: 12px 32px;
+  flex-direction: column;
+  width: 100%;
   list-style: none;
   margin: 0;
   padding: 0;
+}
+
+/* The export puts margin-bottom: 4px on every li, which breaks the rules into
+   detached segments. */
+.project-toc-list li {
+  margin: 0;
+}
+
+.project-toc-link {
+  align-items: baseline;
+  color: var(--text-colors--text-primary);
+  display: flex;
+  gap: 12px;
+  padding: 14px 0;
+  text-decoration: none;
+  transition: background-color 0.2s ease;
+  width: 100%;
+}
+
+/* Restates the base color to beat the global `a:hover` in juliepaik.css, which
+   is (0,1,1) and would turn the row coral against its own tint. */
+.project-toc-link:hover,
+.project-toc-link:focus-visible {
+  color: var(--text-colors--text-primary);
+}
+
+/* A tap latches :hover on touch, which would leave the tint stuck on. */
+@media (hover: hover) {
+  .project-toc-link:hover {
+    background-color: var(--surface);
+  }
+}
+
+.project-toc-link:focus-visible {
+  background-color: var(--surface);
+}
+
+.project-toc-n,
+.project-toc-name {
+  flex: none;
+}
+
+.project-toc-n {
+  font-variant-numeric: tabular-nums;
+  opacity: 0.6;
+}
+
+/* translateY lifts the leader off the baseline it is aligned to, down onto the
+   descender line where a printed leader sits. */
+.project-toc-leader {
+  flex: 1 1 auto;
+  height: 2px;
+  transform: translateY(-4px);
+  background-image: radial-gradient(
+    circle,
+    var(--nav-link-color) 30%,
+    transparent 30%
+  );
+  background-size: 5px 5px;
+  background-repeat: repeat-x;
 }
 
 /* -- Showcase sections --------------------------------------------------- */
@@ -1815,6 +1873,14 @@ a.social-link:not(.brand):hover {
 
 .feature-label .eyebrow {
   margin-bottom: 0;
+}
+
+/* Below 767px the nav shows numbers with no names, so this prefix is the only
+   place a bare "02" can be resolved. */
+.project-label-n {
+  margin-right: 7px;
+  font-variant-numeric: tabular-nums;
+  opacity: 0.6;
 }
 
 /* -- Project state ------------------------------------------------------- */
@@ -1982,215 +2048,14 @@ a.social-link:not(.brand):hover {
 
 /* -- Sticky feature-area indicator --------------------------------------- */
 
-/* The wrapper is the whole mechanism. It spans exactly the three feature
-   sections, so the bar inside it sticks under the navbar for the length of the
-   run and scrolls away with the last section — no fixed positioning, no scroll
-   listener toggling visibility, no boundary to get wrong. */
 .project-run {
   position: relative;
 }
 
-/* PINNED TO THE BOTTOM, and that is what makes it simple.
-
-   The first version sat under the navbar at `top: 60px`, and it fought the
-   navbar for a living. The navbar hides on scroll-down by TRANSLATING up while
-   keeping its 60px slot in the sticky stack, so a bar offset by that 60px hung
-   below an empty band the moment the nav slid away. Closing that gap meant
-   publishing the nav's hidden state to the document, matching its easing and
-   its two durations, and keeping a shared 60px constant in step across three
-   rules and a JS observer band. All of it was bookkeeping to survive a
-   collision that only existed because both things wanted the same edge.
-
-   The bottom edge is uncontested. Nothing else on the site pins there, so the
-   bar needs no offset, no coupling, and no knowledge of the navbar at all —
-   and the deletion reaches further than this rule: scroll-margin-top drops
-   back to the navbar's 60px alone, which gives every anchor jump 45px more
-   content on screen.
-
-   It also stops working against the navbar's intent rather than around it.
-   Hiding the nav on scroll-down exists to give reading room; a second bar
-   pinned to the top took some of that room straight back.
-
-   `bottom: 0` sticky inside .project-run does the appearing and disappearing
-   on its own, exactly as `top` did: pinned to the viewport bottom while the
-   run is on screen, gone when the last project ends.
-
-   ATTACHED TO THE NAVBAR, and travelling with it. `top: 60px` is the navbar's
-   own height, so the two stack as one unit: a site nav with a section nav
-   under it, which is a shape readers already know.
-
-   The navbar hides on scroll-down by TRANSLATING up (components/Nav.tsx,
-   `animate={{ y: hidden ? -60 : 0 }}`) while keeping its 60px slot in the
-   sticky stack the whole time. Left alone, this bar stayed at 60 and hung
-   below an empty navbar-height band. Moving by the same -60px takes its place
-   at the top of the screen instead, and moving back down when the navbar
-   returns keeps them reading as one object rather than two that drift.
-
-   Duration and curve match the navbar's own (0.3s returning, 0.4s hiding, and
-   its EASE constant) so neither appears to chase the other.
-
-   Driven by a data attribute Nav writes to <html>, not by React state here:
-   the only consumer is this rule, and re-rendering a subtree on every scroll
-   direction change to move one element would be the expensive way round.
-
-   Two other positions were tried and rejected. Flush to the BOTTOM of the
-   viewport removed the coupling entirely but sat where the browser toolbar,
-   the home indicator and the window edge live — a dark band there reads as
-   the reader's own chrome, and a control mistaken for chrome never gets
-   pressed. A light translucent strip in the page's paper colour, at either
-   edge, simply disappeared into the page. */
-.project-nav {
-  -webkit-backdrop-filter: blur(75px);
-  backdrop-filter: blur(75px);
-  background-color: #f8f4f1f2;
-  border-bottom: 1px solid var(--divider);
-  padding: 0 var(--gutter);
-  position: sticky;
-  top: 60px;
-  transition: transform 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
-  z-index: 900;
-}
-
-:root[data-nav-hidden="true"] .project-nav {
-  transform: translateY(-60px);
-  transition-duration: 0.4s;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .project-nav {
-    transition: none;
-  }
-}
-
-.project-nav-inner {
-  align-items: center;
-  display: flex;
-  gap: 12px;
-  margin: 0 auto;
-  max-width: var(--width--container-1232);
-  /* Scrolls rather than wraps: a second row would change the bar's height
-     mid-scroll and shift every section under it. */
-  overflow-x: auto;
-  padding: 9px 0;
-  scrollbar-width: none;
-}
-
-.project-nav-inner::-webkit-scrollbar {
-  display: none;
-}
-
-/* Says what the row is. Without it three numbered names read as a breadcrumb
-   or a step tracker — plausible readings that are both wrong. It also gives
-   the left edge something to hold: the chips use about a third of the bar's
-   width, and starting on a bare pill left the rest looking unfinished.
-
-   Carries `.eyebrow .muted` in the markup; `flex: none` stops it shrinking when
-   the chips overflow, since it is the one item in the row that must stay whole. */
-.project-nav-label {
-  flex: none;
-  margin-bottom: 0;
-}
-
-.project-nav-list {
-  align-items: center;
-  display: flex;
-  gap: 8px;
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-.project-nav-list li {
-  /* The export puts margin-bottom: 4px on every li — harmless in prose, but
-     here it sat under the flex line and made the bar taller than the sum of
-     its parts. */
-  margin: 0;
-}
-
-/* CHIPS. Outlined rather than filled, because the page they sit on is made of
-   thin weights and hairline rules — an earlier version marked the current item
-   with a solid near-black pill, which became the darkest object on the page
-   outside the dark Outcomes section and permanently on screen.
-
-   A border is enough to say "pressable". The selected state then only has to
-   differ from its neighbours, not shout at the page. */
-.project-nav-link {
-  align-items: baseline;
-  border: 1px solid var(--color--neutral--warm--400);
-  border-radius: 130px;
-  color: var(--text-colors--muted-dark-blue);
-  display: flex;
-  font-family: var(--text-body-font);
-  font-size: var(--text-size--nav-link-p-text);
-  gap: 7px;
-  line-height: 18px;
-  padding: 6px 13px;
-  text-decoration: none;
-  transition:
-    background-color 0.2s,
-    border-color 0.2s,
-    color 0.2s;
-  white-space: nowrap;
-}
-
-.project-nav-link:hover {
-  background-color: #0d09090d;
-  border-color: var(--color--beige--600);
-  color: var(--text-colors--text-primary);
-}
-
-/* Selected reads as RAISED, not inverted: a solid light fill against the bar's
-   slightly darker ground, an ink border, and ink text. That is the difference
-   between a chip that looks pressed in a set and a black tag stuck to the top
-   of the screen. Ink on the fill measures 14.12:1. */
-.project-nav-link[aria-current] {
-  background-color: var(--color--neutral--100);
-  border-color: var(--color--neutral--800);
-  color: var(--text-colors--text-primary);
-  font-weight: var(--text-weightt--eyebrow-500);
-}
-
-.project-nav-n {
-  font-variant-numeric: tabular-nums;
-  opacity: 0.6;
-}
-
-/* Visible to a screen reader, not on screen: the chips already show three
-   entries with one marked, so rendering "Project 2 of 3" beside them would say
-   the same thing twice. role="status" announces the change on scroll. */
-.project-nav-status {
-  clip-path: inset(50%);
-  height: 1px;
-  margin: 0;
-  overflow: hidden;
-  position: absolute;
-  white-space: nowrap;
-  width: 1px;
-}
-
-/* Anchor jumps have to clear BOTH pinned bars — 60px navbar + 51px indicator
-   (6 + 18 + 6 chip, + 2px chip border, + 9 + 9 bar padding, + 1px border).
-   Applied to the sections themselves so it works for the in-page menu, the
-   chips' own links, and any external link carrying a #hash. */
+/* Must equal SectionNav's NAVBAR_HEIGHT + SCROLL_SLACK (60 + 24), or a #hash
+   from outside the page lands somewhere a tab click doesn't. */
 .project-run .project-section {
-  scroll-margin-top: 111px;
-}
-
-/* The label is the first thing to go: at 375 the three chips alone need more
-   than the column, so the row scrolls, and a label that scrolls off is worse
-   than no label. The chips carry numbers, which is most of what it said. */
-@media screen and (max-width: 767px) {
-  .project-nav-label {
-    display: none;
-  }
-
-  .project-nav-list {
-    gap: 6px;
-  }
-
-  .project-nav-link {
-    padding: 6px 11px;
-  }
+  scroll-margin-top: 84px;
 }
 
 /* -- Prototype stub routes ----------------------------------------------- */
@@ -2216,9 +2081,9 @@ a.social-link:not(.brand):hover {
    .project-overview-label was one declaration applied to one element on the
    NovinoPath page, and .project-nav-label repeated the same declaration for
    the chip bar. Both meant "this label is subordinate to the text beside it",
-   so that is what the class is now called. .project-nav-label survives for the
-   parts that really are about the nav bar — not shrinking, and disappearing on
-   mobile.
+   so that is what the class is now called. Both of those names are gone; the
+   nav's own label carries .sectionnav-label for the parts that really are
+   about the nav — its spacing, and disappearing on mobile.
 
    The export's answer to the same question was .eyebrow.green, which set the
    colour it was already inheriting. Muting is the distinction it never made.

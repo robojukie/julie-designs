@@ -24,6 +24,9 @@
 /* Ours: route-change page transition wipe. */
 @import "../styles/page-transition.css";
 
+/* Ours: the in-page section nav (components/SectionNav.tsx). */
+@import "../styles/section-nav.css";
+
 /* Ours: the case-study image zoom that replaces Webflow's lightbox. Order
    against cursor.css doesn't matter here, unlike for the sheets above: that
    file's `cursor: none` sits on <html> and reaches the overlay only by
