@@ -2,7 +2,7 @@
 
 Julie Paik's design portfolio — a Next.js (App Router) + TypeScript rebuild migrated from my Webflow site
 
-Main and staging branches are deployed on Vercel
+Deployed on Vercel
 
 ## Stack
 
@@ -28,5 +28,4 @@ Main and staging branches are deployed on Vercel
 | `/vac-redesign`                       | Case study                                                 |
 | `/brainsprout`                        | Case study                                                 |
 | `/brainsprout-accessibility-features` | Case study sub-page                                        |
-| `/401`                                | Password-gate page, visual replica only (see NOTES.md)     |
 | 404                                   | `app/not-found.tsx`                                        |
