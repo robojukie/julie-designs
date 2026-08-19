@@ -7,18 +7,18 @@ export async function proxy(request: NextRequest, event: NextFetchEvent) {
   const headers = request.headers;
 
   // A. ADVANCED PRE-FETCH CLEANUP: Catches speculation rule background checks
-  const isPrefetch =
-    headers.get("purpose") === "prefetch" ||
-    headers.get("x-nextjs-data") !== null ||
-    headers.get("sec-purpose") === "prefetch";
+  // const isPrefetch =
+  //   headers.get("purpose") === "prefetch" ||
+  //   headers.get("x-nextjs-data") !== null ||
+  //   headers.get("sec-purpose") === "prefetch";
 
   // B. SYSTEM BLOCKS, BOT FILTERING & ASSET DEDUPLICATION
   const userAgent = headers.get("user-agent")?.toLowerCase() || "";
   const acceptLanguage = headers.get("accept-language") || "";
 
-  // Explicit detection for Next.js internal background routing queries
-  const isNextDataQuery =
-    pathname.includes("/_next/data/") || headers.get("x-nextjs-data") !== null;
+  // // Explicit detection for Next.js internal background routing queries
+  // const isNextDataQuery =
+  //   pathname.includes("/_next/data/") || headers.get("x-nextjs-data") !== null;
 
   const botKeywords = [
     "bot",
@@ -55,19 +55,19 @@ export async function proxy(request: NextRequest, event: NextFetchEvent) {
   // Blocks headless bots (automated scrapers typically bypass browser language arrays)
   const isHeadlessAutomation = acceptLanguage.trim() === "";
 
-  const isNextInternal =
-    pathname.startsWith("/_next") ||
-    pathname.includes("/_next/data") ||
-    pathname.startsWith("/favicon") ||
-    pathname.startsWith("/api");
+  // const isNextInternal =
+  //   pathname.startsWith("/_next") ||
+  //   pathname.includes("/_next/data") ||
+  //   pathname.startsWith("/favicon") ||
+  //   pathname.startsWith("/api");
 
   if (
-    isPrefetch ||
+    // isPrefetch ||
     isBot ||
     isHeadlessAutomation ||
-    isNextInternal ||
-    isNextDataQuery ||
-    pathname.includes(".") ||
+    // isNextInternal ||
+    // isNextDataQuery ||
+    // pathname.includes(".") ||
     pathname === "/dont-track-me" ||
     request.nextUrl.hostname.includes("-vercel.app")
   ) {
@@ -212,7 +212,19 @@ export async function proxy(request: NextRequest, event: NextFetchEvent) {
   return response;
 }
 
+// export const config = {
+//   // Excludes asset file targets cleanly from processing loops
+//   matcher: ["/((?!api|_next/static|_next/image|favicon.ico).*)"],
+// };
+
 export const config = {
-  // Excludes asset file targets cleanly from processing loops
-  matcher: ["/((?!api|_next/static|_next/image|favicon.ico).*)"],
+  matcher: [
+    {
+      source: "/((?!api|_next/static|_next/image|favicon.ico).*)",
+      missing: [
+        { type: "header", key: "next-router-prefetch" }, // 👈 BLOCKS background link caches completely!
+        { type: "header", key: "purpose", value: "prefetch" },
+      ],
+    },
+  ],
 };
