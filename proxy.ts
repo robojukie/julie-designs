@@ -87,8 +87,8 @@ export async function proxy(request: NextRequest, event: NextFetchEvent) {
       process.env.MY_BYPASS_COOKIE_SECRET || "bypass-active",
       {
         path: "/",
-        maxAge: 31536000,
-        sameSite: "none",
+        maxAge: 31536000, // Keep this device hidden for 1 full year
+        sameSite: "none", // Works inside testing frames and embeds
         secure: true,
       },
     );
@@ -162,42 +162,47 @@ export async function proxy(request: NextRequest, event: NextFetchEvent) {
     event.waitUntil(logTask);
   }
 
-  // F. DIRECT RESEND DISPATCH: Explicit target to ://resend.com
-  if (
-    isNewSession &&
-    pathname === "/" &&
-    process.env.NODE_ENV === "production"
-  ) {
-    const sendEmailDirectly = async () => {
-      try {
-        const res = await fetch("https://://resend.com/emails", {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${process.env.RESEND_API_KEY}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            from: "Tracking <onboarding@resend.dev>",
-            to: ["juliespaik@gmail.com"],
-            subject: `🚨 New Arrival: ${locationText}`,
-            html: `
-              <h2>New Analytics Session Started</h2>
-              <p><strong>Location Details:</strong> ${locationText}</p>
-              <p><strong>Target Path:</strong> <code>${pathname}</code></p>
-              <p><strong>Session Tracker ID:</strong> <code>${sessionId}</code></p>
-            `,
-          }),
-        });
-
+  // F. BULLETPROOF DIRECT RESEND DISPATCH: Avoids proxy loopback failures
+  // use process.env.NODE_ENV === 'production' if no need to test olocally
+  if (isNewSession && pathname === "/") {
+    // Direct network call to Resend bypassing internal Next.js API endpoints
+    const directEmailTask = fetch("https://resend.com", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${process.env.RESEND_API_KEY}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        from: "Tracking <onboarding@resend.dev>", // Guaranteed sandbox sender path
+        to: ["juliespaik@gmail.com"],
+        subject: `🚨 New Arrival: ${locationText}`,
+        html: `
+          <h2>New Analytics Session Started</h2>
+          <p><strong>Location Details:</strong> ${locationText}</p>
+          <p><strong>Target Path:</strong> <code>${pathname}</code></p>
+          <p><strong>Session Tracker ID:</strong> <code>${sessionId}</code></p>
+        `,
+      }),
+    })
+      .then(async (res) => {
         const logData = await res.json();
         if (!res.ok)
-          console.error("❌ Resend API Error:", JSON.stringify(logData));
-      } catch (err: any) {
-        console.error("💥 Resend Connection Error:", err.message);
-      }
-    };
+          console.error(
+            "❌ Resend API directly rejected the request:",
+            JSON.stringify(logData),
+          );
+        else
+          console.log(
+            "✅ Resend Direct Push Successful! Message ID:",
+            logData.id,
+          );
+      })
+      .catch((err) =>
+        console.error("💥 Raw Resend connection network error:", err.message),
+      );
 
-    event.waitUntil(sendEmailDirectly());
+    // Lock the Edge execution runtime thread open until transmission finishes
+    event.waitUntil(directEmailTask);
   }
 
   return response;
