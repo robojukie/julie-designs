@@ -76,7 +76,35 @@ export async function proxy(request: NextRequest, event: NextFetchEvent) {
   }
 
   // C. PERSONAL BYPASS: Block tracking for your own registered devices
+  // D. PERSONAL BYPASS: Automate cookie setting via ?admin=true URL parameter
   const bypassCookie = request.cookies.get("bypass_tracking")?.value;
+  const hasAdminParam = request.nextUrl.searchParams.get("admin") === "true";
+
+  // If you visit with ?admin=true, set the 1-year bypass cookie automatically
+  if (hasAdminParam) {
+    const response = NextResponse.next();
+    response.cookies.set(
+      "bypass_tracking",
+      process.env.MY_BYPASS_COOKIE_SECRET || "bypass-active",
+      {
+        path: "/",
+        maxAge: 31536000, // Keep this device hidden for 1 full year
+        sameSite: "none", // Works perfectly inside testing frames and embeds
+        secure: true,
+      },
+    );
+
+    // Redirect to the clean URL (removes the ugly "?admin=true" from your browser bar)
+    const cleanUrl = request.nextUrl.clone();
+    cleanUrl.searchParams.delete("admin");
+
+    // Create a new redirected response with the cookie attached
+    const redirectResponse = NextResponse.redirect(cleanUrl);
+    redirectResponse.cookies.set(response.cookies.get("bypass_tracking")!);
+    return redirectResponse;
+  }
+
+  // If the device already has the bypass cookie, exit quietly without tracking
   if (bypassCookie === process.env.MY_BYPASS_COOKIE_SECRET) {
     return NextResponse.next();
   }

@@ -6,7 +6,7 @@ import Hotjar from "@/components/Hotjar";
 import PageTransition, { ENTRY_SCRIPT } from "@/components/PageTransition";
 import Cursor from "@/components/Cursor";
 import "./globals.css";
-import { Analytics } from "@vercel/analytics/next";
+import VercelAnalyticsWrapper from "@/components/VercelAnalyticsWrapper";
 
 export const metadata: Metadata = {
   title: "Julie Paik — Product Designer",
@@ -56,7 +56,7 @@ export default function RootLayout({
           <Cursor />
         </PageTransition>
         <Hotjar />
-        <Analytics />
+        <VercelAnalyticsWrapper />
       </body>
     </html>
   );
