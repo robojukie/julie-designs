@@ -21,10 +21,13 @@ export async function POST(request: Request) {
       `,
     });
 
-    if (error)
+    if (error) {
+      console.error("Resend Internal Error:", error);
       return NextResponse.json({ error: error.message }, { status: 500 });
+    }
     return NextResponse.json({ success: true, data });
   } catch (err: any) {
+    console.error("API Context Crash:", err.message);
     return NextResponse.json({ error: err.message }, { status: 500 });
   }
 }
