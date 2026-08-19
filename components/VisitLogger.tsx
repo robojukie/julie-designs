@@ -19,11 +19,16 @@ import { useEffect, useRef } from "react";
    effect invocation) from turning one navigation into two rows. It holds the
    last path we reported, not a boolean, so returning to a path later in the
    same session still counts. */
+/* Your own tracking control panel isn't site content — logging it would just
+   add noise to the table every time you go check or flip the setting. */
+const UNTRACKED_PATHS = ["/dont-track-me"];
+
 export default function VisitLogger() {
   const pathname = usePathname();
   const lastReported = useRef<string | null>(null);
 
   useEffect(() => {
+    if (UNTRACKED_PATHS.includes(pathname)) return;
     if (lastReported.current === pathname) return;
     lastReported.current = pathname;
 
