@@ -5,6 +5,7 @@ import Footer from "@/components/Footer";
 import PageTransition, { ENTRY_SCRIPT } from "@/components/PageTransition";
 import Cursor from "@/components/Cursor";
 import "./globals.css";
+import { Analytics } from "@vercel/analytics/next"
 
 export const metadata: Metadata = {
   title: "Julie Paik — Product Designer",
@@ -54,6 +55,7 @@ export default function RootLayout({
           <Cursor />
         </PageTransition>
       </body>
+      <Analytics />
     </html>
   );
 }
