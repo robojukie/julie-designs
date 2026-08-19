@@ -2,7 +2,6 @@ import { NextResponse } from "next/server";
 import type { NextRequest, NextFetchEvent } from "next/server";
 import { geolocation } from "@vercel/functions";
 
-// 🛡️ CORRECT SYNTAX: This MUST be a named export called 'proxy' for Next.js 16 to run it!
 export async function proxy(request: NextRequest, event: NextFetchEvent) {
   const { pathname } = request.nextUrl;
   const headers = request.headers;
@@ -11,8 +10,7 @@ export async function proxy(request: NextRequest, event: NextFetchEvent) {
   const isPrefetch =
     headers.get("purpose") === "prefetch" ||
     headers.get("x-nextjs-data") !== null ||
-    headers.get("sec-purpose") === "prefetch" ||
-    headers.get("sec-fetch-dest") === "empty";
+    headers.get("sec-purpose") === "prefetch";
 
   // B. SYSTEM BLOCKS, BOT FILTERING & ASSET DEDUPLICATION
   const userAgent = headers.get("user-agent")?.toLowerCase() || "";
@@ -50,6 +48,7 @@ export async function proxy(request: NextRequest, event: NextFetchEvent) {
   ];
   const isBot = botKeywords.some((keyword) => userAgent.includes(keyword));
 
+  // Blocks headless bots (automated scrapers typically bypass browser language arrays)
   const isHeadlessAutomation = acceptLanguage.trim() === "";
 
   const isNextInternal =
@@ -165,7 +164,7 @@ export async function proxy(request: NextRequest, event: NextFetchEvent) {
   // F. BULLETPROOF DIRECT RESEND DISPATCH: Avoids proxy loopback failures
   // use process.env.NODE_ENV === 'production' if no need to test olocally
   if (isNewSession && pathname === "/") {
-    // Direct network call to Resend bypassing internal Next.js API endpoints
+    // update to https://api.resend.com/emails?
     const directEmailTask = fetch("https://resend.com", {
       method: "POST",
       headers: {
