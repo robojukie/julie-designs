@@ -16,6 +16,10 @@ export async function proxy(request: NextRequest, event: NextFetchEvent) {
   const userAgent = headers.get("user-agent")?.toLowerCase() || "";
   const acceptLanguage = headers.get("accept-language") || "";
 
+  // Explicit detection for Next.js internal background routing queries
+  const isNextDataQuery =
+    pathname.includes("/_next/data/") || headers.get("x-nextjs-data") !== null;
+
   const botKeywords = [
     "bot",
     "crawler",
