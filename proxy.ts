@@ -1,208 +1,58 @@
 import { NextResponse } from "next/server";
-import type { NextRequest, NextFetchEvent } from "next/server";
-import { geolocation } from "@vercel/functions";
+import type { NextRequest } from "next/server";
+import { BYPASS_COOKIE, SESSION_MAX_AGE } from "@/lib/tracking";
 
-export async function proxy(request: NextRequest, event: NextFetchEvent) {
+/* The proxy no longer logs page views — see components/VisitLogger.tsx for
+   why that moved to the client. All it owns now is the "don't track me"
+   cookie, which has to be set server-side because the value is a secret the
+   browser can't know.
+
+   Two ways to claim it, both landing on the same cookie:
+     ?admin=true on any URL — then redirect to the clean URL so the parameter
+       doesn't stick around in the address bar or in shared links.
+     /dont-track-me — the bookmarkable version, which keeps its confirmation
+       page rather than redirecting. */
+export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
-  const headers = request.headers;
+  const secret = process.env.MY_BYPASS_COOKIE_SECRET;
 
-  // A. PRE-FETCH CLEANUP: Stop Next.js pre-download loops from creating excess logs
-  const isPrefetch =
-    headers.get("purpose") === "prefetch" ||
-    headers.get("x-nextjs-data") !== null;
-
-  // B. SYSTEM BLOCKS, BOT FILTERING & ASSET DEDUPLICATION
-  const userAgent = headers.get("user-agent")?.toLowerCase() || "";
-  const acceptLanguage = headers.get("accept-language") || "";
-
-  const botKeywords = [
-    "bot",
-    "crawler",
-    "spider",
-    "googlebot",
-    "bingbot",
-    "yandexbot",
-    "baiduspider",
-    "facebookexternalhit",
-    "twitterbot",
-    "rogerbot",
-    "linkedinbot",
-    "embedly",
-    "quora link preview",
-    "showyoubot",
-    "outbrain",
-    "pinterest/0.",
-    "slackbot",
-    "vkshare",
-    "w3c_validator",
-    "redditbot",
-    "applebot",
-    "whatsapp",
-    "flipboard",
-    "tumblr",
-    "vercelbot",
-    "headless",
-    "vercel-screenshot",
-    "lighthouse",
-  ];
-  const isBot = botKeywords.some((keyword) => userAgent.includes(keyword));
-
-  // Filter out headless bots and Vercel edge tests lacking an accept-language header
-  const isHeadlessAutomation = acceptLanguage.trim() === "";
-
-  const isNextInternal =
-    pathname.startsWith("/_next") ||
-    pathname.includes("/_next/data") ||
-    pathname.startsWith("/favicon") ||
-    pathname.startsWith("/api");
-
-  if (
-    isPrefetch ||
-    isBot ||
-    isHeadlessAutomation ||
-    isNextInternal ||
-    pathname.includes(".") ||
-    pathname === "/dont-track-me" ||
-    request.nextUrl.hostname.includes("-vercel.app")
-  ) {
-    return NextResponse.next();
-  }
-
-  // B. GEO VALIDATION: Filter out fake automated Vercel compilation pings
-  const { city, country, region } = geolocation(request);
-  if (region === "dev1") {
-    return NextResponse.next();
-  }
-
-  // C. PERSONAL BYPASS: Automate cookie setting via ?admin=true URL parameter
-  const bypassCookie = request.cookies.get("bypass_tracking")?.value;
-  const hasAdminParam = request.nextUrl.searchParams.get("admin") === "true";
-
-  if (hasAdminParam) {
+  if (pathname === "/dont-track-me") {
     const response = NextResponse.next();
-    response.cookies.set(
-      "bypass_tracking",
-      process.env.MY_BYPASS_COOKIE_SECRET || "bypass-active",
-      {
-        path: "/",
-        maxAge: 31536000,
-        sameSite: "none",
-        secure: true,
-      },
-    );
+    setBypassCookie(response, secret);
+    return response;
+  }
 
+  if (request.nextUrl.searchParams.get("admin") === "true") {
     const cleanUrl = request.nextUrl.clone();
     cleanUrl.searchParams.delete("admin");
-
-    const redirectResponse = NextResponse.redirect(cleanUrl);
-    redirectResponse.cookies.set(response.cookies.get("bypass_tracking")!);
-    return redirectResponse;
+    const response = NextResponse.redirect(cleanUrl);
+    setBypassCookie(response, secret);
+    return response;
   }
 
-  if (bypassCookie === process.env.MY_BYPASS_COOKIE_SECRET) {
-    return NextResponse.next();
-  }
-
-  const response = NextResponse.next();
-  let sessionId = request.cookies.get("visitor_session_id")?.value;
-  let isNewSession = false;
-
-  // D. SESSION IDENTIFICATION WITH DOUBLE-FIRE BLOCK
-  if (!sessionId) {
-    const alreadyProcessed = request.headers.get("x-middleware-session-cached");
-    if (alreadyProcessed) return response;
-
-    sessionId = Math.random().toString(36).substring(2, 15);
-    response.cookies.set("visitor_session_id", sessionId, {
-      path: "/",
-      sameSite: "none",
-      secure: true,
-    });
-    isNewSession = true;
-  } else {
-    // BLOCK CONSECUTIVE SUB-SECOND REPEATS
-    const currentSecondToken = `${pathname}-${Math.floor(Date.now() / 1000)}`;
-    const lastProcessedToken = request.cookies.get(
-      "last_processed_ping",
-    )?.value;
-
-    if (lastProcessedToken === currentSecondToken) {
-      return NextResponse.next();
-    }
-
-    response.cookies.set("last_processed_ping", currentSecondToken, {
-      path: "/",
-      maxAge: 5,
-      sameSite: "none",
-      secure: true,
-    });
-
-    request.headers.set("x-middleware-session-cached", "true");
-
-    // 🛡️ GUARANTEED FIX: Keep this false on repeat clicks so your inbox doesn't flood!
-    isNewSession = false;
-  }
-
-  const locationText = `${city || "Unknown City"}, ${region || "Unknown Region"}, ${country || "Unknown Country"}`;
-
-  // E. SUPABASE LOGGER
-  if (process.env.NODE_ENV === "production") {
-    const logTask = fetch(`${request.nextUrl.origin}/api/log-activity`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        sessionId,
-        location: locationText,
-        path: pathname,
-      }),
-    }).catch((err) => console.error("DB log trigger failed", err));
-
-    event.waitUntil(logTask);
-  }
-
-  // F. BULLETPROOF DIRECT RESEND DISPATCH: Absolute correct API routing string
-  if (isNewSession && pathname === "/") {
-    const sendEmailDirectly = async () => {
-      try {
-        const res = await fetch("https://api.resend.com/emails", {
-          // 👈 API prefix completely locked here
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${process.env.RESEND_API_KEY}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            from: "Tracking <onboarding@resend.dev>",
-            to: ["juliespaik@gmail.com"],
-            subject: `🚨 New Arrival: ${locationText}`,
-            html: `
-              <h2>New Analytics Session Started</h2>
-              <p><strong>Location Details:</strong> ${locationText}</p>
-              <p><strong>Target Path:</strong> <code>${pathname}</code></p>
-              <p><strong>Session Tracker ID:</strong> <code>${sessionId}</code></p>
-            `,
-          }),
-        });
-
-        const logData = await res.json();
-        if (!res.ok) {
-          console.error(
-            "❌ Resend API directly rejected the request:",
-            JSON.stringify(logData),
-          );
-        } else {
-          console.log(
-            "✅ Resend Direct Push Successful! Message ID:",
-            logData.id,
-          );
-        }
-      } catch (err: any) {
-        console.error("💥 Raw Resend connection network error:", err.message);
-      }
-    };
-
-    event.waitUntil(sendEmailDirectly());
-  }
-
-  return response;
+  return NextResponse.next();
 }
+
+function setBypassCookie(
+  response: NextResponse,
+  secret: string | undefined,
+) {
+  if (!secret) {
+    console.error("MY_BYPASS_COOKIE_SECRET is unset — bypass not applied");
+    return;
+  }
+  response.cookies.set(BYPASS_COOKIE, secret, {
+    path: "/",
+    maxAge: SESSION_MAX_AGE,
+    httpOnly: true,
+    sameSite: "lax",
+    secure: process.env.NODE_ENV === "production",
+  });
+}
+
+/* Without a matcher this runs on every asset, font, and image request too.
+   Nothing here needs to see those, and the old code spent its first thirty
+   lines filtering them back out by hand. */
+export const config = {
+  matcher: ["/((?!api|_next|_vercel|.*\\..*).*)"],
+};
