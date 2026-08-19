@@ -85,8 +85,8 @@ export async function proxy(request: NextRequest, event: NextFetchEvent) {
       process.env.MY_BYPASS_COOKIE_SECRET || "bypass-active",
       {
         path: "/",
-        maxAge: 31536000,
-        sameSite: "none",
+        maxAge: 31536000, // Keep this device hidden for 1 full year
+        sameSite: "none", // Works inside testing frames and embeds
         secure: true,
       },
     );
@@ -161,7 +161,7 @@ export async function proxy(request: NextRequest, event: NextFetchEvent) {
   }
 
   // F. BULLETPROOF DIRECT RESEND DISPATCH: Avoids proxy loopback failures
-  // (We removed process.env.NODE_ENV === 'production' so you can verify it locally first!)
+  // use process.env.NODE_ENV === 'production' if no need to test olocally
   if (isNewSession && pathname === "/") {
     // Direct network call to Resend bypassing internal Next.js API endpoints
     const directEmailTask = fetch("https://resend.com", {
