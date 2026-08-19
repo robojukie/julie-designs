@@ -13,6 +13,8 @@ export async function proxy(request: NextRequest, event: NextFetchEvent) {
 
   // B. SYSTEM BLOCKS, BOT FILTERING & ASSET DEDUPLICATION
   const userAgent = headers.get("user-agent")?.toLowerCase() || "";
+  const acceptLanguage = headers.get("accept-language") || ""; // 👈 Reads browser language defaults
+
   const botKeywords = [
     "bot",
     "crawler",
@@ -40,10 +42,15 @@ export async function proxy(request: NextRequest, event: NextFetchEvent) {
     "tumblr",
     "vercelbot",
     "headless",
+    "vercel-screenshot",
+    "lighthouse", // 👈 Added Vercel test tools
   ];
   const isBot = botKeywords.some((keyword) => userAgent.includes(keyword));
 
-  // Catch hidden Next.js asset & data streams
+  // 🛡️ CRITICAL NEW CHECK: Real human browsers always send a preferred language string (like 'en-US')
+  // Automated background scripts, network monitors, and scrapers almost always leave this blank.
+  const isHeadlessAutomation = acceptLanguage.trim() === "";
+
   const isNextInternal =
     pathname.startsWith("/_next") ||
     pathname.includes("/_next/data") ||
@@ -53,7 +60,8 @@ export async function proxy(request: NextRequest, event: NextFetchEvent) {
   if (
     isPrefetch ||
     isBot ||
-    isNextInternal || // 👈 Blocks all background data streams from double-logging
+    isHeadlessAutomation || // 👈 Instantly filters out headless bots and Vercel edge tests
+    isNextInternal ||
     pathname.includes(".") ||
     pathname === "/dont-track-me" ||
     request.nextUrl.hostname.includes("-vercel.app")
