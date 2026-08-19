@@ -13,6 +13,9 @@ export async function proxy(request: NextRequest, event: NextFetchEvent) {
     headers.get("sec-purpose") === "prefetch" ||
     headers.get("next-router-prefetch") === "1"; // Catch Next.js client-side link preloading engines
 
+  const fetchMode = headers.get("sec-fetch-mode") || "";
+  const isBackgroundDataFetch = pathname !== "/" && fetchMode !== "navigate";
+
   // B. SYSTEM BLOCKS, BOT FILTERING & ASSET DEDUPLICATION
   const userAgent = headers.get("user-agent")?.toLowerCase() || "";
   const acceptLanguage = headers.get("accept-language") || "";
@@ -72,6 +75,7 @@ export async function proxy(request: NextRequest, event: NextFetchEvent) {
 
   if (
     isPrefetch ||
+    isBackgroundDataFetch ||
     isBot ||
     isHeadlessAutomation ||
     // isNextInternal ||
