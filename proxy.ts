@@ -7,10 +7,11 @@ export async function proxy(request: NextRequest, event: NextFetchEvent) {
   const headers = request.headers;
 
   // A. ADVANCED PRE-FETCH CLEANUP: Catches speculation rule background checks
-  // const isPrefetch =
-  //   headers.get("purpose") === "prefetch" ||
-  //   headers.get("x-nextjs-data") !== null ||
-  //   headers.get("sec-purpose") === "prefetch";
+  const isPrefetch =
+    headers.get("purpose") === "prefetch" ||
+    headers.get("x-nextjs-data") !== null ||
+    headers.get("sec-purpose") === "prefetch" ||
+    headers.get("next-router-prefetch") === "1"; // Catch Next.js client-side link preloading engines
 
   // B. SYSTEM BLOCKS, BOT FILTERING & ASSET DEDUPLICATION
   const userAgent = headers.get("user-agent")?.toLowerCase() || "";
@@ -61,13 +62,22 @@ export async function proxy(request: NextRequest, event: NextFetchEvent) {
   //   pathname.startsWith("/favicon") ||
   //   pathname.startsWith("/api");
 
+  // Explicitly block assets, system layouts, and images from triggering a tracking thread
+  const isStaticAsset =
+    pathname.startsWith("/images/") || // 👈 Blocks your dedicated portfolio asset storage folder
+    pathname.startsWith("/_next") ||
+    pathname.startsWith("/favicon") ||
+    pathname.startsWith("/api") ||
+    pathname.includes("."); // Catches explicit file targets (.png, .jpg, .svg, .pdf)
+
   if (
-    // isPrefetch ||
+    isPrefetch ||
     isBot ||
     isHeadlessAutomation ||
     // isNextInternal ||
     // isNextDataQuery ||
     // pathname.includes(".") ||
+    isStaticAsset ||
     pathname === "/dont-track-me" ||
     request.nextUrl.hostname.includes("-vercel.app")
   ) {
@@ -212,19 +222,19 @@ export async function proxy(request: NextRequest, event: NextFetchEvent) {
   return response;
 }
 
-// export const config = {
-//   // Excludes asset file targets cleanly from processing loops
-//   matcher: ["/((?!api|_next/static|_next/image|favicon.ico).*)"],
-// };
-
 export const config = {
-  matcher: [
-    {
-      source: "/((?!api|_next/static|_next/image|favicon.ico).*)",
-      missing: [
-        { type: "header", key: "next-router-prefetch" }, // 👈 BLOCKS background link caches completely!
-        { type: "header", key: "purpose", value: "prefetch" },
-      ],
-    },
-  ],
+  // Excludes asset file targets cleanly from processing loops
+  matcher: ["/((?!api|_next/static|_next/image|favicon.ico).*)"],
 };
+
+// export const config = {
+//   matcher: [
+//     {
+//       source: "/((?!api|_next/static|_next/image|favicon.ico).*)",
+//       missing: [
+//         { type: "header", key: "next-router-prefetch" }, // 👈 BLOCKS background link caches completely!
+//         { type: "header", key: "purpose", value: "prefetch" },
+//       ],
+//     },
+//   ],
+// };
