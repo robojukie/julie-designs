@@ -2,14 +2,17 @@ import { NextResponse } from "next/server";
 import type { NextRequest, NextFetchEvent } from "next/server";
 import { geolocation } from "@vercel/functions";
 
+// 🛡️ CORRECT SYNTAX: This MUST be a named export called 'proxy' for Next.js 16 to run it!
 export async function proxy(request: NextRequest, event: NextFetchEvent) {
   const { pathname } = request.nextUrl;
   const headers = request.headers;
 
-  // A. PRE-FETCH CLEANUP: Stop Next.js pre-download loops from creating excess logs
+  // A. ADVANCED PRE-FETCH CLEANUP: Catches speculation rule background checks
   const isPrefetch =
     headers.get("purpose") === "prefetch" ||
-    headers.get("x-nextjs-data") !== null;
+    headers.get("x-nextjs-data") !== null ||
+    headers.get("sec-purpose") === "prefetch" ||
+    headers.get("sec-fetch-dest") === "empty";
 
   // B. SYSTEM BLOCKS, BOT FILTERING & ASSET DEDUPLICATION
   const userAgent = headers.get("user-agent")?.toLowerCase() || "";
@@ -47,7 +50,6 @@ export async function proxy(request: NextRequest, event: NextFetchEvent) {
   ];
   const isBot = botKeywords.some((keyword) => userAgent.includes(keyword));
 
-  // Filter out headless bots and Vercel edge tests lacking an accept-language header
   const isHeadlessAutomation = acceptLanguage.trim() === "";
 
   const isNextInternal =
@@ -139,7 +141,7 @@ export async function proxy(request: NextRequest, event: NextFetchEvent) {
 
     request.headers.set("x-middleware-session-cached", "true");
 
-    // 🛡️ GUARANTEED FIX: Keep this false on repeat clicks so your inbox doesn't flood!
+    // 🛡️ FIX: Forces subsequent layout paths to register without sending spam emails
     isNewSession = false;
   }
 
@@ -205,3 +207,8 @@ export async function proxy(request: NextRequest, event: NextFetchEvent) {
 
   return response;
 }
+
+export const config = {
+  // Excludes asset file targets cleanly from processing loops
+  matcher: ["/((?!api|_next/static|_next/image|favicon.ico).*)"],
+};

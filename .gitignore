@@ -25,6 +25,7 @@ README_INTERNAL.md
 # misc
 .DS_Store
 *.pem
+proxy-local.ts
 
 # Claude Code
 .claude/
