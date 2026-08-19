@@ -75,8 +75,7 @@ export async function proxy(request: NextRequest, event: NextFetchEvent) {
     return NextResponse.next();
   }
 
-  // C. PERSONAL BYPASS: Block tracking for your own registered devices
-  // D. PERSONAL BYPASS: Automate cookie setting via ?admin=true URL parameter
+  // C. PERSONAL BYPASS: Automate cookie setting via ?admin=true URL parameter
   const bypassCookie = request.cookies.get("bypass_tracking")?.value;
   const hasAdminParam = request.nextUrl.searchParams.get("admin") === "true";
 
@@ -89,7 +88,7 @@ export async function proxy(request: NextRequest, event: NextFetchEvent) {
       {
         path: "/",
         maxAge: 31536000, // Keep this device hidden for 1 full year
-        sameSite: "none", // Works perfectly inside testing frames and embeds
+        sameSite: "none", // Works inside testing frames and embeds
         secure: true,
       },
     );
