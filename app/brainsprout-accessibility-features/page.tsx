@@ -84,7 +84,7 @@ export default function BrainSproutAccessibility() {
 
       <div className="section _w-radius light-purple">
         <div className="subsection-intro intro">
-          <div className="container-1224">
+          <div className="container-1232">
             <div className="container-680">
               <div className="container-title-and-list">
                 <div className="eyebrow-and-headline-container">
