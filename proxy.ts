@@ -1,18 +1,16 @@
 import { NextResponse } from "next/server";
-import type { NextRequest, NextFetchEvent } from "next/server"; // 👈 Added NextFetchEvent type
+import type { NextRequest, NextFetchEvent } from "next/server";
 import { geolocation } from "@vercel/functions";
 
-// 1. Accept the NextFetchEvent context as the second parameter
 export async function proxy(request: NextRequest, event: NextFetchEvent) {
   const { pathname } = request.nextUrl;
   const headers = request.headers;
 
-  // A. STRIP PRE-FETCHES: Stop Next.js background caching loops from inflating logs
+  // A. PRE-FETCH CLEANUP: Stop Next.js pre-download loops from creating excess logs
   const isPrefetch =
     headers.get("purpose") === "prefetch" ||
     headers.get("x-nextjs-data") !== null;
 
-  // B. SYSTEM BLOCKS: Exit silently if asset, system path, preview deployment, or a prefetch
   if (
     isPrefetch ||
     pathname.startsWith("/_next") ||
@@ -24,13 +22,13 @@ export async function proxy(request: NextRequest, event: NextFetchEvent) {
     return NextResponse.next();
   }
 
-  // C. GEO CHECK: Exclude Vercel's automated compilation test logs
+  // B. GEO VALIDATION: Filter out fake automated Vercel compilation pings
   const { city, country, region } = geolocation(request);
   if (region === "dev1") {
     return NextResponse.next();
   }
 
-  // D. PERSONAL BYPASS: Don't track your own devices
+  // C. PERSONAL BYPASS: Block tracking for your own registered devices
   const bypassCookie = request.cookies.get("bypass_tracking")?.value;
   if (bypassCookie === process.env.MY_BYPASS_COOKIE_SECRET) {
     return NextResponse.next();
@@ -40,7 +38,7 @@ export async function proxy(request: NextRequest, event: NextFetchEvent) {
   let sessionId = request.cookies.get("visitor_session_id")?.value;
   let isNewSession = false;
 
-  // E. SESSION CONFIG
+  // D. SESSION IDENTIFICATION
   if (!sessionId) {
     sessionId = Math.random().toString(36).substring(2, 15);
     response.cookies.set("visitor_session_id", sessionId, {
@@ -53,7 +51,7 @@ export async function proxy(request: NextRequest, event: NextFetchEvent) {
 
   const locationText = `${city || "Unknown City"}, ${region || "Unknown Region"}, ${country || "Unknown Country"}`;
 
-  // F. EDGE FETCH GUARANTEE: Call waitUntil on the execution context event
+  // E. SUPABASE LOGGER: Keep your functioning Supabase endpoint
   if (process.env.NODE_ENV === "production") {
     const logTask = fetch(`${request.nextUrl.origin}/api/log-activity`, {
       method: "POST",
@@ -65,30 +63,50 @@ export async function proxy(request: NextRequest, event: NextFetchEvent) {
       }),
     }).catch((err) => console.error("DB log trigger failed", err));
 
-    // Force Vercel to preserve the pipeline until Supabase saves the row
     event.waitUntil(logTask);
   }
 
-  if (
-    isNewSession &&
-    pathname === "/" &&
-    process.env.NODE_ENV === "production"
-  ) {
-    const emailTask = fetch(
-      `${request.nextUrl.origin}/api/send-visitor-email`,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          page: pathname,
-          location: locationText,
-          sessionId,
-        }),
+  // F. BULLETPROOF DIRECT RESEND DISPATCH: Avoids proxy loopback failures
+  // (We removed process.env.NODE_ENV === 'production' so you can verify it locally first!)
+  if (isNewSession && pathname === "/") {
+    // Direct network call to Resend bypassing internal Next.js API endpoints
+    const directEmailTask = fetch("https://resend.com", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${process.env.RESEND_API_KEY}`,
+        "Content-Type": "application/json",
       },
-    ).catch((err) => console.error("Email trigger failed", err));
+      body: JSON.stringify({
+        from: "Tracking <onboarding@resend.dev>", // Guaranteed sandbox sender path
+        to: ["your-resend-account-email@gmail.com"], // 👈 REPLACE with your Resend login address!
+        subject: `🚨 New Arrival: ${locationText}`,
+        html: `
+          <h2>New Analytics Session Started</h2>
+          <p><strong>Location Details:</strong> ${locationText}</p>
+          <p><strong>Target Path:</strong> <code>${pathname}</code></p>
+          <p><strong>Session Tracker ID:</strong> <code>${sessionId}</code></p>
+        `,
+      }),
+    })
+      .then(async (res) => {
+        const logData = await res.json();
+        if (!res.ok)
+          console.error(
+            "❌ Resend API directly rejected the request:",
+            JSON.stringify(logData),
+          );
+        else
+          console.log(
+            "✅ Resend Direct Push Successful! Message ID:",
+            logData.id,
+          );
+      })
+      .catch((err) =>
+        console.error("💥 Raw Resend connection network error:", err.message),
+      );
 
-    // Force Vercel to keep the runtime active until Resend confirms dispatch
-    event.waitUntil(emailTask);
+    // Lock the Edge execution runtime thread open until transmission finishes
+    event.waitUntil(directEmailTask);
   }
 
   return response;
