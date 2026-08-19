@@ -121,28 +121,7 @@ export async function proxy(request: NextRequest, event: NextFetchEvent) {
     sessionId = Math.random().toString(36).substring(2, 15);
     response.cookies.set("visitor_session_id", sessionId, {
       path: "/",
-      sameSite: "none",
-      secure: true,
-    });
-    isNewSession = true;
-  } else {
-    // 🛡️ BLOCK CONSECUTIVE SUB-SECOND REPEATS
-    // Generate a temporary cache token tracking the exact path and current timestamp second
-    const currentSecondToken = `${pathname}-${Math.floor(Date.now() / 1000)}`;
-    const lastProcessedToken = request.cookies.get(
-      "last_processed_ping",
-    )?.value;
-
-    // If the visitor just pinged this exact route during this same second, drop the twin log
-    if (lastProcessedToken === currentSecondToken) {
-      return NextResponse.next();
-    }
-
-    // Otherwise, update the timestamp lock cookie for their current step
-    response.cookies.set("last_processed_ping", currentSecondToken, {
-      path: "/",
-      maxAge: 5, // Automatically disappears after 5 seconds to free up space
-      sameSite: "none",
+      sameSite: "none", // Works beautifully inside previews and iframes
       secure: true,
     });
 
@@ -169,51 +148,46 @@ export async function proxy(request: NextRequest, event: NextFetchEvent) {
   }
 
   // F. BULLETPROOF DIRECT RESEND DISPATCH: Avoids proxy loopback failures
-  // add in "process.env.NODE_ENV === "production" to test locally
-  // FIXED DISPATCH: We remove event.waitUntil and await the transfer to guarantee delivery!
+  // (We removed process.env.NODE_ENV === 'production' so you can verify it locally first!)
   if (isNewSession && pathname === "/") {
-    // Create the asynchronous task frame
-    const sendEmailDirectly = async () => {
-      try {
-        const res = await fetch("https://resend.com", {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${process.env.RESEND_API_KEY}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            from: "Tracking <onboarding@resend.dev>",
-            to: ["juliespaik@gmail.com"], // 👈 Ensure your email is correct!
-            subject: `🚨 New Arrival: ${locationText}`,
-            html: `
-              <h2>New Analytics Session Started</h2>
-              <p><strong>Location Details:</strong> ${locationText}</p>
-              <p><strong>Target Path:</strong> <code>${pathname}</code></p>
-              <p><strong>Session Tracker ID:</strong> <code>${sessionId}</code></p>
-            `,
-          }),
-        });
-
+    // Direct network call to Resend bypassing internal Next.js API endpoints
+    const directEmailTask = fetch("https://resend.com", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${process.env.RESEND_API_KEY}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        from: "Tracking <onboarding@resend.dev>", // Guaranteed sandbox sender path
+        to: ["juliespaik@gmail.com"],
+        subject: `🚨 New Arrival: ${locationText}`,
+        html: `
+          <h2>New Analytics Session Started</h2>
+          <p><strong>Location Details:</strong> ${locationText}</p>
+          <p><strong>Target Path:</strong> <code>${pathname}</code></p>
+          <p><strong>Session Tracker ID:</strong> <code>${sessionId}</code></p>
+        `,
+      }),
+    })
+      .then(async (res) => {
         const logData = await res.json();
-        if (!res.ok) {
+        if (!res.ok)
           console.error(
             "❌ Resend API directly rejected the request:",
             JSON.stringify(logData),
           );
-        } else {
+        else
           console.log(
             "✅ Resend Direct Push Successful! Message ID:",
             logData.id,
           );
-        }
-      } catch (err: any) {
-        console.error("💥 Raw Resend connection network error:", err.message);
-      }
-    };
+      })
+      .catch((err) =>
+        console.error("💥 Raw Resend connection network error:", err.message),
+      );
 
-    // 🛡️ CRUCIAL CHANGE: We await the execution inside the proxy chain.
-    // This tells Vercel: Do not give the user the page until the email has physically left our system.
-    event.waitUntil(sendEmailDirectly());
+    // Lock the Edge execution runtime thread open until transmission finishes
+    event.waitUntil(directEmailTask);
   }
 
   return response;
