@@ -66,6 +66,7 @@ export async function proxy(request: NextRequest, event: NextFetchEvent) {
     isBot ||
     isHeadlessAutomation ||
     isNextInternal ||
+    isNextDataQuery ||
     pathname.includes(".") ||
     pathname === "/dont-track-me" ||
     request.nextUrl.hostname.includes("-vercel.app")
