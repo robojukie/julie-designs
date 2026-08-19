@@ -160,48 +160,47 @@ export async function proxy(request: NextRequest, event: NextFetchEvent) {
     event.waitUntil(logTask);
   }
 
-  // F. BULLETPROOF DIRECT RESEND DISPATCH: Absolute correct API routing string
+  // F. BULLETPROOF DIRECT RESEND DISPATCH: Avoids proxy loopback failures
+  // (We removed process.env.NODE_ENV === 'production' so you can verify it locally first!)
   if (isNewSession && pathname === "/") {
-    const sendEmailDirectly = async () => {
-      try {
-        const res = await fetch("https://api.resend.com/emails", {
-          // 👈 API prefix completely locked here
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${process.env.RESEND_API_KEY}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            from: "Tracking <onboarding@resend.dev>",
-            to: ["juliespaik@gmail.com"],
-            subject: `🚨 New Arrival: ${locationText}`,
-            html: `
-              <h2>New Analytics Session Started</h2>
-              <p><strong>Location Details:</strong> ${locationText}</p>
-              <p><strong>Target Path:</strong> <code>${pathname}</code></p>
-              <p><strong>Session Tracker ID:</strong> <code>${sessionId}</code></p>
-            `,
-          }),
-        });
-
+    // Direct network call to Resend bypassing internal Next.js API endpoints
+    const directEmailTask = fetch("https://resend.com", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${process.env.RESEND_API_KEY}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        from: "Tracking <onboarding@resend.dev>", // Guaranteed sandbox sender path
+        to: ["juliespaik@gmail.com"],
+        subject: `🚨 New Arrival: ${locationText}`,
+        html: `
+          <h2>New Analytics Session Started</h2>
+          <p><strong>Location Details:</strong> ${locationText}</p>
+          <p><strong>Target Path:</strong> <code>${pathname}</code></p>
+          <p><strong>Session Tracker ID:</strong> <code>${sessionId}</code></p>
+        `,
+      }),
+    })
+      .then(async (res) => {
         const logData = await res.json();
-        if (!res.ok) {
+        if (!res.ok)
           console.error(
             "❌ Resend API directly rejected the request:",
             JSON.stringify(logData),
           );
-        } else {
+        else
           console.log(
             "✅ Resend Direct Push Successful! Message ID:",
             logData.id,
           );
-        }
-      } catch (err: any) {
-        console.error("💥 Raw Resend connection network error:", err.message);
-      }
-    };
+      })
+      .catch((err) =>
+        console.error("💥 Raw Resend connection network error:", err.message),
+      );
 
-    event.waitUntil(sendEmailDirectly());
+    // Lock the Edge execution runtime thread open until transmission finishes
+    event.waitUntil(directEmailTask);
   }
 
   return response;
