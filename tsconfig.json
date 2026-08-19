@@ -29,5 +29,10 @@
     ".next/types/**/*.ts",
     ".next/dev/types/**/*.ts"
   ],
-  "exclude": ["node_modules", "drafts", "juliepaik.webflow"]
+  "exclude": [
+    "node_modules",
+    "drafts",
+    "juliepaik.webflow",
+    ".next/dev/types/**/*.ts"
+  ]
 }
