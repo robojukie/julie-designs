@@ -11,10 +11,49 @@ export async function proxy(request: NextRequest, event: NextFetchEvent) {
     headers.get("purpose") === "prefetch" ||
     headers.get("x-nextjs-data") !== null;
 
+  // B. SYSTEM BLOCKS, BOT FILTERING & ASSET DEDUPLICATION
+  const userAgent = headers.get("user-agent")?.toLowerCase() || "";
+  const botKeywords = [
+    "bot",
+    "crawler",
+    "spider",
+    "googlebot",
+    "bingbot",
+    "yandexbot",
+    "baiduspider",
+    "facebookexternalhit",
+    "twitterbot",
+    "rogerbot",
+    "linkedinbot",
+    "embedly",
+    "quora link preview",
+    "showyoubot",
+    "outbrain",
+    "pinterest/0.",
+    "slackbot",
+    "vkshare",
+    "w3c_validator",
+    "redditbot",
+    "applebot",
+    "whatsapp",
+    "flipboard",
+    "tumblr",
+    "vercelbot",
+    "headless",
+  ];
+  const isBot = botKeywords.some((keyword) => userAgent.includes(keyword));
+
+  // Catch hidden Next.js asset & data streams
+  const isNextInternal =
+    pathname.startsWith("/_next") ||
+    pathname.includes("/_next/data") ||
+    pathname.startsWith("/favicon") ||
+    pathname.startsWith("/api");
+
   if (
     isPrefetch ||
-    pathname.startsWith("/_next") ||
-    pathname.startsWith("/api") ||
+    isBot ||
+    isNextInternal || // 👈 Blocks all background data streams from double-logging
     pathname.includes(".") ||
     pathname === "/dont-track-me" ||
     request.nextUrl.hostname.includes("-vercel.app")
@@ -38,14 +77,21 @@ export async function proxy(request: NextRequest, event: NextFetchEvent) {
   let sessionId = request.cookies.get("visitor_session_id")?.value;
   let isNewSession = false;
 
-  // D. SESSION IDENTIFICATION
+  // D. SESSION IDENTIFICATION WITH DOUBLE-FIRE BLOCK
   if (!sessionId) {
+    // Check if we already created a session during this exact request pass
+    const alreadyProcessed = request.headers.get("x-middleware-session-cached");
+    if (alreadyProcessed) return response;
+
     sessionId = Math.random().toString(36).substring(2, 15);
     response.cookies.set("visitor_session_id", sessionId, {
       path: "/",
-      sameSite: "lax",
+      sameSite: "none", // Works beautifully inside previews and iframes
       secure: true,
     });
+
+    // Inject a temporary header flag to kill immediate internal double-triggers
+    request.headers.set("x-middleware-session-cached", "true");
     isNewSession = true;
   }
 
@@ -78,7 +124,7 @@ export async function proxy(request: NextRequest, event: NextFetchEvent) {
       },
       body: JSON.stringify({
         from: "Tracking <onboarding@resend.dev>", // Guaranteed sandbox sender path
-        to: ["your-resend-account-email@gmail.com"], // 👈 REPLACE with your Resend login address!
+        to: ["juliespaik@gmail.com"],
         subject: `🚨 New Arrival: ${locationText}`,
         html: `
           <h2>New Analytics Session Started</h2>
