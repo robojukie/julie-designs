@@ -1,35 +1,30 @@
 import { NextResponse } from "next/server";
 import { Resend } from "resend";
 
-// Initialize Resend with your environment variable API key
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { page, location } = body;
+    const { page, location, sessionId } = body;
 
-    // Send the tracking alert email
     const { data, error } = await resend.emails.send({
-      from: "Tracking <hello@juliepaik.com>",
+      from: "Tracking <alerts@juliepaik.com>",
       to: ["juliespaik@gmail.com"],
-      subject: `Visitor Alert: ${location}`,
+      subject: `🚨 New Arrival: ${location}`,
       html: `
-        <h2>New Website Visit Captured</h2>
-        <p><strong>Location Details:</strong> ${location}</p>
-        <p><strong>Page Visited:</strong> <code>${page}</code></p>
-        <p><strong>Timestamp:</strong> ${new Date().toLocaleString()}</p>
+        <h2>New Session Started</h2>
+        <p><strong>Location:</strong> ${location}</p>
+        <p><strong>Landing Page:</strong> <code>${page}</code></p>
+        <p><strong>Session ID:</strong> <code>${sessionId}</code></p>
+        <p><em>Use this Session ID in your logging dashboard to track their full live click path.</em></p>
       `,
     });
 
-    if (error) {
-      console.error("Resend Error:", error);
+    if (error)
       return NextResponse.json({ error: error.message }, { status: 500 });
-    }
-
     return NextResponse.json({ success: true, data });
   } catch (err: any) {
-    console.error("API Error:", err);
     return NextResponse.json({ error: err.message }, { status: 500 });
   }
 }
