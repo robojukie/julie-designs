@@ -11,9 +11,9 @@ export async function POST(request: Request) {
 
     // Send the tracking alert email
     const { data, error } = await resend.emails.send({
-      from: "Tracking <hello@juliepaik.com>", // Replace with your Resend verified domain
-      to: ["juliespaik@gmail.com"], // Replace with your personal inbox address
-      subject: `新 Visitor Alert: ${location}`,
+      from: "Tracking <hello@juliepaik.com>",
+      to: ["juliespaik@gmail.com"],
+      subject: `Visitor Alert: ${location}`,
       html: `
         <h2>New Website Visit Captured</h2>
         <p><strong>Location Details:</strong> ${location}</p>
