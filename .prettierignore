@@ -1,0 +1,5 @@
+# Verbatim ports of the original Webflow export. Reformatting them rewrites
+# thousands of lines and buries the deletions the freeze check looks for.
+styles/juliepaik.css
+styles/webflow.css
+styles/normalize.css

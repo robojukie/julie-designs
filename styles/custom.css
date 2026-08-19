@@ -981,16 +981,6 @@ a.social-link:not(.brand):hover {
   padding-right: 0;
 }
 
-/* Opt in at the call site: <div className="container-1232 top-level-gutter">.
-   (0,2,0), so it beats the zeroing rule above without needing source order,
-   and beats `.container-1232.full`'s `padding: 0` on order if both ever land
-   on one element. */
-.container-1232.top-level-gutter {
-  max-width: calc(var(--width--container-1232) + 2 * var(--gutter));
-  padding-left: var(--gutter);
-  padding-right: var(--gutter);
-}
-
 /* (0,2,0), to match what these are replacing. .section.about is the outer
    gutter on /about; .subsection above is the one on / and on /about below the
    hero. Both had to come along: leaving them on their hardcoded 24px while the
@@ -2820,4 +2810,18 @@ a.social-link:not(.brand):hover {
    keeps the case-study pages flat. */
 .body {
   background-image: linear-gradient(#fdfcfc, #fbf6f0 42%, #f8f4f1);
+}
+
+/* ---------------------------------------------------------------------------
+   38. .heading-container takes its parent's measure
+
+   DEPRECATE. Despite the generic name this class is used only on /brainsprout
+   (23) and /brainsprout-accessibility-features (19) — nowhere else on the site.
+   Its 680px cap was the last thing putting a heading and its own body copy on
+   different measures, so it is removed here rather than in the frozen export.
+   The class itself should go when those two pages are migrated: rename it to
+   something page-scoped, or fold it into .content-block with the rest.
+--------------------------------------------------------------------------- */
+.heading-container {
+  max-width: none;
 }
