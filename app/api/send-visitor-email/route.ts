@@ -4,12 +4,28 @@ import { Resend } from "resend";
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function POST(request: Request) {
+  // 1. Verify key is loaded before initializing
+  if (!process.env.RESEND_API_KEY) {
+    console.error(
+      "❌ CRITICAL CONFIG ERROR: RESEND_API_KEY is missing from environment variables!",
+    );
+    return NextResponse.json(
+      { error: "Unconfigured API Key" },
+      { status: 500 },
+    );
+  }
+  const resend = new Resend(process.env.RESEND_API_KEY);
+
   try {
     const body = await request.json();
     const { page, location, sessionId } = body;
 
+    console.log(
+      `📧 API ROUTE: Attempting to dispatch Resend request for session: ${sessionId}`,
+    );
+
     const { data, error } = await resend.emails.send({
-      from: "Tracking <alerts@juliepaik.com>",
+      from: "Tracking <onboarding@resend.dev>",
       to: ["juliespaik@gmail.com"],
       subject: `🚨 New Arrival: ${location}`,
       html: `
@@ -25,6 +41,11 @@ export async function POST(request: Request) {
       console.error("Resend Internal Error:", error);
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
+    console.log(
+      "✅ RESEND SUCCESS: Email successfully handed to Resend network. ID:",
+      data?.id,
+    );
+
     return NextResponse.json({ success: true, data });
   } catch (err: any) {
     console.error("API Context Crash:", err.message);
