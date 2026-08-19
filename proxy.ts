@@ -1,21 +1,36 @@
 import { NextResponse } from "next/server";
-import type { NextRequest } from "next/server";
+import type { NextRequest, NextFetchEvent } from "next/server"; // 👈 Added NextFetchEvent type
 import { geolocation } from "@vercel/functions";
 
-export async function proxy(request: NextRequest) {
+// 1. Accept the NextFetchEvent context as the second parameter
+export async function proxy(request: NextRequest, event: NextFetchEvent) {
   const { pathname } = request.nextUrl;
+  const headers = request.headers;
 
-  // 1. Skip assets, system API routes, and your secret bypass page
+  // A. STRIP PRE-FETCHES: Stop Next.js background caching loops from inflating logs
+  const isPrefetch =
+    headers.get("purpose") === "prefetch" ||
+    headers.get("x-nextjs-data") !== null;
+
+  // B. SYSTEM BLOCKS: Exit silently if asset, system path, preview deployment, or a prefetch
   if (
+    isPrefetch ||
     pathname.startsWith("/_next") ||
     pathname.startsWith("/api") ||
     pathname.includes(".") ||
-    pathname === "/dont-track-me"
+    pathname === "/dont-track-me" ||
+    request.nextUrl.hostname.includes("-vercel.app")
   ) {
     return NextResponse.next();
   }
 
-  // 2. Block your own visits using your custom bypass passphrase
+  // C. GEO CHECK: Exclude Vercel's automated compilation test logs
+  const { city, country, region } = geolocation(request);
+  if (region === "dev1") {
+    return NextResponse.next();
+  }
+
+  // D. PERSONAL BYPASS: Don't track your own devices
   const bypassCookie = request.cookies.get("bypass_tracking")?.value;
   if (bypassCookie === process.env.MY_BYPASS_COOKIE_SECRET) {
     return NextResponse.next();
@@ -25,10 +40,9 @@ export async function proxy(request: NextRequest) {
   let sessionId = request.cookies.get("visitor_session_id")?.value;
   let isNewSession = false;
 
-  // 3. Handle Session Tracking
+  // E. SESSION CONFIG
   if (!sessionId) {
     sessionId = Math.random().toString(36).substring(2, 15);
-    // Session cookie clears automatically when they close the browser tab
     response.cookies.set("visitor_session_id", sessionId, {
       path: "/",
       sameSite: "lax",
@@ -37,13 +51,11 @@ export async function proxy(request: NextRequest) {
     isNewSession = true;
   }
 
-  // 4. Capture location details
-  const { city, country, region } = geolocation(request);
   const locationText = `${city || "Unknown City"}, ${region || "Unknown Region"}, ${country || "Unknown Country"}`;
 
-  // 5. High-density Activity Logging (Feeds to Free Supabase Table)
+  // F. EDGE FETCH GUARANTEE: Call waitUntil on the execution context event
   if (process.env.NODE_ENV === "production") {
-    fetch(`${request.nextUrl.origin}/api/log-activity`, {
+    const logTask = fetch(`${request.nextUrl.origin}/api/log-activity`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -52,23 +64,31 @@ export async function proxy(request: NextRequest) {
         path: pathname,
       }),
     }).catch((err) => console.error("DB log trigger failed", err));
+
+    // Force Vercel to preserve the pipeline until Supabase saves the row
+    event.waitUntil(logTask);
   }
 
-  // 6. Only fire an email on a NEW arrival to the Home Page
   if (
     isNewSession &&
     pathname === "/" &&
     process.env.NODE_ENV === "production"
   ) {
-    fetch(`${request.nextUrl.origin}/api/send-visitor-email`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        page: pathname,
-        location: locationText,
-        sessionId,
-      }),
-    }).catch((err) => console.error("Email trigger failed", err));
+    const emailTask = fetch(
+      `${request.nextUrl.origin}/api/send-visitor-email`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          page: pathname,
+          location: locationText,
+          sessionId,
+        }),
+      },
+    ).catch((err) => console.error("Email trigger failed", err));
+
+    // Force Vercel to keep the runtime active until Resend confirms dispatch
+    event.waitUntil(emailTask);
   }
 
   return response;
