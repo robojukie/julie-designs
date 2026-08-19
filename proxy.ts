@@ -13,7 +13,7 @@ export async function proxy(request: NextRequest, event: NextFetchEvent) {
 
   // B. SYSTEM BLOCKS, BOT FILTERING & ASSET DEDUPLICATION
   const userAgent = headers.get("user-agent")?.toLowerCase() || "";
-  const acceptLanguage = headers.get("accept-language") || ""; // 👈 Reads browser language defaults
+  const acceptLanguage = headers.get("accept-language") || "";
 
   const botKeywords = [
     "bot",
@@ -43,12 +43,11 @@ export async function proxy(request: NextRequest, event: NextFetchEvent) {
     "vercelbot",
     "headless",
     "vercel-screenshot",
-    "lighthouse", // 👈 Added Vercel test tools
+    "lighthouse",
   ];
   const isBot = botKeywords.some((keyword) => userAgent.includes(keyword));
 
-  // 🛡️ CRITICAL NEW CHECK: Real human browsers always send a preferred language string (like 'en-US')
-  // Automated background scripts, network monitors, and scrapers almost always leave this blank.
+  // Filter out headless bots and Vercel edge tests lacking an accept-language header
   const isHeadlessAutomation = acceptLanguage.trim() === "";
 
   const isNextInternal =
@@ -60,7 +59,7 @@ export async function proxy(request: NextRequest, event: NextFetchEvent) {
   if (
     isPrefetch ||
     isBot ||
-    isHeadlessAutomation || // 👈 Instantly filters out headless bots and Vercel edge tests
+    isHeadlessAutomation ||
     isNextInternal ||
     pathname.includes(".") ||
     pathname === "/dont-track-me" ||
@@ -79,7 +78,6 @@ export async function proxy(request: NextRequest, event: NextFetchEvent) {
   const bypassCookie = request.cookies.get("bypass_tracking")?.value;
   const hasAdminParam = request.nextUrl.searchParams.get("admin") === "true";
 
-  // If you visit with ?admin=true, set the 1-year bypass cookie automatically
   if (hasAdminParam) {
     const response = NextResponse.next();
     response.cookies.set(
@@ -87,23 +85,20 @@ export async function proxy(request: NextRequest, event: NextFetchEvent) {
       process.env.MY_BYPASS_COOKIE_SECRET || "bypass-active",
       {
         path: "/",
-        maxAge: 31536000, // Keep this device hidden for 1 full year
-        sameSite: "none", // Works inside testing frames and embeds
+        maxAge: 31536000,
+        sameSite: "none",
         secure: true,
       },
     );
 
-    // Redirect to the clean URL (removes the ugly "?admin=true" from your browser bar)
     const cleanUrl = request.nextUrl.clone();
     cleanUrl.searchParams.delete("admin");
 
-    // Create a new redirected response with the cookie attached
     const redirectResponse = NextResponse.redirect(cleanUrl);
     redirectResponse.cookies.set(response.cookies.get("bypass_tracking")!);
     return redirectResponse;
   }
 
-  // If the device already has the bypass cookie, exit quietly without tracking
   if (bypassCookie === process.env.MY_BYPASS_COOKIE_SECRET) {
     return NextResponse.next();
   }
@@ -114,7 +109,6 @@ export async function proxy(request: NextRequest, event: NextFetchEvent) {
 
   // D. SESSION IDENTIFICATION WITH DOUBLE-FIRE BLOCK
   if (!sessionId) {
-    // Check if we already created a session during this exact request pass
     const alreadyProcessed = request.headers.get("x-middleware-session-cached");
     if (alreadyProcessed) return response;
 
@@ -126,34 +120,32 @@ export async function proxy(request: NextRequest, event: NextFetchEvent) {
     });
     isNewSession = true;
   } else {
-    // 🛡️ BLOCK CONSECUTIVE SUB-SECOND REPEATS
-    // Generate a temporary cache token tracking the exact path and current timestamp second
+    // BLOCK CONSECUTIVE SUB-SECOND REPEATS
     const currentSecondToken = `${pathname}-${Math.floor(Date.now() / 1000)}`;
     const lastProcessedToken = request.cookies.get(
       "last_processed_ping",
     )?.value;
 
-    // If the visitor just pinged this exact route during this same second, drop the twin log
     if (lastProcessedToken === currentSecondToken) {
       return NextResponse.next();
     }
 
-    // Otherwise, update the timestamp lock cookie for their current step
     response.cookies.set("last_processed_ping", currentSecondToken, {
       path: "/",
-      maxAge: 5, // Automatically disappears after 5 seconds to free up space
+      maxAge: 5,
       sameSite: "none",
       secure: true,
     });
 
-    // Inject a temporary header flag to kill immediate internal double-triggers
     request.headers.set("x-middleware-session-cached", "true");
-    isNewSession = true;
+
+    // 🛡️ GUARANTEED FIX: Keep this false on repeat clicks so your inbox doesn't flood!
+    isNewSession = false;
   }
 
   const locationText = `${city || "Unknown City"}, ${region || "Unknown Region"}, ${country || "Unknown Country"}`;
 
-  // E. SUPABASE LOGGER: Keep your functioning Supabase endpoint
+  // E. SUPABASE LOGGER
   if (process.env.NODE_ENV === "production") {
     const logTask = fetch(`${request.nextUrl.origin}/api/log-activity`, {
       method: "POST",
@@ -168,14 +160,12 @@ export async function proxy(request: NextRequest, event: NextFetchEvent) {
     event.waitUntil(logTask);
   }
 
-  // F. BULLETPROOF DIRECT RESEND DISPATCH: Avoids proxy loopback failures
-  // add in "process.env.NODE_ENV === "production" to test locally
-  // FIXED DISPATCH: We remove event.waitUntil and await the transfer to guarantee delivery!
+  // F. BULLETPROOF DIRECT RESEND DISPATCH: Absolute correct API routing string
   if (isNewSession && pathname === "/") {
-    // Create the asynchronous task frame
     const sendEmailDirectly = async () => {
       try {
-        const res = await fetch("https://resend.com", {
+        const res = await fetch("https://api.resend.com/emails", {
+          // 👈 API prefix completely locked here
           method: "POST",
           headers: {
             Authorization: `Bearer ${process.env.RESEND_API_KEY}`,
@@ -183,7 +173,7 @@ export async function proxy(request: NextRequest, event: NextFetchEvent) {
           },
           body: JSON.stringify({
             from: "Tracking <onboarding@resend.dev>",
-            to: ["juliespaik@gmail.com"], // 👈 Ensure your email is correct!
+            to: ["juliespaik@gmail.com"],
             subject: `🚨 New Arrival: ${locationText}`,
             html: `
               <h2>New Analytics Session Started</h2>
@@ -211,8 +201,6 @@ export async function proxy(request: NextRequest, event: NextFetchEvent) {
       }
     };
 
-    // 🛡️ CRUCIAL CHANGE: We await the execution inside the proxy chain.
-    // This tells Vercel: Do not give the user the page until the email has physically left our system.
     event.waitUntil(sendEmailDirectly());
   }
 
