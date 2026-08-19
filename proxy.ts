@@ -2,18 +2,21 @@ import { NextResponse } from "next/server";
 import type { NextRequest, NextFetchEvent } from "next/server";
 import { geolocation } from "@vercel/functions";
 
+// 🛡️ CORRECT SYNTAX: This MUST be a named export called 'proxy' for Next.js 16 to run it!
 export async function proxy(request: NextRequest, event: NextFetchEvent) {
   const { pathname } = request.nextUrl;
   const headers = request.headers;
 
-  // A. PRE-FETCH CLEANUP: Stop Next.js pre-download loops from creating excess logs
+  // A. ADVANCED PRE-FETCH CLEANUP: Catches speculation rule background checks
   const isPrefetch =
     headers.get("purpose") === "prefetch" ||
-    headers.get("x-nextjs-data") !== null;
+    headers.get("x-nextjs-data") !== null ||
+    headers.get("sec-purpose") === "prefetch" ||
+    headers.get("sec-fetch-dest") === "empty";
 
   // B. SYSTEM BLOCKS, BOT FILTERING & ASSET DEDUPLICATION
   const userAgent = headers.get("user-agent")?.toLowerCase() || "";
-  const acceptLanguage = headers.get("accept-language") || ""; // 👈 Reads browser language defaults
+  const acceptLanguage = headers.get("accept-language") || "";
 
   const botKeywords = [
     "bot",
@@ -43,12 +46,10 @@ export async function proxy(request: NextRequest, event: NextFetchEvent) {
     "vercelbot",
     "headless",
     "vercel-screenshot",
-    "lighthouse", // 👈 Added Vercel test tools
+    "lighthouse",
   ];
   const isBot = botKeywords.some((keyword) => userAgent.includes(keyword));
 
-  // 🛡️ CRITICAL NEW CHECK: Real human browsers always send a preferred language string (like 'en-US')
-  // Automated background scripts, network monitors, and scrapers almost always leave this blank.
   const isHeadlessAutomation = acceptLanguage.trim() === "";
 
   const isNextInternal =
@@ -60,7 +61,7 @@ export async function proxy(request: NextRequest, event: NextFetchEvent) {
   if (
     isPrefetch ||
     isBot ||
-    isHeadlessAutomation || // 👈 Instantly filters out headless bots and Vercel edge tests
+    isHeadlessAutomation ||
     isNextInternal ||
     pathname.includes(".") ||
     pathname === "/dont-track-me" ||
@@ -79,7 +80,6 @@ export async function proxy(request: NextRequest, event: NextFetchEvent) {
   const bypassCookie = request.cookies.get("bypass_tracking")?.value;
   const hasAdminParam = request.nextUrl.searchParams.get("admin") === "true";
 
-  // If you visit with ?admin=true, set the 1-year bypass cookie automatically
   if (hasAdminParam) {
     const response = NextResponse.next();
     response.cookies.set(
@@ -87,23 +87,20 @@ export async function proxy(request: NextRequest, event: NextFetchEvent) {
       process.env.MY_BYPASS_COOKIE_SECRET || "bypass-active",
       {
         path: "/",
-        maxAge: 31536000, // Keep this device hidden for 1 full year
-        sameSite: "none", // Works inside testing frames and embeds
+        maxAge: 31536000,
+        sameSite: "none",
         secure: true,
       },
     );
 
-    // Redirect to the clean URL (removes the ugly "?admin=true" from your browser bar)
     const cleanUrl = request.nextUrl.clone();
     cleanUrl.searchParams.delete("admin");
 
-    // Create a new redirected response with the cookie attached
     const redirectResponse = NextResponse.redirect(cleanUrl);
     redirectResponse.cookies.set(response.cookies.get("bypass_tracking")!);
     return redirectResponse;
   }
 
-  // If the device already has the bypass cookie, exit quietly without tracking
   if (bypassCookie === process.env.MY_BYPASS_COOKIE_SECRET) {
     return NextResponse.next();
   }
@@ -114,25 +111,43 @@ export async function proxy(request: NextRequest, event: NextFetchEvent) {
 
   // D. SESSION IDENTIFICATION WITH DOUBLE-FIRE BLOCK
   if (!sessionId) {
-    // Check if we already created a session during this exact request pass
     const alreadyProcessed = request.headers.get("x-middleware-session-cached");
     if (alreadyProcessed) return response;
 
     sessionId = Math.random().toString(36).substring(2, 15);
     response.cookies.set("visitor_session_id", sessionId, {
       path: "/",
-      sameSite: "none", // Works beautifully inside previews and iframes
+      sameSite: "none",
+      secure: true,
+    });
+    isNewSession = true;
+  } else {
+    // BLOCK CONSECUTIVE SUB-SECOND REPEATS
+    const currentSecondToken = `${pathname}-${Math.floor(Date.now() / 1000)}`;
+    const lastProcessedToken = request.cookies.get(
+      "last_processed_ping",
+    )?.value;
+
+    if (lastProcessedToken === currentSecondToken) {
+      return NextResponse.next();
+    }
+
+    response.cookies.set("last_processed_ping", currentSecondToken, {
+      path: "/",
+      maxAge: 5,
+      sameSite: "none",
       secure: true,
     });
 
-    // Inject a temporary header flag to kill immediate internal double-triggers
     request.headers.set("x-middleware-session-cached", "true");
-    isNewSession = true;
+
+    // 🛡️ FIX: Forces subsequent layout paths to register without sending spam emails
+    isNewSession = false;
   }
 
   const locationText = `${city || "Unknown City"}, ${region || "Unknown Region"}, ${country || "Unknown Country"}`;
 
-  // E. SUPABASE LOGGER: Keep your functioning Supabase endpoint
+  // E. SUPABASE LOGGER
   if (process.env.NODE_ENV === "production") {
     const logTask = fetch(`${request.nextUrl.origin}/api/log-activity`, {
       method: "POST",
@@ -147,48 +162,48 @@ export async function proxy(request: NextRequest, event: NextFetchEvent) {
     event.waitUntil(logTask);
   }
 
-  // F. BULLETPROOF DIRECT RESEND DISPATCH: Avoids proxy loopback failures
-  // (We removed process.env.NODE_ENV === 'production' so you can verify it locally first!)
-  if (isNewSession && pathname === "/") {
-    // Direct network call to Resend bypassing internal Next.js API endpoints
-    const directEmailTask = fetch("https://resend.com", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${process.env.RESEND_API_KEY}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        from: "Tracking <onboarding@resend.dev>", // Guaranteed sandbox sender path
-        to: ["juliespaik@gmail.com"],
-        subject: `🚨 New Arrival: ${locationText}`,
-        html: `
-          <h2>New Analytics Session Started</h2>
-          <p><strong>Location Details:</strong> ${locationText}</p>
-          <p><strong>Target Path:</strong> <code>${pathname}</code></p>
-          <p><strong>Session Tracker ID:</strong> <code>${sessionId}</code></p>
-        `,
-      }),
-    })
-      .then(async (res) => {
+  // F. DIRECT RESEND DISPATCH: Explicit target to ://resend.com
+  if (
+    isNewSession &&
+    pathname === "/" &&
+    process.env.NODE_ENV === "production"
+  ) {
+    const sendEmailDirectly = async () => {
+      try {
+        const res = await fetch("https://://resend.com/emails", {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${process.env.RESEND_API_KEY}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            from: "Tracking <onboarding@resend.dev>",
+            to: ["juliespaik@gmail.com"],
+            subject: `🚨 New Arrival: ${locationText}`,
+            html: `
+              <h2>New Analytics Session Started</h2>
+              <p><strong>Location Details:</strong> ${locationText}</p>
+              <p><strong>Target Path:</strong> <code>${pathname}</code></p>
+              <p><strong>Session Tracker ID:</strong> <code>${sessionId}</code></p>
+            `,
+          }),
+        });
+
         const logData = await res.json();
         if (!res.ok)
-          console.error(
-            "❌ Resend API directly rejected the request:",
-            JSON.stringify(logData),
-          );
-        else
-          console.log(
-            "✅ Resend Direct Push Successful! Message ID:",
-            logData.id,
-          );
-      })
-      .catch((err) =>
-        console.error("💥 Raw Resend connection network error:", err.message),
-      );
+          console.error("❌ Resend API Error:", JSON.stringify(logData));
+      } catch (err: any) {
+        console.error("💥 Resend Connection Error:", err.message);
+      }
+    };
 
-    // Lock the Edge execution runtime thread open until transmission finishes
-    event.waitUntil(directEmailTask);
+    event.waitUntil(sendEmailDirectly());
   }
 
   return response;
 }
+
+export const config = {
+  // Excludes asset file targets cleanly from processing loops
+  matcher: ["/((?!api|_next/static|_next/image|favicon.ico).*)"],
+};
